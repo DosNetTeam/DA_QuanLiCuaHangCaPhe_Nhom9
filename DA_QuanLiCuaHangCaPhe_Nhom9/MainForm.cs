@@ -16,5 +16,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         {
             InitializeComponent();
         }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
