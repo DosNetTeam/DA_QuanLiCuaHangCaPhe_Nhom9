@@ -307,7 +307,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
         // Hàm này được gọi khi bấm nút "Thanh Toán"
         // (Tên hàm _1 là do bạn double-click vào nút trong designer)
-        private void btnThanhToan_Click_1(object sender, EventArgs e)
+        private void btnThanhToan_Click(object sender, EventArgs e)
         {
             // Kiểm tra xem có hàng trong giỏ chưa
             if (lvDonHang.Items.Count == 0)
@@ -385,7 +385,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         }
 
         // Hàm này được gọi khi bấm nút "Hủy Đơn"
-        private void btnHuyDon_Click_1(object sender, EventArgs e)
+        private void btnHuyDon_Click(object sender, EventArgs e)
         {
             // Hỏi xác nhận
             var confirm = MessageBox.Show("Bạn có chắc muốn hủy đơn hàng này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
