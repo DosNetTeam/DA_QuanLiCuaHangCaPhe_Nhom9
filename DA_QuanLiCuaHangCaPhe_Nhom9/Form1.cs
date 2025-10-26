@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 using System.Drawing;
 using Microsoft.Win32;
@@ -11,7 +11,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         public Form1()
         {
             InitializeComponent();
-            
+
             // Start centered on screen
             StartPosition = FormStartPosition.CenterScreen;
             CenterToScreen();
@@ -21,15 +21,15 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
             // Configure password textbox to hide characters
             txtPass.UseSystemPasswordChar = true;
-            
+
             // Set tab order for better UX
             txtUser.TabIndex = 0;
             txtPass.TabIndex = 1;
             btnOK.TabIndex = 2;
-            
+
             // Allow Enter key to submit form
             this.AcceptButton = btnOK;
-            
+
             // Keep centered if display settings change (resolution/scale)
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
         }
@@ -72,10 +72,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             if (string.IsNullOrWhiteSpace(username))
             {
                 MessageBox.Show(
-                    "Vui lòng nhập tên đăng nhập!",
-                    "Thông báo",
+                   "Vui lòng nhập tên đăng nhập!",
+               "Thông báo",
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
+              MessageBoxIcon.Warning
                 );
                 txtUser.Focus();
                 return;
@@ -84,11 +84,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             if (string.IsNullOrWhiteSpace(password))
             {
                 MessageBox.Show(
-                    "Vui lòng nhập mật khẩu!",
-                    "Thông báo",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
+                   "Vui lòng nhập mật khẩu!",
+              "Thông báo",
+                MessageBoxButtons.OK,
+                  MessageBoxIcon.Warning
+           );
                 txtPass.Focus();
                 return;
             }
@@ -98,38 +98,31 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             if (username == "admin" && password == "123456")
             {
                 MessageBox.Show(
-                    $"Đăng nhập thành công!\nXin chào {username}",
+                 $"Đăng nhập thành công!\nXin chào {username}",
                     "Thành công",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
+                               MessageBoxButtons.OK,
+                          MessageBoxIcon.Information
                 );
-            
-                // TODO: Open main application form
-                // Example:
-                // MainForm mainForm = new MainForm();
-                // mainForm.Show();
-                // this.Hide();
+
+                // Open Admin form and hide login form
+                Admin adminForm = new Admin();
+                this.Hide();
+                adminForm.FormClosed += (s, args) => this.Close(); // Close login when admin closes
+                adminForm.Show();
             }
             else
             {
                 MessageBox.Show(
                     "Tên đăng nhập hoặc mật khẩu không đúng!",
-                    "Lỗi đăng nhập",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
-                
+                  "Lỗi đăng nhập",
+              MessageBoxButtons.OK,
+          MessageBoxIcon.Error
+             );
+
                 // Clear password field for security
                 txtPass.Clear();
                 txtUser.Focus();
             }
-
-            // TODO: Kết nối với database để check tài khoản
-            // using (var context = new YourDbContext())
-            // {
-            //     var user = context.Users.FirstOrDefault(u => u.Username == username && u.Password == password);
-            //     if (user != null) { /* success */ }
-            // }
         }
 
         private void label1_Click(object? sender, EventArgs e)
@@ -150,8 +143,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         // Helper method to enable/disable login button
         private void UpdateLoginButtonState()
         {
-            btnOK.Enabled = !string.IsNullOrWhiteSpace(txtUser.Text) && 
-                            !string.IsNullOrWhiteSpace(txtPass.Text);
+            btnOK.Enabled = !string.IsNullOrWhiteSpace(txtUser.Text) &&
+!string.IsNullOrWhiteSpace(txtPass.Text);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
