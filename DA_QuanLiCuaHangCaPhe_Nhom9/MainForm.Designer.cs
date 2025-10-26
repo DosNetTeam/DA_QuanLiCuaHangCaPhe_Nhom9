@@ -235,6 +235,7 @@
             btnHuyDon.TabIndex = 1;
             btnHuyDon.Text = "Huỷ đơn";
             btnHuyDon.UseVisualStyleBackColor = true;
+            btnHuyDon.Click += btnHuyDon_Click;
             // 
             // btnThanhToan
             // 
@@ -245,6 +246,7 @@
             btnThanhToan.TabIndex = 0;
             btnThanhToan.Text = "Thanh Toán";
             btnThanhToan.UseVisualStyleBackColor = true;
+            btnThanhToan.Click += btnThanhToan_Click;
             // 
             // MainForm
             // 
