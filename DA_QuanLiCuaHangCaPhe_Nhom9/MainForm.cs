@@ -14,15 +14,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 {
     public partial class MainForm : Form
     {
-        // -----------------------------------------------------------------
-        // PHẦN CODE ĐÃ ĐƯỢC ĐƠN GIẢN HÓA (Bỏ Reflection)
-        // -----------------------------------------------------------------
-        // Chúng ta không cần 2 dòng này nữa, vì chúng ta sẽ gọi
-        // 'DataSqlContext' một cách trực tiếp.
-        // private string _tenDbContext = "DataSqlContext";
-        // private Type _contextType;
-        // -----------------------------------------------------------------
-
+        
 
         // Giả định ID nhân viên đang đăng nhập.
         private int _currentMaNV = 3;
@@ -34,12 +26,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            // -----------------------------------------------------------------
-            // PHẦN CODE ĐÃ ĐƯỢC ĐƠN GIẢN HÓA (Bỏ Reflection)
-            // -----------------------------------------------------------------
-            // Chúng ta không cần khối code phức tạp để "tìm" DbContext nữa.
-            // -----------------------------------------------------------------
-
             // Cấu hình ListView
             lvDonHang.View = View.Details;
             lvDonHang.Columns.Clear();
@@ -53,14 +39,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             TaiSanPham("TatCa");
         }
 
-        // -----------------------------------------------------------------
-        // PHẦN CODE ĐÃ ĐƯỢC ĐƠN GIẢN HÓA (Bỏ Reflection)
-        // -----------------------------------------------------------------
-        // Chúng ta không cần hàm 'CreateDbContext()' phức tạp nữa.
-        // #region Các hàm trợ giúp (Helpers)
-        // ... (Đã xóa hàm CreateDbContext) ...
-        // #endregion
-        // -----------------------------------------------------------------
+     
 
 
         #region Các hàm tải dữ liệu (Load Data - Dùng EF Core)
@@ -309,79 +288,85 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         // (Tên hàm _1 là do bạn double-click vào nút trong designer)
         private void btnThanhToan_Click(object sender, EventArgs e)
         {
+
+            //ThanhToan frmThanhToan = new ThanhToan(lvDonHang.Items, decimal.Parse(lblTongCong.Text.Replace(" đ", "").Replace(".", ""), CultureInfo.InvariantCulture));
+            //frmThanhToan.ShowDialog();
+
             // Kiểm tra xem có hàng trong giỏ chưa
             if (lvDonHang.Items.Count == 0)
             {
                 MessageBox.Show("Vui lòng thêm sản phẩm vào đơn hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return; // Thoát hàm
             }
-
-            try
+            else
             {
-                // -----------------------------------------------------------------
-                // PHẦN CODE ĐÃ ĐƯỢC ĐƠN GIẢN HÓA (Bỏ Reflection)
-                // -----------------------------------------------------------------
-                // Dùng 'DataSqlContext' trực tiếp
-                using (DataSqlContext db = new DataSqlContext())
-                // -----------------------------------------------------------------
-                {
-                    // Bước 1: Tạo đối tượng DonHang
-                    var donHangMoi = new DonHang
-                    {
-                        NgayLap = DateTime.Now,
-                        MaNv = _currentMaNV, // Dùng MaNv = 3
-                        TrangThai = "Dang xu ly"
-                    };
-
-                    decimal tongTien = 0;
-
-                    // Bước 2: Tạo danh sách các ChiTietDonHang
-                    var listChiTiet = new List<ChiTietDonHang>();
-
-                    // Lặp qua từng dòng trong giỏ hàng (ListView)
-                    foreach (ListViewItem item in lvDonHang.Items)
-                    {
-                        int maSP = (int)item.Tag;
-                        int soLuong = int.Parse(item.SubItems[1].Text);
-                        decimal donGia = decimal.Parse(item.SubItems[2].Text.Replace(".", ""), CultureInfo.InvariantCulture);
-
-                        // Tạo một đối tượng ChiTietDonHang
-                        var chiTiet = new ChiTietDonHang
-                        {
-                            // Gán chi tiết này vào đơn hàng mẹ
-                            MaDhNavigation = donHangMoi,
-                            MaSp = maSP,
-                            SoLuong = soLuong,
-                            DonGia = donGia
-                        };
-                        // Thêm vào danh sách tạm
-                        listChiTiet.Add(chiTiet);
-
-                        // Cộng dồn tổng tiền
-                        tongTien += (soLuong * donGia);
-                    }
-
-                    // Bước 3: Cập nhật tổng tiền cho DonHang
-                    donHangMoi.TongTien = tongTien;
-
-                    // Bước 4: Báo cho EF Core biết chúng ta muốn...
-                    db.DonHangs.Add(donHangMoi); // ...thêm 1 DonHang mới
-                    db.ChiTietDonHangs.AddRange(listChiTiet); // ...thêm NHIỀU ChiTietDonHang mới
-
-                    // Bước 5: Thực thi lệnh, lưu vào CSDL
-                    db.SaveChanges();
-
-                    MessageBox.Show($"Đã lưu đơn hàng {donHangMoi.MaDh} thành công!", "Thông báo");
-
-                    // Bước 6: Xóa giỏ hàng trên UI
-                    lvDonHang.Items.Clear();
-                    CapNhatTongTien();
-                }
+                ThanhToan frmThanhToan = new ThanhToan(lvDonHang.Items, decimal.Parse(lblTongCong.Text.Replace(" đ", "").Replace(".", ""), CultureInfo.InvariantCulture));
+                frmThanhToan.ShowDialog();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi khi lưu đơn hàng: " + ex.InnerException?.Message ?? ex.Message);
-            }
+
+            //try
+            //{
+                
+            //    using (DataSqlContext db = new DataSqlContext())
+            //    // -----------------------------------------------------------------
+            //    {
+            //        // Bước 1: Tạo đối tượng DonHang
+            //        var donHangMoi = new DonHang
+            //        {
+            //            NgayLap = DateTime.Now,
+            //            MaNv = _currentMaNV, // Dùng MaNv = 3
+            //            TrangThai = "Dang xu ly"
+            //        };
+
+            //        decimal tongTien = 0;
+
+            //        // Bước 2: Tạo danh sách các ChiTietDonHang
+            //        var listChiTiet = new List<ChiTietDonHang>();
+
+            //        // Lặp qua từng dòng trong giỏ hàng (ListView)
+            //        foreach (ListViewItem item in lvDonHang.Items)
+            //        {
+            //            int maSP = (int)item.Tag;
+            //            int soLuong = int.Parse(item.SubItems[1].Text);
+            //            decimal donGia = decimal.Parse(item.SubItems[2].Text.Replace(".", ""), CultureInfo.InvariantCulture);
+
+            //            // Tạo một đối tượng ChiTietDonHang
+            //            var chiTiet = new ChiTietDonHang
+            //            {
+            //                // Gán chi tiết này vào đơn hàng mẹ
+            //                MaDhNavigation = donHangMoi,
+            //                MaSp = maSP,
+            //                SoLuong = soLuong,
+            //                DonGia = donGia
+            //            };
+            //            // Thêm vào danh sách tạm
+            //            listChiTiet.Add(chiTiet);
+
+            //            // Cộng dồn tổng tiền
+            //            tongTien += (soLuong * donGia);
+            //        }
+
+            //        // Bước 3: Cập nhật tổng tiền cho DonHang
+            //        donHangMoi.TongTien = tongTien;
+
+            //        // Bước 4: Báo cho EF Core biết chúng ta muốn...
+            //        db.DonHangs.Add(donHangMoi); // ...thêm 1 DonHang mới
+            //        db.ChiTietDonHangs.AddRange(listChiTiet); // ...thêm NHIỀU ChiTietDonHang mới
+
+            //        // Bước 5: Thực thi lệnh, lưu vào CSDL
+            //        db.SaveChanges();
+
+            //        MessageBox.Show($"Đã lưu đơn hàng {donHangMoi.MaDh} thành công!", "Thông báo");
+
+            //        // Bước 6: Xóa giỏ hàng trên UI
+            //        lvDonHang.Items.Clear();
+            //        CapNhatTongTien();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("Lỗi khi lưu đơn hàng: " + ex.InnerException?.Message ?? ex.Message);
+            //}
         }
 
         // Hàm này được gọi khi bấm nút "Hủy Đơn"

@@ -13,7 +13,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             ApplicationConfiguration.Initialize();
             //Application.Run(new Form1());
 
-            Application.Run(new ThanhToan());
+            Application.Run(new MainForm());
         }
     }
 }
