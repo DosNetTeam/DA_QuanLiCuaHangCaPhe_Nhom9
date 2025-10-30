@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            panelBottom = new Panel();
+            button1 = new Button();
             panelLeft = new Panel();
             lvChiTietBill = new ListView();
             tenmon = new ColumnHeader();
@@ -39,31 +39,34 @@
             label3 = new Label();
             txtKhachDua = new TextBox();
             label2 = new Label();
-            label4 = new Label();
+            lblTienDu = new Label();
             lblTongCongBill = new Label();
             label1 = new Label();
             panelRight = new Panel();
-            pbQR = new PictureBox();
+            panelBillPreview = new Panel();
+            pbQR_InBill = new PictureBox();
             groupBox2 = new GroupBox();
             rbQR = new RadioButton();
             rbTienMat = new RadioButton();
-            button1 = new Button();
-            panelBottom.SuspendLayout();
             panelLeft.SuspendLayout();
             groupBox1.SuspendLayout();
             panelRight.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pbQR).BeginInit();
+            panelBillPreview.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pbQR_InBill).BeginInit();
             groupBox2.SuspendLayout();
             SuspendLayout();
             // 
-            // panelBottom
+            // button1
             // 
-            panelBottom.Controls.Add(button1);
-            panelBottom.Dock = DockStyle.Bottom;
-            panelBottom.Location = new Point(0, 805);
-            panelBottom.Name = "panelBottom";
-            panelBottom.Size = new Size(1337, 250);
-            panelBottom.TabIndex = 0;
+            button1.Font = new Font("Segoe UI Black", 9.900001F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
+            button1.Location = new Point(145, 215);
+            button1.Name = "button1";
+            button1.Size = new Size(229, 58);
+            button1.TabIndex = 0;
+            button1.Text = "In hoá đơn";
+            button1.TextAlign = ContentAlignment.BottomCenter;
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // panelLeft
             // 
@@ -73,7 +76,7 @@
             panelLeft.Dock = DockStyle.Left;
             panelLeft.Location = new Point(0, 0);
             panelLeft.Name = "panelLeft";
-            panelLeft.Size = new Size(500, 805);
+            panelLeft.Size = new Size(518, 1244);
             panelLeft.TabIndex = 1;
             // 
             // lvChiTietBill
@@ -83,7 +86,7 @@
             lvChiTietBill.GridLines = true;
             lvChiTietBill.Location = new Point(0, 61);
             lvChiTietBill.Name = "lvChiTietBill";
-            lvChiTietBill.Size = new Size(500, 494);
+            lvChiTietBill.Size = new Size(518, 898);
             lvChiTietBill.TabIndex = 1;
             lvChiTietBill.UseCompatibleStateImageBehavior = false;
             lvChiTietBill.View = View.Details;
@@ -117,16 +120,17 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(button1);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(txtKhachDua);
             groupBox1.Controls.Add(label2);
-            groupBox1.Controls.Add(label4);
+            groupBox1.Controls.Add(lblTienDu);
             groupBox1.Controls.Add(lblTongCongBill);
             groupBox1.Controls.Add(label1);
             groupBox1.Dock = DockStyle.Bottom;
-            groupBox1.Location = new Point(0, 555);
+            groupBox1.Location = new Point(0, 959);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(500, 250);
+            groupBox1.Size = new Size(518, 285);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Tính tiền";
@@ -146,6 +150,7 @@
             txtKhachDua.Name = "txtKhachDua";
             txtKhachDua.Size = new Size(250, 47);
             txtKhachDua.TabIndex = 3;
+            txtKhachDua.TextChanged += txtKhachDua_TextChanged;
             // 
             // label2
             // 
@@ -156,14 +161,14 @@
             label2.TabIndex = 2;
             label2.Text = "Khách đưa";
             // 
-            // label4
+            // lblTienDu
             // 
-            label4.AutoSize = true;
-            label4.Location = new Point(195, 157);
-            label4.Name = "label4";
-            label4.Size = new Size(60, 41);
-            label4.TabIndex = 1;
-            label4.Text = "0 đ";
+            lblTienDu.AutoSize = true;
+            lblTienDu.Location = new Point(195, 157);
+            lblTienDu.Name = "lblTienDu";
+            lblTienDu.Size = new Size(60, 41);
+            lblTienDu.TabIndex = 1;
+            lblTienDu.Text = "0 đ";
             // 
             // lblTongCongBill
             // 
@@ -185,26 +190,35 @@
             // 
             // panelRight
             // 
-            panelRight.Controls.Add(pbQR);
+            panelRight.Controls.Add(panelBillPreview);
             panelRight.Controls.Add(groupBox2);
             panelRight.Dock = DockStyle.Fill;
-            panelRight.Location = new Point(500, 0);
+            panelRight.Location = new Point(518, 0);
             panelRight.Name = "panelRight";
             panelRight.Padding = new Padding(5, 0, 0, 0);
-            panelRight.Size = new Size(837, 805);
+            panelRight.Size = new Size(1052, 1244);
             panelRight.TabIndex = 1;
             // 
-            // pbQR
+            // panelBillPreview
             // 
-            pbQR.BorderStyle = BorderStyle.FixedSingle;
-            pbQR.Dock = DockStyle.Fill;
-            pbQR.Location = new Point(5, 250);
-            pbQR.Name = "pbQR";
-            pbQR.Size = new Size(832, 555);
-            pbQR.SizeMode = PictureBoxSizeMode.Zoom;
-            pbQR.TabIndex = 1;
-            pbQR.TabStop = false;
-            pbQR.Visible = false;
+            panelBillPreview.AutoScroll = true;
+            panelBillPreview.Controls.Add(pbQR_InBill);
+            panelBillPreview.Dock = DockStyle.Fill;
+            panelBillPreview.Location = new Point(5, 250);
+            panelBillPreview.Name = "panelBillPreview";
+            panelBillPreview.Size = new Size(1047, 994);
+            panelBillPreview.TabIndex = 1;
+            // 
+            // pbQR_InBill
+            // 
+            pbQR_InBill.Dock = DockStyle.Bottom;
+            pbQR_InBill.Location = new Point(0, 705);
+            pbQR_InBill.Name = "pbQR_InBill";
+            pbQR_InBill.Size = new Size(1047, 289);
+            pbQR_InBill.SizeMode = PictureBoxSizeMode.Zoom;
+            pbQR_InBill.TabIndex = 0;
+            pbQR_InBill.TabStop = false;
+            pbQR_InBill.Click += pbQR_InBill_Click;
             // 
             // groupBox2
             // 
@@ -213,7 +227,7 @@
             groupBox2.Dock = DockStyle.Top;
             groupBox2.Location = new Point(5, 0);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(832, 250);
+            groupBox2.Size = new Size(1047, 250);
             groupBox2.TabIndex = 0;
             groupBox2.TabStop = false;
             groupBox2.Text = "Hình thức thanh toán";
@@ -227,6 +241,7 @@
             rbQR.TabIndex = 0;
             rbQR.Text = "Chuyển khoản QR";
             rbQR.UseVisualStyleBackColor = true;
+            rbQR.CheckedChanged += rbQR_CheckedChanged;
             // 
             // rbTienMat
             // 
@@ -239,47 +254,35 @@
             rbTienMat.TabStop = true;
             rbTienMat.Text = "Tiền mặt";
             rbTienMat.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            button1.Font = new Font("Segoe UI Black", 9.900001F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            button1.Location = new Point(128, 31);
-            button1.Name = "button1";
-            button1.Size = new Size(229, 58);
-            button1.TabIndex = 0;
-            button1.Text = "In hoá đơn";
-            button1.TextAlign = ContentAlignment.BottomCenter;
-            button1.UseVisualStyleBackColor = true;
+            rbTienMat.CheckedChanged += rbQR_CheckedChanged;
             // 
             // ThanhToan
             // 
             AutoScaleDimensions = new SizeF(17F, 41F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1337, 1055);
+            ClientSize = new Size(1570, 1244);
             Controls.Add(panelRight);
             Controls.Add(panelLeft);
-            Controls.Add(panelBottom);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "ThanhToan";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Xác Nhận Thanh Toán";
-            panelBottom.ResumeLayout(false);
+            Load += ThanhToan_Load;
             panelLeft.ResumeLayout(false);
             panelLeft.PerformLayout();
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             panelRight.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pbQR).EndInit();
+            panelBillPreview.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pbQR_InBill).EndInit();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             ResumeLayout(false);
         }
 
         #endregion
-
-        private Panel panelBottom;
         private Panel panelLeft;
         private Panel panelRight;
         private Label label5;
@@ -287,7 +290,7 @@
         private Label label3;
         private TextBox txtKhachDua;
         private Label label2;
-        private Label label4;
+        private Label lblTienDu;
         private Label lblTongCongBill;
         private Label label1;
         private ListView lvChiTietBill;
@@ -296,8 +299,9 @@
         private ColumnHeader ThanhTien;
         private GroupBox groupBox2;
         private RadioButton rbTienMat;
-        private PictureBox pbQR;
         private RadioButton rbQR;
         private Button button1;
+        private Panel panelBillPreview;
+        private PictureBox pbQR_InBill;
     }
 }
