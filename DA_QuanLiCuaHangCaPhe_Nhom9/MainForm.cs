@@ -52,7 +52,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
             try
             {
-                
+
                 using (DataSqlContext db = new DataSqlContext())
                 // -----------------------------------------------------------------
                 {
@@ -279,7 +279,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
         // Hàm này được gọi khi bấm nút "Thanh Toán"
         // (Tên hàm _1 là do bạn double-click vào nút trong designer)
-        private void btnThanhToan_Click_1(object sender, EventArgs e)
+        private void btnThanhToan_Click(object sender, EventArgs e)
         {
 
             //ThanhToan frmThanhToan = new ThanhToan(lvDonHang.Items, decimal.Parse(lblTongCong.Text.Replace(" đ", "").Replace(".", ""), CultureInfo.InvariantCulture));
@@ -363,7 +363,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         }
 
         // Hàm này được gọi khi bấm nút "Hủy Đơn"
-        private void btnHuyDon_Click_1(object sender, EventArgs e)
+        private void btnHuyDon_Click(object sender, EventArgs e)
         {
             // Hỏi xác nhận
             var confirm = MessageBox.Show("Bạn có chắc muốn hủy đơn hàng này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
