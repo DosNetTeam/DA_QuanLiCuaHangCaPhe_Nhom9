@@ -76,10 +76,12 @@
             // 
             // panelCol1
             // 
+            panelCol1.BackColor = Color.FromArgb(0, 0, 0, 100);
             panelCol1.Controls.Add(panelTongTien);
             panelCol1.Controls.Add(lvDonHang);
             panelCol1.Controls.Add(label1);
             panelCol1.Dock = DockStyle.Fill;
+            panelCol1.ForeColor = Color.Black;
             panelCol1.Location = new Point(3, 3);
             panelCol1.Name = "panelCol1";
             panelCol1.Size = new Size(614, 1041);
@@ -90,18 +92,19 @@
             panelTongTien.Controls.Add(lblTongCong);
             panelTongTien.Controls.Add(label2);
             panelTongTien.Dock = DockStyle.Bottom;
-            panelTongTien.Location = new Point(0, 791);
+            panelTongTien.Font = new Font("Times New Roman", 15.9000006F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            panelTongTien.Location = new Point(0, 919);
             panelTongTien.Name = "panelTongTien";
-            panelTongTien.Size = new Size(614, 250);
+            panelTongTien.Size = new Size(614, 122);
             panelTongTien.TabIndex = 2;
             // 
             // lblTongCong
             // 
             lblTongCong.AutoSize = true;
             lblTongCong.Dock = DockStyle.Fill;
-            lblTongCong.Location = new Point(169, 0);
+            lblTongCong.Location = new Point(283, 0);
             lblTongCong.Name = "lblTongCong";
-            lblTongCong.Size = new Size(52, 41);
+            lblTongCong.Size = new Size(84, 62);
             lblTongCong.TabIndex = 1;
             lblTongCong.Text = "0đ";
             lblTongCong.TextAlign = ContentAlignment.MiddleRight;
@@ -112,17 +115,20 @@
             label2.Dock = DockStyle.Left;
             label2.Location = new Point(0, 0);
             label2.Name = "label2";
-            label2.Size = new Size(169, 41);
+            label2.Size = new Size(283, 62);
             label2.TabIndex = 0;
             label2.Text = "Tổng cộng:";
             // 
             // lvDonHang
             // 
+            lvDonHang.BackColor = SystemColors.ButtonFace;
             lvDonHang.Columns.AddRange(new ColumnHeader[] { TenSP, SL, DonGia, ThanhTien });
             lvDonHang.Dock = DockStyle.Fill;
-            lvDonHang.Location = new Point(0, 41);
+            lvDonHang.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lvDonHang.ForeColor = SystemColors.MenuText;
+            lvDonHang.Location = new Point(0, 38);
             lvDonHang.Name = "lvDonHang";
-            lvDonHang.Size = new Size(614, 1000);
+            lvDonHang.Size = new Size(614, 1003);
             lvDonHang.TabIndex = 1;
             lvDonHang.UseCompatibleStateImageBehavior = false;
             lvDonHang.View = View.Details;
@@ -130,7 +136,7 @@
             // TenSP
             // 
             TenSP.Text = "Tên SP";
-            TenSP.Width = 100;
+            TenSP.Width = 200;
             // 
             // SL
             // 
@@ -139,20 +145,22 @@
             // DonGia
             // 
             DonGia.Text = "Đơn Giá";
-            DonGia.Width = 120;
+            DonGia.Width = 190;
             // 
             // ThanhTien
             // 
             ThanhTien.Text = "Thành Tiền";
-            ThanhTien.Width = 120;
+            ThanhTien.Width = 190;
             // 
             // label1
             // 
             label1.AutoSize = true;
+            label1.BackColor = Color.Transparent;
             label1.Dock = DockStyle.Top;
+            label1.Font = new Font("Times New Roman", 9.900001F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label1.Location = new Point(0, 0);
             label1.Name = "label1";
-            label1.Size = new Size(248, 41);
+            label1.Size = new Size(272, 38);
             label1.TabIndex = 0;
             label1.Text = "Chi tiết đơn hàng";
             // 
@@ -169,28 +177,32 @@
             // flpSanPham
             // 
             flpSanPham.AutoScroll = true;
+            flpSanPham.BackColor = Color.WhiteSmoke;
             flpSanPham.Dock = DockStyle.Fill;
-            flpSanPham.Location = new Point(0, 41);
+            flpSanPham.Location = new Point(0, 38);
             flpSanPham.Name = "flpSanPham";
-            flpSanPham.Size = new Size(702, 1000);
+            flpSanPham.Size = new Size(702, 1003);
             flpSanPham.TabIndex = 1;
             // 
             // label3
             // 
             label3.AutoSize = true;
             label3.Dock = DockStyle.Top;
+            label3.Font = new Font("Times New Roman", 10F, FontStyle.Bold);
             label3.Location = new Point(0, 0);
             label3.Name = "label3";
-            label3.Size = new Size(295, 41);
+            label3.Size = new Size(327, 38);
             label3.TabIndex = 0;
             label3.Text = "Danh sách Sản phẩm";
             // 
             // panelCol3
             // 
+            panelCol3.BackColor = Color.FromArgb(0, 0, 0, 100);
             panelCol3.Controls.Add(flpLoaiSP);
             panelCol3.Controls.Add(label4);
             panelCol3.Controls.Add(panelChucNang);
             panelCol3.Dock = DockStyle.Fill;
+            panelCol3.ForeColor = SystemColors.ControlText;
             panelCol3.Location = new Point(1331, 3);
             panelCol3.Name = "panelCol3";
             panelCol3.Size = new Size(438, 1041);
@@ -199,20 +211,22 @@
             // flpLoaiSP
             // 
             flpLoaiSP.AutoScroll = true;
+            flpLoaiSP.BackColor = Color.FromArgb(0, 0, 0, 100);
             flpLoaiSP.Dock = DockStyle.Fill;
             flpLoaiSP.FlowDirection = FlowDirection.TopDown;
-            flpLoaiSP.Location = new Point(0, 41);
+            flpLoaiSP.Location = new Point(0, 38);
             flpLoaiSP.Name = "flpLoaiSP";
-            flpLoaiSP.Size = new Size(438, 750);
+            flpLoaiSP.Size = new Size(438, 881);
             flpLoaiSP.TabIndex = 2;
             // 
             // label4
             // 
             label4.AutoSize = true;
             label4.Dock = DockStyle.Top;
+            label4.Font = new Font("Times New Roman", 9.900001F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label4.Location = new Point(0, 0);
             label4.Name = "label4";
-            label4.Size = new Size(212, 41);
+            label4.Size = new Size(240, 38);
             label4.TabIndex = 1;
             label4.Text = "Loại Sản phẩm";
             // 
@@ -221,31 +235,38 @@
             panelChucNang.Controls.Add(btnHuyDon);
             panelChucNang.Controls.Add(btnThanhToan);
             panelChucNang.Dock = DockStyle.Bottom;
-            panelChucNang.Location = new Point(0, 791);
+            panelChucNang.Location = new Point(0, 919);
             panelChucNang.Name = "panelChucNang";
-            panelChucNang.Size = new Size(438, 250);
+            panelChucNang.Size = new Size(438, 122);
             panelChucNang.TabIndex = 0;
             // 
             // btnHuyDon
             // 
-            btnHuyDon.Dock = DockStyle.Top;
-            btnHuyDon.Location = new Point(0, 58);
+            btnHuyDon.BackColor = Color.FromArgb(255, 128, 128);
+            btnHuyDon.Dock = DockStyle.Bottom;
+            btnHuyDon.FlatAppearance.BorderSize = 0;
+            btnHuyDon.FlatStyle = FlatStyle.Flat;
+            btnHuyDon.Font = new Font("Times New Roman", 12F);
+            btnHuyDon.Location = new Point(0, 64);
             btnHuyDon.Name = "btnHuyDon";
             btnHuyDon.Size = new Size(438, 58);
             btnHuyDon.TabIndex = 1;
             btnHuyDon.Text = "Huỷ đơn";
-            btnHuyDon.UseVisualStyleBackColor = true;
+            btnHuyDon.UseVisualStyleBackColor = false;
             btnHuyDon.Click += btnHuyDon_Click;
             // 
             // btnThanhToan
             // 
+            btnThanhToan.BackColor = Color.YellowGreen;
             btnThanhToan.Dock = DockStyle.Top;
+            btnThanhToan.FlatStyle = FlatStyle.Flat;
+            btnThanhToan.Font = new Font("Times New Roman", 12F);
             btnThanhToan.Location = new Point(0, 0);
             btnThanhToan.Name = "btnThanhToan";
             btnThanhToan.Size = new Size(438, 58);
             btnThanhToan.TabIndex = 0;
             btnThanhToan.Text = "Thanh Toán";
-            btnThanhToan.UseVisualStyleBackColor = true;
+            btnThanhToan.UseVisualStyleBackColor = false;
             btnThanhToan.Click += btnThanhToan_Click;
             // 
             // MainForm
@@ -274,15 +295,10 @@
 
         private TableLayoutPanel tlpMain;
         private Label label1;
-        private ListView lvDonHang;
         private Panel panelCol1;
         private Panel panelTongTien;
         private Label label2;
         private Label lblTongCong;
-        private ColumnHeader TenSP;
-        private ColumnHeader SL;
-        private ColumnHeader DonGia;
-        private ColumnHeader ThanhTien;
         private Panel panelCol2;
         private FlowLayoutPanel flpSanPham;
         private Label label3;
@@ -292,5 +308,10 @@
         private Button btnHuyDon;
         private FlowLayoutPanel flpLoaiSP;
         private Label label4;
+        private ListView lvDonHang;
+        private ColumnHeader TenSP;
+        private ColumnHeader SL;
+        private ColumnHeader DonGia;
+        private ColumnHeader ThanhTien;
     }
 }
