@@ -14,7 +14,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 {
     public partial class MainForm : Form
     {
-        
+
 
         // Giả định ID nhân viên đang đăng nhập.
         private int _currentMaNV = 3;
@@ -39,7 +39,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             TaiSanPham("TatCa");
         }
 
-     
+
 
 
         #region Các hàm tải dữ liệu (Load Data - Dùng EF Core)
@@ -52,25 +52,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
             try
             {
-                // -----------------------------------------------------------------
-                // PHẦN CODE ĐÃ ĐƯỢC ĐƠN GIẢN HÓA (Bỏ Reflection)
-                // -----------------------------------------------------------------
-                // Cách cũ (phức tạp): using (var db = (dynamic)CreateDbContext())
-                //
-                // Cách mới (rõ ràng):
-                // Tạo một kết nối CSDL mới bằng class 'DataSqlContext'
-                // mà EF Core đã tạo cho chúng ta.
+                
                 using (DataSqlContext db = new DataSqlContext())
                 // -----------------------------------------------------------------
                 {
-                    // -----------------------------------------------------------------
-                    // PHẦN CODE ĐÃ ĐƯỢC ĐƠN GIẢN HÓA (Bỏ Reflection)
-                    // -----------------------------------------------------------------
-                    // Cách cũ (phức tạp): ((IQueryable<SanPham>)db.SanPhams)
-                    //
-                    // Cách mới (rõ ràng):
-                    // Vì 'db' giờ là kiểu 'DataSqlContext',
-                    // chúng ta có thể gọi 'db.SanPhams' trực tiếp.
                     var cacLoaiSP = db.SanPhams
                                      .Select(sp => sp.LoaiSp)
                                      .Where(loai => loai != null && loai != "")
@@ -83,8 +68,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                     {
                         Text = "Tất Cả",
                         Tag = "TatCa",
-                        Width = flpLoaiSP.Width - 30,
-                        Height = 40,
+                        Width = flpLoaiSP.Width,//- 30
+                        Height = 45,
                         Margin = new Padding(5),
                         Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                         BackColor = Color.LightGray
@@ -99,8 +84,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                         {
                             Text = tenLoai,
                             Tag = tenLoai,
-                            Width = flpLoaiSP.Width - 30,
-                            Height = 40,
+                            Width = flpLoaiSP.Width,//- 30
+                            Height = 50,
                             Margin = new Padding(5)
                         };
                         btn.Click += BtnLoai_Click;
@@ -121,10 +106,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
             try
             {
-                // -----------------------------------------------------------------
-                // PHẦN CODE ĐÃ ĐƯỢC ĐƠN GIẢN HÓA (Bỏ Reflection)
-                // -----------------------------------------------------------------
-                // Tương tự như trên, chúng ta dùng 'DataSqlContext' trực tiếp.
+
                 using (DataSqlContext db = new DataSqlContext())
                 // -----------------------------------------------------------------
                 {
@@ -151,11 +133,22 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                         {
                             Text = $"{sp.TenSp}\n{sp.DonGia:N0} đ",
                             Tag = sp,
-                            Width = 100,
-                            Height = 80,
+                            Width = 140, // từ 120 t cho lên 140
+                            Height = 100,
                             Margin = new Padding(5),
-                            BackColor = Color.FromArgb(255, 240, 200)
+                            // BackColor = Color.FromArgb(255, 240, 200)
+
+                            // --- CÁC THUỘC TÍNH STYLE MỚI ---
+                            BackColor = Color.White, // Nền nút màu trắng
+                            FlatStyle = FlatStyle.Flat, // Kiểu phẳng
+                            Font = new Font("Segoe UI", 9F, FontStyle.Bold), // Chữ đậm
+                            ForeColor = Color.Black // Chữ màu đen
+
                         };
+
+                        btn.FlatAppearance.BorderSize = 1;
+                        btn.FlatAppearance.BorderColor = Color.Gainsboro; // Màu viền xám nhạt
+
                         btn.Click += BtnSanPham_Click;
                         flpSanPham.Controls.Add(btn);
                     }
@@ -306,7 +299,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
             //try
             //{
-                
+
             //    using (DataSqlContext db = new DataSqlContext())
             //    // -----------------------------------------------------------------
             //    {
@@ -383,6 +376,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                 // Cập nhật tổng tiền về 0
                 CapNhatTongTien();
             }
+        }
+
+        private void panelCol3_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
