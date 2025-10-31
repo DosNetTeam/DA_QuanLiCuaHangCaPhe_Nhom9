@@ -253,8 +253,6 @@
             btnHuyDon.TabIndex = 1;
             btnHuyDon.Text = "Huỷ đơn";
             btnHuyDon.UseVisualStyleBackColor = false;
-            btnHuyDon.Click += btnHuyDon_Click;
->>>>>>> Stashed changes
             // 
             // btnThanhToan
             // 
@@ -268,8 +266,6 @@
             btnThanhToan.TabIndex = 0;
             btnThanhToan.Text = "Thanh Toán";
             btnThanhToan.UseVisualStyleBackColor = false;
-            btnThanhToan.Click += btnThanhToan_Click;
->>>>>>> Stashed changes
             // 
             // MainForm
             // 
