@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
+            btn_inhoadon = new Button();
             panelLeft = new Panel();
             lvChiTietBill = new ListView();
             tenmon = new ColumnHeader();
@@ -56,17 +56,17 @@
             groupBox2.SuspendLayout();
             SuspendLayout();
             // 
-            // button1
+            // btn_inhoadon
             // 
-            button1.Font = new Font("Segoe UI Black", 9.900001F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            button1.Location = new Point(145, 215);
-            button1.Name = "button1";
-            button1.Size = new Size(229, 58);
-            button1.TabIndex = 0;
-            button1.Text = "In hoá đơn";
-            button1.TextAlign = ContentAlignment.BottomCenter;
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            btn_inhoadon.Font = new Font("Segoe UI Black", 9.900001F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
+            btn_inhoadon.Location = new Point(145, 215);
+            btn_inhoadon.Name = "btn_inhoadon";
+            btn_inhoadon.Size = new Size(229, 58);
+            btn_inhoadon.TabIndex = 0;
+            btn_inhoadon.Text = "In hoá đơn";
+            btn_inhoadon.TextAlign = ContentAlignment.BottomCenter;
+            btn_inhoadon.UseVisualStyleBackColor = true;
+            btn_inhoadon.Click += btn_inhoadon_Click;
             // 
             // panelLeft
             // 
@@ -120,7 +120,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(button1);
+            groupBox1.Controls.Add(btn_inhoadon);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(txtKhachDua);
             groupBox1.Controls.Add(label2);
@@ -300,7 +300,7 @@
         private GroupBox groupBox2;
         private RadioButton rbTienMat;
         private RadioButton rbQR;
-        private Button button1;
+        private Button btn_inhoadon;
         private Panel panelBillPreview;
         private PictureBox pbQR_InBill;
     }
