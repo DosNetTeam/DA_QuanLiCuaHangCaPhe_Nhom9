@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,16 +16,39 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
     {
         // Biến (fields) để lưu dữ liệu được truyền từ MainForm
         private decimal _tongTien;
-
+        private int _maNhanVien;
         private ListView.ListViewItemCollection _danhSachMonAn;
 
 
-        public ThanhToan(ListView.ListViewItemCollection danhSachMonAn, decimal tongTien)
+        public ThanhToan(ListView.ListViewItemCollection danhSachMonAn, decimal tongTien, int maNhanVien)
         {
             InitializeComponent();
             // Lưu dữ liệu vào các biến
             _tongTien = tongTien;
             _danhSachMonAn = danhSachMonAn;
+
+            // ----- THÊM KIỂM TRA LỖI NÀY -----
+            if (maNhanVien <= 0)
+            {
+                MessageBox.Show(
+                    "Lỗi: Không nhận được Mã Nhân Viên (MaNV) từ MainForm.\n\nVui lòng kiểm tra lại file MainForm.cs và đảm bảo biến '_currentMaNV' đã được gán giá trị hợp lệ (ví dụ: 1, 2, hoặc 3).",
+                    "Lỗi Truyền Dữ Liệu",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                this.DialogResult = DialogResult.Cancel; // Hủy và đóng form
+
+                // Lên lịch để đóng form ngay sau khi nó vừa kịp tải
+                // (Vì chúng ta không thể Close() ngay trong constructor)
+                this.Load += (s, e) => this.Close();
+                return;
+            }
+            // ----- KẾT THÚC KIỂM TRA -----
+
+            // Lưu dữ liệu vào các biến
+            _tongTien = tongTien;
+            _danhSachMonAn = danhSachMonAn;
+            _maNhanVien = maNhanVien;
         }
 
 
@@ -36,6 +60,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
         private void ThanhToan_Load(object sender, EventArgs e)
         {
+            if (this.DialogResult == DialogResult.Cancel)
+            {
+                return;
+            }
+            
             // --- 1. Cấu hình phần tính tiền (Bên trái) ---
             lblTongCongBill.Text = _tongTien.ToString("N0") + " đ";
             txtKhachDua.Text = _tongTien.ToString("N0");
@@ -53,6 +82,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             // --- 3. Cấu hình phần thanh toán (Bên phải) ---
             rbTienMat.Checked = true;
             pbQR_InBill.Visible = false; // Ẩn QR code bên trong bill
+
+          
 
             // --- 4. Vẽ hóa đơn xem trước (Bên phải) ---
             HienThiBillPreview();
@@ -200,8 +231,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btn_inhoadon_Click(object sender, EventArgs e)
         {
+
+
             // Kiểm tra tiền khách đưa (nếu là tiền mặt)
             if (rbTienMat.Checked)
             {
@@ -213,6 +246,62 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                     MessageBox.Show("Số tiền khách đưa không đủ!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return; // Không cho đóng form
                 }
+
+                try
+                {
+                    // Lệnh "gọi" database
+                    using (DataSqlContext db = new DataSqlContext())
+                    {
+                        // Bước 1: Tạo đối tượng DonHang
+                        var donHangMoi = new DonHang
+                        {
+                            NgayLap = DateTime.Now,
+                            MaNv = _maNhanVien, // Dùng MaNv được truyền từ MainForm
+                            TrangThai = "Da hoan thanh", // Đã thanh toán
+                            TongTien = _tongTien
+                        };
+
+                        // Bước 2: Tạo danh sách các ChiTietDonHang
+                        // (Chúng ta *bắt buộc* phải tạo một List<> mới cho EF Core)
+                        var listChiTiet = new List<ChiTietDonHang>();
+
+                        // Lặp qua từng dòng trong giỏ hàng (ListView)
+                        foreach (ListViewItem item in _danhSachMonAn)
+                        {
+                            int maSP = (int)item.Tag;
+                            int soLuong = int.Parse(item.SubItems[1].Text);
+                            decimal donGia = decimal.Parse(item.SubItems[2].Text.Replace(".", ""), CultureInfo.InvariantCulture);
+
+                            var chiTiet = new ChiTietDonHang
+                            {
+                                MaDhNavigation = donHangMoi, // Gán vào đơn hàng mẹ
+                                MaSp = maSP,
+                                SoLuong = soLuong,
+                                DonGia = donGia
+                            };
+                            listChiTiet.Add(chiTiet);
+                        }
+
+                        // Bước 3: Báo cho EF Core biết chúng ta muốn...
+                        db.DonHangs.Add(donHangMoi); // ...thêm 1 DonHang mới
+                        db.ChiTietDonHangs.AddRange(listChiTiet); // ...thêm NHIỀU ChiTietDonHang mới
+
+                        // Bước 4: Thực thi lệnh, lưu vào CSDL
+                        db.SaveChanges();
+                        
+                        MessageBox.Show($"Đã thanh toán thanh công {_tongTien}", "Thông báo");
+
+                        // Bước 5: Gửi tín hiệu "OK" (thành công) về cho MainForm
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi lưu đơn hàng: " + ex.InnerException?.Message ?? ex.Message);
+                    // Nếu lỗi, không đóng form
+                }
+
             }
 
             // (Code logic in hóa đơn thật của bạn sẽ ở đây)
@@ -226,5 +315,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         {
 
         }
+
     }
 }

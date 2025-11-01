@@ -291,11 +291,32 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                 MessageBox.Show("Vui lòng thêm sản phẩm vào đơn hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return; // Thoát hàm
             }
-            else
+
+
+            // 2. Lấy tổng tiền (Phải Parse đúng cách)
+            string tongTienStr = lblTongCong.Text.Replace(" đ", "").Replace(".", "");
+            decimal tongTien = decimal.Parse(tongTienStr, CultureInfo.InvariantCulture);
+
+            ThanhToan frmThanhToan = new ThanhToan(lvDonHang.Items, decimal.Parse(lblTongCong.Text.Replace(" đ", "").Replace(".", ""), CultureInfo.InvariantCulture), _currentMaNV);
+                //frmThanhToan.ShowDialog();
+            
+
+           
+
+            // 4. HIỂN THỊ và LẮNG NGHE TÍN HIỆU TRẢ VỀ
+            var result = frmThanhToan.ShowDialog();
+
+            // 5. KIỂM TRA TÍN HIỆU
+            if (result == DialogResult.OK)
             {
-                ThanhToan frmThanhToan = new ThanhToan(lvDonHang.Items, decimal.Parse(lblTongCong.Text.Replace(" đ", "").Replace(".", ""), CultureInfo.InvariantCulture));
-                frmThanhToan.ShowDialog();
+                // Nếu form Thanh Toán báo "OK" (đã lưu CSDL thành công)
+                // thì chúng ta "Làm mới hóa đơn" (như bạn muốn)
+                lvDonHang.Items.Clear(); // Xóa giỏ hàng
+                CapNhatTongTien(); // Cập nhật tổng tiền (về 0)
             }
+            // Nếu result == DialogResult.Cancel (người dùng bấm "Hủy" hoặc nút X), 
+            // thì không làm gì cả, giỏ hàng vẫn còn đó.
+
 
             //try
             //{
