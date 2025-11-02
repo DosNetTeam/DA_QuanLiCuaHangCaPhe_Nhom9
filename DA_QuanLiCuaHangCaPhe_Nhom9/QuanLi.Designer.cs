@@ -30,7 +30,7 @@
         {
             panelMenu = new Panel();
             btnDangXuat = new Button();
-            label1 = new Label();
+            lblCoffee = new Label();
             panelContent = new Panel();
             tabControlMain = new TabControl();
             tabPageQuanLyNV = new TabPage();
@@ -44,14 +44,14 @@
             panelHoaDon = new Panel();
             dgvHoaDon = new DataGridView();
             cbTrangThaiHD = new ComboBox();
-            textBox1 = new TextBox();
+            txtTimKiemHD = new TextBox();
             label4 = new Label();
             label3 = new Label();
             tabPageTonKho = new TabPage();
             panel2 = new Panel();
             dgvTonKho = new DataGridView();
             btnThemMoiKho = new Button();
-            txtTimKiemNL = new TextBox();
+            txtTimKiemKho = new TextBox();
             label6 = new Label();
             label5 = new Label();
             panelMenu.SuspendLayout();
@@ -71,7 +71,7 @@
             // panelMenu
             // 
             panelMenu.Controls.Add(btnDangXuat);
-            panelMenu.Controls.Add(label1);
+            panelMenu.Controls.Add(lblCoffee);
             panelMenu.Dock = DockStyle.Left;
             panelMenu.Location = new Point(0, 0);
             panelMenu.Name = "panelMenu";
@@ -88,17 +88,18 @@
             btnDangXuat.TabIndex = 6;
             btnDangXuat.Text = "Dang Xuat";
             btnDangXuat.UseVisualStyleBackColor = true;
+            btnDangXuat.Click += btnDangXuat_Click;
             // 
-            // label1
+            // lblCoffee
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 25.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label1.ForeColor = Color.FromArgb(192, 64, 0);
-            label1.Location = new Point(39, 93);
-            label1.Name = "label1";
-            label1.Size = new Size(176, 60);
-            label1.TabIndex = 1;
-            label1.Text = "COFFEE";
+            lblCoffee.AutoSize = true;
+            lblCoffee.Font = new Font("Segoe UI", 25.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblCoffee.ForeColor = Color.FromArgb(192, 64, 0);
+            lblCoffee.Location = new Point(39, 93);
+            lblCoffee.Name = "lblCoffee";
+            lblCoffee.Size = new Size(176, 60);
+            lblCoffee.TabIndex = 1;
+            lblCoffee.Text = "COFFEE";
             // 
             // panelContent
             // 
@@ -160,6 +161,7 @@
             dgvPerformance.RowHeadersWidth = 51;
             dgvPerformance.Size = new Size(516, 255);
             dgvPerformance.TabIndex = 3;
+            dgvPerformance.CellContentClick += dgvPerformance_CellContentClick;
             // 
             // btnLoc
             // 
@@ -173,6 +175,7 @@
             btnLoc.TabIndex = 2;
             btnLoc.Text = "Loc";
             btnLoc.UseVisualStyleBackColor = false;
+            btnLoc.Click += btnLoc_Click;
             // 
             // cbThang
             // 
@@ -183,6 +186,7 @@
             cbThang.Name = "cbThang";
             cbThang.Size = new Size(151, 31);
             cbThang.TabIndex = 1;
+            cbThang.SelectedIndexChanged += cbThang_SelectedIndexChanged;
             // 
             // lblTieuDeHieuSuat
             // 
@@ -224,7 +228,7 @@
             panelHoaDon.BackColor = Color.White;
             panelHoaDon.Controls.Add(dgvHoaDon);
             panelHoaDon.Controls.Add(cbTrangThaiHD);
-            panelHoaDon.Controls.Add(textBox1);
+            panelHoaDon.Controls.Add(txtTimKiemHD);
             panelHoaDon.Controls.Add(label4);
             panelHoaDon.Dock = DockStyle.Fill;
             panelHoaDon.Location = new Point(3, 64);
@@ -254,14 +258,14 @@
             cbTrangThaiHD.TabIndex = 2;
             cbTrangThaiHD.Text = "Tat ca trang thai";
             // 
-            // textBox1
+            // txtTimKiemHD
             // 
-            textBox1.ForeColor = Color.Gray;
-            textBox1.Location = new Point(15, 50);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(125, 27);
-            textBox1.TabIndex = 1;
-            textBox1.Text = "Tim kiem ma hd";
+            txtTimKiemHD.ForeColor = Color.Gray;
+            txtTimKiemHD.Location = new Point(15, 50);
+            txtTimKiemHD.Name = "txtTimKiemHD";
+            txtTimKiemHD.Size = new Size(125, 27);
+            txtTimKiemHD.TabIndex = 1;
+            txtTimKiemHD.Text = "Tim kiem ma hd";
             // 
             // label4
             // 
@@ -302,7 +306,7 @@
             panel2.BackColor = Color.White;
             panel2.Controls.Add(dgvTonKho);
             panel2.Controls.Add(btnThemMoiKho);
-            panel2.Controls.Add(txtTimKiemNL);
+            panel2.Controls.Add(txtTimKiemKho);
             panel2.Controls.Add(label6);
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 61);
@@ -340,14 +344,14 @@
             btnThemMoiKho.Text = "+ Thêm Mới";
             btnThemMoiKho.UseVisualStyleBackColor = false;
             // 
-            // txtTimKiemNL
+            // txtTimKiemKho
             // 
-            txtTimKiemNL.ForeColor = Color.Gray;
-            txtTimKiemNL.Location = new Point(15, 50);
-            txtTimKiemNL.Name = "txtTimKiemNL";
-            txtTimKiemNL.Size = new Size(151, 27);
-            txtTimKiemNL.TabIndex = 1;
-            txtTimKiemNL.Text = "Tim kiem nguyen lieu";
+            txtTimKiemKho.ForeColor = Color.Gray;
+            txtTimKiemKho.Location = new Point(15, 50);
+            txtTimKiemKho.Name = "txtTimKiemKho";
+            txtTimKiemKho.Size = new Size(151, 27);
+            txtTimKiemKho.TabIndex = 1;
+            txtTimKiemKho.Text = "Tim kiem nguyen lieu";
             // 
             // label6
             // 
@@ -407,7 +411,7 @@
         #endregion
 
         private Panel panelMenu;
-        private Label label1;
+        private Label lblCoffee;
         private Panel panelContent;
         private Button btnDangXuat;
         private TabControl tabControlMain;
@@ -421,7 +425,7 @@
         private ComboBox cbThang;
         private DataGridView dgvPerformance;
         private Panel panelHoaDon;
-        private TextBox textBox1;
+        private TextBox txtTimKiemHD;
         private Label label4;
         private Label label3;
         private DataGridView dgvHoaDon;
@@ -430,7 +434,7 @@
         private Label label6;
         private Label label5;
         private Button btnThemMoiKho;
-        private TextBox txtTimKiemNL;
+        private TextBox txtTimKiemKho;
         private DataGridView dgvTonKho;
     }
 }

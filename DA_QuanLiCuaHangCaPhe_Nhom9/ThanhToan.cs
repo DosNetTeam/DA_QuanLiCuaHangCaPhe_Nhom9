@@ -27,7 +27,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             _danhSachMonAn = danhSachMonAn;
         }
 
-
+        public ThanhToan()
+        {
+        }
 
         private void pbQR_Click(object sender, EventArgs e)
         {
