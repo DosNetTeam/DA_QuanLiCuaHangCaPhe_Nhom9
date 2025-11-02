@@ -1,3 +1,5 @@
+using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+
 namespace DA_QuanLiCuaHangCaPhe_Nhom9
 {
     internal static class Program
@@ -13,7 +15,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             ApplicationConfiguration.Initialize();
             //Application.Run(new Form1());
 
-            Application.Run(new MainForm());
+            Application.Run(new QuanLi());
         }
     }
 }
