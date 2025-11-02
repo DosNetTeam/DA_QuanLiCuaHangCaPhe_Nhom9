@@ -95,7 +95,7 @@
             lblCoffee.AutoSize = true;
             lblCoffee.Font = new Font("Segoe UI", 25.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblCoffee.ForeColor = Color.FromArgb(192, 64, 0);
-            lblCoffee.Location = new Point(39, 93);
+            lblCoffee.Location = new Point(24, 93);
             lblCoffee.Name = "lblCoffee";
             lblCoffee.Size = new Size(176, 60);
             lblCoffee.TabIndex = 1;

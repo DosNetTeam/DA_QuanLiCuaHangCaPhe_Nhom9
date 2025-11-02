@@ -266,7 +266,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
         private void btnDangXuat_Click(object sender, EventArgs e)
         {
-            var confirm = MessageBox.Show("Bạn có chắc muốn đăng xuất?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var confirm = MessageBox.Show("Bạn có chắc muốn đăng xuất Không ?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm != DialogResult.Yes) return;
 
             // If a login Form1 instance was hidden earlier, reuse it; otherwise create a new one.
