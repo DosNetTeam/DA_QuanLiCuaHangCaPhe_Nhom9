@@ -404,6 +404,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         }
 
         #endregion
+
+        private void QuanLi_Load_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
 

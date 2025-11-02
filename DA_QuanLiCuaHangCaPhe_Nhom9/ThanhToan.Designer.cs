@@ -58,16 +58,16 @@
             // 
             // btn_inhoadon
             // 
-            button1.Font = new Font("Segoe UI Black", 9.900001F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            button1.Location = new Point(68, 105);
-            button1.Margin = new Padding(1);
-            button1.Name = "button1";
-            button1.Size = new Size(108, 28);
-            button1.TabIndex = 0;
-            button1.Text = "In hoá đơn";
-            button1.TextAlign = ContentAlignment.BottomCenter;
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            btn_inhoadon.Font = new Font("Segoe UI Black", 9.900001F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
+            btn_inhoadon.Location = new Point(144, 215);
+            btn_inhoadon.Margin = new Padding(2);
+            btn_inhoadon.Name = "btn_inhoadon";
+            btn_inhoadon.Size = new Size(230, 57);
+            btn_inhoadon.TabIndex = 0;
+            btn_inhoadon.Text = "In hoá đơn";
+            btn_inhoadon.TextAlign = ContentAlignment.BottomCenter;
+            btn_inhoadon.UseVisualStyleBackColor = true;
+            btn_inhoadon.Click += btn_inhoadon_Click;
             // 
             // panelLeft
             // 
@@ -76,9 +76,9 @@
             panelLeft.Controls.Add(groupBox1);
             panelLeft.Dock = DockStyle.Left;
             panelLeft.Location = new Point(0, 0);
-            panelLeft.Margin = new Padding(1);
+            panelLeft.Margin = new Padding(2);
             panelLeft.Name = "panelLeft";
-            panelLeft.Size = new Size(244, 515);
+            panelLeft.Size = new Size(518, 1056);
             panelLeft.TabIndex = 1;
             // 
             // lvChiTietBill
@@ -86,10 +86,10 @@
             lvChiTietBill.Columns.AddRange(new ColumnHeader[] { tenmon, Soluong, ThanhTien });
             lvChiTietBill.Dock = DockStyle.Fill;
             lvChiTietBill.GridLines = true;
-            lvChiTietBill.Location = new Point(0, 30);
-            lvChiTietBill.Margin = new Padding(1);
+            lvChiTietBill.Location = new Point(0, 61);
+            lvChiTietBill.Margin = new Padding(2);
             lvChiTietBill.Name = "lvChiTietBill";
-            lvChiTietBill.Size = new Size(244, 346);
+            lvChiTietBill.Size = new Size(518, 710);
             lvChiTietBill.TabIndex = 1;
             lvChiTietBill.UseCompatibleStateImageBehavior = false;
             lvChiTietBill.View = View.Details;
@@ -114,7 +114,7 @@
             label5.Dock = DockStyle.Top;
             label5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label5.Location = new Point(0, 0);
-            label5.Margin = new Padding(1, 0, 1, 0);
+            label5.Margin = new Padding(2, 0, 2, 0);
             label5.Name = "label5";
             label5.Padding = new Padding(0, 5, 0, 5);
             label5.Size = new Size(149, 30);
@@ -132,11 +132,11 @@
             groupBox1.Controls.Add(lblTongCongBill);
             groupBox1.Controls.Add(label1);
             groupBox1.Dock = DockStyle.Bottom;
-            groupBox1.Location = new Point(0, 376);
-            groupBox1.Margin = new Padding(1);
+            groupBox1.Location = new Point(0, 771);
+            groupBox1.Margin = new Padding(2);
             groupBox1.Name = "groupBox1";
-            groupBox1.Padding = new Padding(1);
-            groupBox1.Size = new Size(244, 139);
+            groupBox1.Padding = new Padding(2);
+            groupBox1.Size = new Size(518, 285);
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Tính tiền";
@@ -144,8 +144,8 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(6, 77);
-            label3.Margin = new Padding(1, 0, 1, 0);
+            label3.Location = new Point(13, 158);
+            label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
             label3.Size = new Size(66, 20);
             label3.TabIndex = 4;
@@ -153,8 +153,8 @@
             // 
             // txtKhachDua
             // 
-            txtKhachDua.Location = new Point(92, 47);
-            txtKhachDua.Margin = new Padding(1);
+            txtKhachDua.Location = new Point(196, 96);
+            txtKhachDua.Margin = new Padding(2);
             txtKhachDua.Name = "txtKhachDua";
             txtKhachDua.Size = new Size(120, 27);
             txtKhachDua.TabIndex = 3;
@@ -163,8 +163,8 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(6, 49);
-            label2.Margin = new Padding(1, 0, 1, 0);
+            label2.Location = new Point(13, 100);
+            label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
             label2.Size = new Size(79, 20);
             label2.TabIndex = 2;
@@ -173,8 +173,8 @@
             // lblTienDu
             // 
             lblTienDu.AutoSize = true;
-            lblTienDu.Location = new Point(92, 77);
-            lblTienDu.Margin = new Padding(1, 0, 1, 0);
+            lblTienDu.Location = new Point(196, 158);
+            lblTienDu.Margin = new Padding(2, 0, 2, 0);
             lblTienDu.Name = "lblTienDu";
             lblTienDu.Size = new Size(30, 20);
             lblTienDu.TabIndex = 1;
@@ -183,8 +183,8 @@
             // lblTongCongBill
             // 
             lblTongCongBill.AutoSize = true;
-            lblTongCongBill.Location = new Point(92, 21);
-            lblTongCongBill.Margin = new Padding(1, 0, 1, 0);
+            lblTongCongBill.Location = new Point(196, 43);
+            lblTongCongBill.Margin = new Padding(2, 0, 2, 0);
             lblTongCongBill.Name = "lblTongCongBill";
             lblTongCongBill.Size = new Size(30, 20);
             lblTongCongBill.TabIndex = 1;
@@ -193,8 +193,8 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(6, 21);
-            label1.Margin = new Padding(1, 0, 1, 0);
+            label1.Location = new Point(13, 43);
+            label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
             label1.Size = new Size(87, 20);
             label1.TabIndex = 0;
@@ -205,11 +205,11 @@
             panelRight.Controls.Add(panelBillPreview);
             panelRight.Controls.Add(groupBox2);
             panelRight.Dock = DockStyle.Fill;
-            panelRight.Location = new Point(244, 0);
-            panelRight.Margin = new Padding(1);
+            panelRight.Location = new Point(518, 0);
+            panelRight.Margin = new Padding(2);
             panelRight.Name = "panelRight";
-            panelRight.Padding = new Padding(2, 0, 0, 0);
-            panelRight.Size = new Size(495, 515);
+            panelRight.Padding = new Padding(4, 0, 0, 0);
+            panelRight.Size = new Size(1052, 1056);
             panelRight.TabIndex = 1;
             // 
             // panelBillPreview
@@ -217,19 +217,19 @@
             panelBillPreview.AutoScroll = true;
             panelBillPreview.Controls.Add(pbQR_InBill);
             panelBillPreview.Dock = DockStyle.Fill;
-            panelBillPreview.Location = new Point(2, 122);
-            panelBillPreview.Margin = new Padding(1);
+            panelBillPreview.Location = new Point(4, 250);
+            panelBillPreview.Margin = new Padding(2);
             panelBillPreview.Name = "panelBillPreview";
-            panelBillPreview.Size = new Size(493, 393);
+            panelBillPreview.Size = new Size(1048, 806);
             panelBillPreview.TabIndex = 1;
             // 
             // pbQR_InBill
             // 
             pbQR_InBill.Dock = DockStyle.Bottom;
-            pbQR_InBill.Location = new Point(0, 252);
-            pbQR_InBill.Margin = new Padding(1);
+            pbQR_InBill.Location = new Point(0, 517);
+            pbQR_InBill.Margin = new Padding(2);
             pbQR_InBill.Name = "pbQR_InBill";
-            pbQR_InBill.Size = new Size(493, 141);
+            pbQR_InBill.Size = new Size(1048, 289);
             pbQR_InBill.SizeMode = PictureBoxSizeMode.Zoom;
             pbQR_InBill.TabIndex = 0;
             pbQR_InBill.TabStop = false;
@@ -240,11 +240,11 @@
             groupBox2.Controls.Add(rbQR);
             groupBox2.Controls.Add(rbTienMat);
             groupBox2.Dock = DockStyle.Top;
-            groupBox2.Location = new Point(2, 0);
-            groupBox2.Margin = new Padding(1);
+            groupBox2.Location = new Point(4, 0);
+            groupBox2.Margin = new Padding(2);
             groupBox2.Name = "groupBox2";
-            groupBox2.Padding = new Padding(1);
-            groupBox2.Size = new Size(493, 122);
+            groupBox2.Padding = new Padding(2);
+            groupBox2.Size = new Size(1048, 250);
             groupBox2.TabIndex = 0;
             groupBox2.TabStop = false;
             groupBox2.Text = "Hình thức thanh toán";
@@ -252,8 +252,8 @@
             // rbQR
             // 
             rbQR.AutoSize = true;
-            rbQR.Location = new Point(28, 75);
-            rbQR.Margin = new Padding(1);
+            rbQR.Location = new Point(60, 154);
+            rbQR.Margin = new Padding(2);
             rbQR.Name = "rbQR";
             rbQR.Size = new Size(146, 24);
             rbQR.TabIndex = 0;
@@ -265,8 +265,8 @@
             // 
             rbTienMat.AutoSize = true;
             rbTienMat.Checked = true;
-            rbTienMat.Location = new Point(28, 30);
-            rbTienMat.Margin = new Padding(1);
+            rbTienMat.Location = new Point(60, 62);
+            rbTienMat.Margin = new Padding(2);
             rbTienMat.Name = "rbTienMat";
             rbTienMat.Size = new Size(88, 24);
             rbTienMat.TabIndex = 0;
@@ -279,11 +279,11 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(739, 515);
+            ClientSize = new Size(1570, 1056);
             Controls.Add(panelRight);
             Controls.Add(panelLeft);
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            Margin = new Padding(1);
+            Margin = new Padding(2);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "ThanhToan";

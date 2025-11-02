@@ -156,6 +156,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             AddLabelToBill("Dơn giá", currentY, 9, FontStyle.Regular, 440);    // Cột Giá
             AddLabelToBill("Thành tiền", currentY, 9, FontStyle.Regular, 590); // Cột Tổng 
 
+            currentY += 30 // dãng cách tên cột với nd
+                ;
             // --- 4. VẼ CÁC MÓN ĂN (DÙNG VÒNG LẶP) ---
             foreach (ListViewItem item in _danhSachMonAn)
             {
@@ -175,19 +177,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             }
 
             // --- 5. VẼ PHẦN TỔNG TIỀN (FOOTER) ---
-            currentY += 15; // 
+            currentY += 15; 
             AddLabelToBill("-----------------------------------", currentY, 9);
-            currentY += 25; //
+            currentY += 25; 
 
             // SỬA: Căn chỉnh lại vị trí X
             AddLabelToBill("Tổng cộng:", currentY, 10, FontStyle.Bold, 40);
             AddLabelToBill(_tongTien.ToString("N0") + " đ", currentY, 12, FontStyle.Bold, 290);
-            currentY += 55; // 
+            currentY += 55; 
 
             AddLabelToBill("Xin cảm ơn quý khách!", currentY, 9, FontStyle.Italic);
-            currentY += 25; // 
+            currentY += 35; 
             AddLabelToBill("Hẹn gặp lại quý khách!", currentY, 9, FontStyle.Italic);
-            currentY += 25;
+            currentY += 35;
 
             // --- 6. ĐẶT VỊ TRÍ MÃ QR (ĐANG BỊ ẨN) ---
             // Thêm lại QR vào panel
@@ -235,7 +237,63 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
         private void btn_inhoadon_Click(object sender, EventArgs e)
         {
+            if (rbQR.Checked == true)
+            {
+                try
+                {
+                    // Lệnh "gọi" database
+                    using (DataSqlContext db = new DataSqlContext())
+                    {
+                        // Bước 1: Tạo đối tượng DonHang
+                        var donHangMoi = new DonHang
+                        {
+                            NgayLap = DateTime.Now,
+                            MaNv = _maNhanVien, // Dùng MaNv được truyền từ MainForm
+                            TrangThai = "Da hoan thanh", // Đã thanh toán
+                            TongTien = _tongTien
+                        };
 
+                        // Bước 2: Tạo danh sách các ChiTietDonHang
+                        // (Chúng ta *bắt buộc* phải tạo một List<> mới cho EF Core)
+                        var listChiTiet = new List<ChiTietDonHang>();
+
+                        // Lặp qua từng dòng trong giỏ hàng (ListView)
+                        foreach (ListViewItem item in _danhSachMonAn)
+                        {
+                            int maSP = (int)item.Tag;
+                            int soLuong = int.Parse(item.SubItems[1].Text);
+                            decimal donGia = decimal.Parse(item.SubItems[2].Text.Replace(".", ""), CultureInfo.InvariantCulture);
+
+                            var chiTiet = new ChiTietDonHang
+                            {
+                                MaDhNavigation = donHangMoi, // Gán vào đơn hàng mẹ
+                                MaSp = maSP,
+                                SoLuong = soLuong,
+                                DonGia = donGia
+                            };
+                            listChiTiet.Add(chiTiet);
+                        }
+
+                        // Bước 3: Báo cho EF Core biết chúng ta muốn...
+                        db.DonHangs.Add(donHangMoi); // ...thêm 1 DonHang mới
+                        db.ChiTietDonHangs.AddRange(listChiTiet); // ...thêm NHIỀU ChiTietDonHang mới
+
+                        // Bước 4: Thực thi lệnh, lưu vào CSDL
+                        db.SaveChanges();
+
+                        MessageBox.Show($"Đã thanh toán thanh công {_tongTien}", "Thông báo");
+
+                        // Bước 5: Gửi tín hiệu "OK" (thành công) về cho MainForm
+                        this.DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi khi lưu đơn hàng: " + ex.InnerException?.Message ?? ex.Message);
+                    // Nếu lỗi, không đóng form
+                }
+            }
 
             // Kiểm tra tiền khách đưa (nếu là tiền mặt)
             if (rbTienMat.Checked)
