@@ -305,7 +305,7 @@
             label1.Location = new Point(0, 0);
             label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(272, 38);
+            label1.Size = new Size(136, 19);
             label1.TabIndex = 0;
             label1.Text = "Chi tiết đơn hàng";
             // 
@@ -376,7 +376,7 @@
             label3.Location = new Point(0, 0);
             label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
-            label3.Size = new Size(327, 38);
+            label3.Size = new Size(157, 19);
             label3.TabIndex = 0;
             label3.Text = "Danh sách Sản phẩm";
             // 
@@ -414,7 +414,7 @@
             label4.Location = new Point(0, 0);
             label4.Margin = new Padding(2, 0, 2, 0);
             label4.Name = "label4";
-            label4.Size = new Size(240, 38);
+            label4.Size = new Size(117, 19);
             label4.TabIndex = 1;
             label4.Text = "Loại Sản phẩm";
             // 
@@ -461,7 +461,7 @@
             // 
             // MainForm
             // 
-            AutoScaleDimensions = new SizeF(17F, 41F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1772, 1048);
             Controls.Add(tlpMain);

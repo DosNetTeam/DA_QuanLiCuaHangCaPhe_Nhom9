@@ -51,7 +51,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             _maNhanVien = maNhanVien;
         }
 
-
+        public ThanhToan()
+        {
+        }
 
         private void pbQR_Click(object sender, EventArgs e)
         {
