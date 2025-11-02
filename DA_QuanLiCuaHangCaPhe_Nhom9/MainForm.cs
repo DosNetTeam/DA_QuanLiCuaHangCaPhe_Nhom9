@@ -17,7 +17,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
 
         // Giả định ID nhân viên đang đăng nhập.
-        private int _currentMaNV = 3;
+        private int _currentMaNV =  3;
+
+
+        // Biến này sẽ lưu Mã Khách Hàng sau khi tìm thấy
+        // Dấu ? có nghĩa là "nullable" (có thể rỗng,
+        // rỗng = Khách vãng lai)
+        private int? _currentMaKH = null;
+
+        // Biến này lưu loại sản phẩm đang được chọn (ví dụ: "Cà phê")
+        // Ban đầu mặc định là "Tất Cả"
+        private string _currentMaLoai = "TatCa";
 
         public MainForm()
         {
@@ -104,6 +114,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         {
             flpSanPham.Controls.Clear();
 
+            //Lấy text tìm kiếm ---
+            string searchText = txtTimKiemSP.Text.Trim().ToLower();
+
             try
             {
 
@@ -121,6 +134,18 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                     {
                         // thì chúng ta thêm một điều kiện 'Where' vào câu truy vấn
                         query = query.Where(sp => sp.LoaiSp == maLoai);
+                    }
+
+
+                    //Lọc theo Tên SP ---
+                    // Nếu ô tìm kiếm không rỗng
+                    if (!string.IsNullOrEmpty(searchText))
+                    {
+                        // Thêm điều kiện Where: Tên SP (chuyển chữ thường)
+                        // phải chứa (Contains) chữ tìm kiếm
+                        query = query.Where(sp =>
+                            sp.TenSp.ToLower().Contains(searchText)
+                        );
                     }
 
                     // Thêm một điều kiện 'Where' nữa: chỉ lấy sp "Con ban"
@@ -172,6 +197,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
             // Lấy 'Tag' (chữ "TatCa" hoặc "Cà phê") mà chúng ta đã gán
             string maLoai = nutDuocBam.Tag.ToString();
+
+            _currentMaLoai = maLoai; // Lưu lại loại SP vừa chọn
 
             // Gọi hàm tải sản phẩm với mã loại vừa lấy
             TaiSanPham(maLoai);
@@ -298,10 +325,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             decimal tongTien = decimal.Parse(tongTienStr, CultureInfo.InvariantCulture);
 
             ThanhToan frmThanhToan = new ThanhToan(lvDonHang.Items, decimal.Parse(lblTongCong.Text.Replace(" đ", "").Replace(".", ""), CultureInfo.InvariantCulture), _currentMaNV);
-                //frmThanhToan.ShowDialog();
-            
+            //frmThanhToan.ShowDialog();
 
-           
+
+
 
             // 4. HIỂN THỊ và LẮNG NGHE TÍN HIỆU TRẢ VỀ
             var result = frmThanhToan.ShowDialog();
@@ -402,6 +429,157 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         private void panelCol3_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void btnXoaMon_Click(object sender, EventArgs e)
+        {
+            // Bước 1: Kiểm tra xem người dùng đã chọn món nào chưa
+            // (ListView cho phép chọn nhiều, nhưng ta chỉ xử lý 1)
+            if (lvDonHang.SelectedItems.Count > 0)
+            {
+                // Bước 2: Lấy món ăn đang được chọn
+                // (SelectedItems[0] là món đầu tiên trong danh sách được chọn)
+                ListViewItem itemDaChon = lvDonHang.SelectedItems[0];
+
+                // Bước 3: Xóa món ăn đó khỏi giỏ hàng (ListView)
+                lvDonHang.Items.Remove(itemDaChon);
+
+                // Bước 4 (Rất quan trọng): Cập nhật lại tổng tiền
+                CapNhatTongTien();
+            }
+            else
+            {
+                // Nếu không chọn gì mà bấm xóa, thì thông báo
+                MessageBox.Show("Vui lòng chọn một món ăn trong giỏ hàng để xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void btnGIamSoLuong_Click(object sender, EventArgs e)
+        {
+            // Bước 1: Kiểm tra xem người dùng đã chọn món nào chưa
+            if (lvDonHang.SelectedItems.Count > 0)
+            {
+                // Bước 2: Lấy món ăn đang được chọn
+                ListViewItem itemDaChon = lvDonHang.SelectedItems[0];
+
+                // Bước 3: Lấy số lượng hiện tại (từ cột 1)
+                int soLuongHienTai = int.Parse(itemDaChon.SubItems[1].Text);
+
+                // Biến này để theo dõi xem chúng ta có cần cập nhật tổng tiền không
+                bool daThayDoi = false;
+
+                // Bước 4: Xử lý logic
+                if (soLuongHienTai > 1)
+                {
+                    // ----- TRƯỜNG HỢP 1: SỐ LƯỢNG > 1 (Ví dụ: 3 -> 2) -----
+                    int soLuongMoi = soLuongHienTai - 1;
+
+                    // Lấy đơn giá (từ cột 2) và tính lại
+                    string donGiaStr = itemDaChon.SubItems[2].Text.Replace(".", "");
+                    decimal donGia = decimal.Parse(donGiaStr, System.Globalization.CultureInfo.InvariantCulture);
+                    decimal thanhTienMoi = soLuongMoi * donGia;
+
+                    // Cập nhật lại giỏ hàng
+                    itemDaChon.SubItems[1].Text = soLuongMoi.ToString();
+                    itemDaChon.SubItems[3].Text = thanhTienMoi.ToString("N0");
+
+                    daThayDoi = true; // Đánh dấu là đã thay đổi
+                }
+                else
+                {
+                    // ----- TRƯỜNG HỢP 2: SỐ LƯỢNG = 1 (Giảm nữa là xóa) -----
+                    // Hỏi người dùng cho chắc
+                    var confirm = MessageBox.Show(
+                        "Số lượng món này là 1. Giảm nữa sẽ xóa món này khỏi giỏ hàng. Bạn có chắc không?",
+                        "Xác nhận xóa món",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Question);
+
+                    if (confirm == DialogResult.Yes)
+                    {
+                        // Nếu người dùng đồng ý, xóa món ăn
+                        lvDonHang.Items.Remove(itemDaChon);
+                        daThayDoi = true; // Đánh dấu là đã thay đổi
+                    }
+                }
+
+                // Bước 5 (Rất quan trọng):
+                // Nếu đã có thay đổi (hoặc đã giảm, hoặc đã xóa) thì mới cập nhật tổng tiền
+                if (daThayDoi)
+                {
+                    CapNhatTongTien();
+                }
+            }
+            else
+            {
+                // Nếu không chọn gì mà bấm giảm
+                MessageBox.Show("Vui lòng chọn một món ăn trong giỏ hàng để giảm số lượng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void txtTimKiemKH_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void txtTimKiemSP_TextChanged(object sender, EventArgs e)
+        {
+            // Gọi lại hàm TaiSanPham với loại SP ta đang chọn
+            TaiSanPham(_currentMaLoai);
+        }
+
+        private void btnTimKH_Click(object sender, EventArgs e)
+        {
+            // Lấy SĐT từ TextBox, xóa khoảng trắng
+            string sdt = txtTimKiemKH.Text.Trim();
+
+            // Nếu không gõ gì, trả về khách vãng lai
+            if (string.IsNullOrEmpty(sdt))
+            {
+                lblTenKH.Text = "Khách vãng lai";
+                _currentMaKH = null;
+                return;
+            }
+
+            try
+            {
+                // 1. "Gọi" Database
+                using (DataSqlContext db = new DataSqlContext())
+                {
+                    // 2. Tìm khách hàng có SĐT khớp
+                    // .FirstOrDefault() sẽ trả về null nếu không tìm thấy
+                    var khachHang = db.KhachHangs
+                                      .FirstOrDefault(kh => kh.SoDienThoai == sdt);
+
+                    // 3. Xử lý kết quả
+                    if (khachHang != null)
+                    {
+                        // TÌM THẤY
+                        lblTenKH.Text = khachHang.TenKh;
+                        _currentMaKH = khachHang.MaKh; // Lưu lại MaKH!
+                    }
+                    else
+                    {
+                        // KHÔNG TÌM THẤY
+                        lblTenKH.Text = "Không tìm thấy KH";
+                        _currentMaKH = null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi tìm khách hàng: " + ex.Message);
+            }
         }
     }
 }
