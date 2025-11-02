@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            button1 = new Button();
+            btn_inhoadon = new Button();
             panelLeft = new Panel();
             lvChiTietBill = new ListView();
             tenmon = new ColumnHeader();
@@ -56,7 +56,7 @@
             groupBox2.SuspendLayout();
             SuspendLayout();
             // 
-            // button1
+            // btn_inhoadon
             // 
             button1.Font = new Font("Segoe UI Black", 9.900001F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             button1.Location = new Point(68, 105);
@@ -124,7 +124,7 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(button1);
+            groupBox1.Controls.Add(btn_inhoadon);
             groupBox1.Controls.Add(label3);
             groupBox1.Controls.Add(txtKhachDua);
             groupBox1.Controls.Add(label2);
@@ -320,7 +320,7 @@
         private GroupBox groupBox2;
         private RadioButton rbTienMat;
         private RadioButton rbQR;
-        private Button button1;
+        private Button btn_inhoadon;
         private Panel panelBillPreview;
         private PictureBox pbQR_InBill;
     }
