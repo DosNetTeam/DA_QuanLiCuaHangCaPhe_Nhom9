@@ -116,8 +116,8 @@
             label5.Location = new Point(0, 0);
             label5.Margin = new Padding(2, 0, 2, 0);
             label5.Name = "label5";
-            label5.Padding = new Padding(0, 10, 0, 10);
-            label5.Size = new Size(300, 61);
+            label5.Padding = new Padding(0, 5, 0, 5);
+            label5.Size = new Size(149, 30);
             label5.TabIndex = 0;
             label5.Text = " CHI TIẾT HÓA ĐƠN";
             label5.TextAlign = ContentAlignment.MiddleCenter;
@@ -147,7 +147,7 @@
             label3.Location = new Point(13, 158);
             label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
-            label3.Size = new Size(133, 41);
+            label3.Size = new Size(66, 20);
             label3.TabIndex = 4;
             label3.Text = "Tiền dư: ";
             // 
@@ -156,7 +156,7 @@
             txtKhachDua.Location = new Point(196, 96);
             txtKhachDua.Margin = new Padding(2);
             txtKhachDua.Name = "txtKhachDua";
-            txtKhachDua.Size = new Size(250, 47);
+            txtKhachDua.Size = new Size(120, 27);
             txtKhachDua.TabIndex = 3;
             txtKhachDua.TextChanged += txtKhachDua_TextChanged;
             // 
@@ -166,7 +166,7 @@
             label2.Location = new Point(13, 100);
             label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
-            label2.Size = new Size(157, 41);
+            label2.Size = new Size(79, 20);
             label2.TabIndex = 2;
             label2.Text = "Khách đưa";
             // 
@@ -176,7 +176,7 @@
             lblTienDu.Location = new Point(196, 158);
             lblTienDu.Margin = new Padding(2, 0, 2, 0);
             lblTienDu.Name = "lblTienDu";
-            lblTienDu.Size = new Size(60, 41);
+            lblTienDu.Size = new Size(30, 20);
             lblTienDu.TabIndex = 1;
             lblTienDu.Text = "0 đ";
             // 
@@ -186,7 +186,7 @@
             lblTongCongBill.Location = new Point(196, 43);
             lblTongCongBill.Margin = new Padding(2, 0, 2, 0);
             lblTongCongBill.Name = "lblTongCongBill";
-            lblTongCongBill.Size = new Size(60, 41);
+            lblTongCongBill.Size = new Size(30, 20);
             lblTongCongBill.TabIndex = 1;
             lblTongCongBill.Text = "0 đ";
             // 
@@ -196,7 +196,7 @@
             label1.Location = new Point(13, 43);
             label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(177, 41);
+            label1.Size = new Size(87, 20);
             label1.TabIndex = 0;
             label1.Text = "Tổng cộng: ";
             // 
@@ -255,7 +255,7 @@
             rbQR.Location = new Point(60, 154);
             rbQR.Margin = new Padding(2);
             rbQR.Name = "rbQR";
-            rbQR.Size = new Size(295, 45);
+            rbQR.Size = new Size(146, 24);
             rbQR.TabIndex = 0;
             rbQR.Text = "Chuyển khoản QR";
             rbQR.UseVisualStyleBackColor = true;
@@ -268,7 +268,7 @@
             rbTienMat.Location = new Point(60, 62);
             rbTienMat.Margin = new Padding(2);
             rbTienMat.Name = "rbTienMat";
-            rbTienMat.Size = new Size(170, 45);
+            rbTienMat.Size = new Size(88, 24);
             rbTienMat.TabIndex = 0;
             rbTienMat.TabStop = true;
             rbTienMat.Text = "Tiền mặt";
@@ -277,7 +277,7 @@
             // 
             // ThanhToan
             // 
-            AutoScaleDimensions = new SizeF(17F, 41F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1570, 1056);
             Controls.Add(panelRight);
