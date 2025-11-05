@@ -93,13 +93,12 @@
             label2.Size = new Size(86, 25);
             label2.TabIndex = 10;
             label2.Text = "Tài Khoản";
-            label2.Click += label2_Click;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 163);
-            label1.Location = new Point(159, 19);
+            label1.Location = new Point(149, 22);
             label1.Margin = new Padding(1, 0, 1, 0);
             label1.Name = "label1";
             label1.Size = new Size(194, 46);
@@ -111,7 +110,7 @@
             // 
             pictureBox1.BorderStyle = BorderStyle.Fixed3D;
             pictureBox1.Image = Properties.Resources.download;
-            pictureBox1.Location = new Point(298, 105);
+            pictureBox1.Location = new Point(298, 114);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(237, 183);
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;

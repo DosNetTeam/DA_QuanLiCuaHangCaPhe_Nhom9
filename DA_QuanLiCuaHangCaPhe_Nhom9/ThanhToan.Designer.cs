@@ -26,14 +26,11 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent() {
+        private void InitializeComponent()
+        {
             btn_inhoadon = new Button();
             panelLeft = new Panel();
-            lvChiTietBill = new ListView();
-            tenmon = new ColumnHeader();
-            Soluong = new ColumnHeader();
-            ThanhTien = new ColumnHeader();
-            label5 = new Label();
+            tableLayoutPanel1 = new TableLayoutPanel();
             groupBox1 = new GroupBox();
             label3 = new Label();
             txtKhachDua = new TextBox();
@@ -41,27 +38,35 @@
             lblTienDu = new Label();
             lblTongCongBill = new Label();
             label1 = new Label();
-            panelRight = new Panel();
-            panelBillPreview = new Panel();
-            pbQR_InBill = new PictureBox();
             groupBox2 = new GroupBox();
             rbQR = new RadioButton();
             rbTienMat = new RadioButton();
+            lvChiTietBill = new ListView();
+            tenmon = new ColumnHeader();
+            Soluong = new ColumnHeader();
+            ThanhTien = new ColumnHeader();
+            columnHeader1 = new ColumnHeader();
+            label5 = new Label();
+            panelRight = new Panel();
+            panelBillPreview = new Panel();
+            pbQR_InBill = new PictureBox();
             panelLeft.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             groupBox1.SuspendLayout();
+            groupBox2.SuspendLayout();
             panelRight.SuspendLayout();
             panelBillPreview.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pbQR_InBill).BeginInit();
-            groupBox2.SuspendLayout();
             SuspendLayout();
             // 
             // btn_inhoadon
             // 
+            btn_inhoadon.Dock = DockStyle.Right;
             btn_inhoadon.Font = new Font("Segoe UI Black", 9.900001F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            btn_inhoadon.Location = new Point(306, 441);
-            btn_inhoadon.Margin = new Padding(4, 4, 4, 4);
+            btn_inhoadon.Location = new Point(160, 22);
+            btn_inhoadon.Margin = new Padding(2);
             btn_inhoadon.Name = "btn_inhoadon";
-            btn_inhoadon.Size = new Size(489, 117);
+            btn_inhoadon.Size = new Size(159, 58);
             btn_inhoadon.TabIndex = 0;
             btn_inhoadon.Text = "In hoá đơn";
             btn_inhoadon.UseVisualStyleBackColor = true;
@@ -69,25 +74,158 @@
             // 
             // panelLeft
             // 
+            panelLeft.Controls.Add(tableLayoutPanel1);
             panelLeft.Controls.Add(lvChiTietBill);
             panelLeft.Controls.Add(label5);
-            panelLeft.Controls.Add(groupBox1);
             panelLeft.Dock = DockStyle.Left;
             panelLeft.Location = new Point(0, 0);
-            panelLeft.Margin = new Padding(4, 4, 4, 4);
+            panelLeft.Margin = new Padding(2);
             panelLeft.Name = "panelLeft";
-            panelLeft.Size = new Size(1101, 1948);
+            panelLeft.Size = new Size(325, 515);
             panelLeft.TabIndex = 1;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 1;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.Controls.Add(groupBox1, 0, 0);
+            tableLayoutPanel1.Controls.Add(groupBox2, 0, 1);
+            tableLayoutPanel1.Dock = DockStyle.Bottom;
+            tableLayoutPanel1.Location = new Point(0, 306);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 2;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 58.8516731F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 41.1483269F));
+            tableLayoutPanel1.Size = new Size(325, 209);
+            tableLayoutPanel1.TabIndex = 2;
+            // 
+            // groupBox1
+            // 
+            groupBox1.Controls.Add(label3);
+            groupBox1.Controls.Add(txtKhachDua);
+            groupBox1.Controls.Add(label2);
+            groupBox1.Controls.Add(lblTienDu);
+            groupBox1.Controls.Add(lblTongCongBill);
+            groupBox1.Controls.Add(label1);
+            groupBox1.Dock = DockStyle.Fill;
+            groupBox1.Location = new Point(2, 2);
+            groupBox1.Margin = new Padding(2);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Padding = new Padding(2);
+            groupBox1.Size = new Size(321, 119);
+            groupBox1.TabIndex = 0;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Tính tiền";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(13, 96);
+            label3.Margin = new Padding(2, 0, 2, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(66, 20);
+            label3.TabIndex = 4;
+            label3.Text = "Tiền dư: ";
+            // 
+            // txtKhachDua
+            // 
+            txtKhachDua.Location = new Point(135, 58);
+            txtKhachDua.Margin = new Padding(2);
+            txtKhachDua.Name = "txtKhachDua";
+            txtKhachDua.Size = new Size(120, 27);
+            txtKhachDua.TabIndex = 3;
+            txtKhachDua.TextChanged += txtKhachDua_TextChanged;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(13, 65);
+            label2.Margin = new Padding(2, 0, 2, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(79, 20);
+            label2.TabIndex = 2;
+            label2.Text = "Khách đưa";
+            // 
+            // lblTienDu
+            // 
+            lblTienDu.AutoSize = true;
+            lblTienDu.Location = new Point(135, 96);
+            lblTienDu.Margin = new Padding(2, 0, 2, 0);
+            lblTienDu.Name = "lblTienDu";
+            lblTienDu.Size = new Size(30, 20);
+            lblTienDu.TabIndex = 1;
+            lblTienDu.Text = "0 đ";
+            // 
+            // lblTongCongBill
+            // 
+            lblTongCongBill.AutoSize = true;
+            lblTongCongBill.Location = new Point(135, 32);
+            lblTongCongBill.Margin = new Padding(2, 0, 2, 0);
+            lblTongCongBill.Name = "lblTongCongBill";
+            lblTongCongBill.Size = new Size(30, 20);
+            lblTongCongBill.TabIndex = 1;
+            lblTongCongBill.Text = "0 đ";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(13, 32);
+            label1.Margin = new Padding(2, 0, 2, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(87, 20);
+            label1.TabIndex = 0;
+            label1.Text = "Tổng cộng: ";
+            // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(btn_inhoadon);
+            groupBox2.Controls.Add(rbQR);
+            groupBox2.Controls.Add(rbTienMat);
+            groupBox2.Dock = DockStyle.Bottom;
+            groupBox2.Location = new Point(2, 125);
+            groupBox2.Margin = new Padding(2);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Padding = new Padding(2);
+            groupBox2.Size = new Size(321, 82);
+            groupBox2.TabIndex = 0;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Hình thức thanh toán";
+            // 
+            // rbQR
+            // 
+            rbQR.AutoSize = true;
+            rbQR.Location = new Point(13, 58);
+            rbQR.Margin = new Padding(2);
+            rbQR.Name = "rbQR";
+            rbQR.Size = new Size(146, 24);
+            rbQR.TabIndex = 0;
+            rbQR.Text = "Chuyển khoản QR";
+            rbQR.UseVisualStyleBackColor = true;
+            rbQR.CheckedChanged += rbQR_CheckedChanged;
+            // 
+            // rbTienMat
+            // 
+            rbTienMat.AutoSize = true;
+            rbTienMat.Checked = true;
+            rbTienMat.Location = new Point(13, 24);
+            rbTienMat.Margin = new Padding(2);
+            rbTienMat.Name = "rbTienMat";
+            rbTienMat.Size = new Size(88, 24);
+            rbTienMat.TabIndex = 0;
+            rbTienMat.TabStop = true;
+            rbTienMat.Text = "Tiền mặt";
+            rbTienMat.UseVisualStyleBackColor = true;
+            rbTienMat.CheckedChanged += rbQR_CheckedChanged;
             // 
             // lvChiTietBill
             // 
-            lvChiTietBill.Columns.AddRange(new ColumnHeader[] { tenmon, Soluong, ThanhTien });
+            lvChiTietBill.Columns.AddRange(new ColumnHeader[] { tenmon, Soluong, ThanhTien, columnHeader1 });
             lvChiTietBill.Dock = DockStyle.Fill;
             lvChiTietBill.GridLines = true;
-            lvChiTietBill.Location = new Point(0, 61);
-            lvChiTietBill.Margin = new Padding(4, 4, 4, 4);
+            lvChiTietBill.Location = new Point(0, 30);
+            lvChiTietBill.Margin = new Padding(2);
             lvChiTietBill.Name = "lvChiTietBill";
-            lvChiTietBill.Size = new Size(1101, 1303);
+            lvChiTietBill.Size = new Size(325, 485);
             lvChiTietBill.TabIndex = 1;
             lvChiTietBill.UseCompatibleStateImageBehavior = false;
             lvChiTietBill.View = View.Details;
@@ -95,7 +233,7 @@
             // tenmon
             // 
             tenmon.Text = "Tên món";
-            tenmon.Width = 250;
+            tenmon.Width = 170;
             // 
             // Soluong
             // 
@@ -112,102 +250,23 @@
             label5.Dock = DockStyle.Top;
             label5.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label5.Location = new Point(0, 0);
-            label5.Margin = new Padding(4, 0, 4, 0);
+            label5.Margin = new Padding(2, 0, 2, 0);
             label5.Name = "label5";
-            label5.Padding = new Padding(0, 10, 0, 10);
-            label5.Size = new Size(300, 61);
+            label5.Padding = new Padding(0, 5, 0, 5);
+            label5.Size = new Size(149, 30);
             label5.TabIndex = 0;
             label5.Text = " CHI TIẾT HÓA ĐƠN";
             label5.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // groupBox1
-            // 
-            groupBox1.Controls.Add(btn_inhoadon);
-            groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(txtKhachDua);
-            groupBox1.Controls.Add(label2);
-            groupBox1.Controls.Add(lblTienDu);
-            groupBox1.Controls.Add(lblTongCongBill);
-            groupBox1.Controls.Add(label1);
-            groupBox1.Dock = DockStyle.Bottom;
-            groupBox1.Location = new Point(0, 1364);
-            groupBox1.Margin = new Padding(4, 4, 4, 4);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Padding = new Padding(4, 4, 4, 4);
-            groupBox1.Size = new Size(1101, 584);
-            groupBox1.TabIndex = 0;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Tính tiền";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(28, 324);
-            label3.Margin = new Padding(4, 0, 4, 0);
-            label3.Name = "label3";
-            label3.Size = new Size(133, 41);
-            label3.TabIndex = 4;
-            label3.Text = "Tiền dư: ";
-            // 
-            // txtKhachDua
-            // 
-            txtKhachDua.Location = new Point(416, 197);
-            txtKhachDua.Margin = new Padding(4, 4, 4, 4);
-            txtKhachDua.Name = "txtKhachDua";
-            txtKhachDua.Size = new Size(250, 47);
-            txtKhachDua.TabIndex = 3;
-            txtKhachDua.TextChanged += txtKhachDua_TextChanged;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(28, 205);
-            label2.Margin = new Padding(4, 0, 4, 0);
-            label2.Name = "label2";
-            label2.Size = new Size(157, 41);
-            label2.TabIndex = 2;
-            label2.Text = "Khách đưa";
-            // 
-            // lblTienDu
-            // 
-            lblTienDu.AutoSize = true;
-            lblTienDu.Location = new Point(416, 324);
-            lblTienDu.Margin = new Padding(4, 0, 4, 0);
-            lblTienDu.Name = "lblTienDu";
-            lblTienDu.Size = new Size(60, 41);
-            lblTienDu.TabIndex = 1;
-            lblTienDu.Text = "0 đ";
-            // 
-            // lblTongCongBill
-            // 
-            lblTongCongBill.AutoSize = true;
-            lblTongCongBill.Location = new Point(416, 88);
-            lblTongCongBill.Margin = new Padding(4, 0, 4, 0);
-            lblTongCongBill.Name = "lblTongCongBill";
-            lblTongCongBill.Size = new Size(60, 41);
-            lblTongCongBill.TabIndex = 1;
-            lblTongCongBill.Text = "0 đ";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(28, 88);
-            label1.Margin = new Padding(4, 0, 4, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(177, 41);
-            label1.TabIndex = 0;
-            label1.Text = "Tổng cộng: ";
-            // 
             // panelRight
             // 
             panelRight.Controls.Add(panelBillPreview);
-            panelRight.Controls.Add(groupBox2);
             panelRight.Dock = DockStyle.Fill;
-            panelRight.Location = new Point(1101, 0);
-            panelRight.Margin = new Padding(4, 4, 4, 4);
+            panelRight.Location = new Point(325, 0);
+            panelRight.Margin = new Padding(2);
             panelRight.Name = "panelRight";
-            panelRight.Padding = new Padding(8, 0, 0, 0);
-            panelRight.Size = new Size(1903, 1948);
+            panelRight.Padding = new Padding(4, 0, 0, 0);
+            panelRight.Size = new Size(580, 515);
             panelRight.TabIndex = 1;
             // 
             // panelBillPreview
@@ -215,73 +274,33 @@
             panelBillPreview.AutoScroll = true;
             panelBillPreview.Controls.Add(pbQR_InBill);
             panelBillPreview.Dock = DockStyle.Fill;
-            panelBillPreview.Location = new Point(8, 512);
-            panelBillPreview.Margin = new Padding(4, 4, 4, 4);
+            panelBillPreview.Location = new Point(4, 0);
+            panelBillPreview.Margin = new Padding(2);
             panelBillPreview.Name = "panelBillPreview";
-            panelBillPreview.Size = new Size(1895, 1436);
+            panelBillPreview.Size = new Size(576, 515);
             panelBillPreview.TabIndex = 1;
             // 
             // pbQR_InBill
             // 
             pbQR_InBill.Dock = DockStyle.Bottom;
-            pbQR_InBill.Location = new Point(0, 844);
-            pbQR_InBill.Margin = new Padding(4, 4, 4, 4);
+            pbQR_InBill.Location = new Point(0, 306);
+            pbQR_InBill.Margin = new Padding(2);
             pbQR_InBill.Name = "pbQR_InBill";
-            pbQR_InBill.Size = new Size(1895, 592);
+            pbQR_InBill.Size = new Size(576, 209);
             pbQR_InBill.SizeMode = PictureBoxSizeMode.Zoom;
             pbQR_InBill.TabIndex = 0;
             pbQR_InBill.TabStop = false;
             pbQR_InBill.Click += pbQR_InBill_Click;
             // 
-            // groupBox2
-            // 
-            groupBox2.Controls.Add(rbQR);
-            groupBox2.Controls.Add(rbTienMat);
-            groupBox2.Dock = DockStyle.Top;
-            groupBox2.Location = new Point(8, 0);
-            groupBox2.Margin = new Padding(4, 4, 4, 4);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Padding = new Padding(4, 4, 4, 4);
-            groupBox2.Size = new Size(1895, 512);
-            groupBox2.TabIndex = 0;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Hình thức thanh toán";
-            // 
-            // rbQR
-            // 
-            rbQR.AutoSize = true;
-            rbQR.Location = new Point(128, 316);
-            rbQR.Margin = new Padding(4, 4, 4, 4);
-            rbQR.Name = "rbQR";
-            rbQR.Size = new Size(295, 45);
-            rbQR.TabIndex = 0;
-            rbQR.Text = "Chuyển khoản QR";
-            rbQR.UseVisualStyleBackColor = true;
-            rbQR.CheckedChanged += rbQR_CheckedChanged;
-            // 
-            // rbTienMat
-            // 
-            rbTienMat.AutoSize = true;
-            rbTienMat.Checked = true;
-            rbTienMat.Location = new Point(128, 127);
-            rbTienMat.Margin = new Padding(4, 4, 4, 4);
-            rbTienMat.Name = "rbTienMat";
-            rbTienMat.Size = new Size(170, 45);
-            rbTienMat.TabIndex = 0;
-            rbTienMat.TabStop = true;
-            rbTienMat.Text = "Tiền mặt";
-            rbTienMat.UseVisualStyleBackColor = true;
-            rbTienMat.CheckedChanged += rbQR_CheckedChanged;
-            // 
             // ThanhToan
             // 
-            AutoScaleDimensions = new SizeF(17F, 41F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(3004, 1948);
+            ClientSize = new Size(905, 515);
             Controls.Add(panelRight);
             Controls.Add(panelLeft);
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            Margin = new Padding(4, 4, 4, 4);
+            Margin = new Padding(2);
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "ThanhToan";
@@ -290,13 +309,14 @@
             Load += ThanhToan_Load;
             panelLeft.ResumeLayout(false);
             panelLeft.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
             panelRight.ResumeLayout(false);
             panelBillPreview.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pbQR_InBill).EndInit();
-            groupBox2.ResumeLayout(false);
-            groupBox2.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -319,7 +339,9 @@
         private RadioButton rbTienMat;
         private RadioButton rbQR;
         private Button btn_inhoadon;
-        private Panel panelBillPreview;
+        private TableLayoutPanel tableLayoutPanel1;
         private PictureBox pbQR_InBill;
+        private Panel panelBillPreview;
+        private ColumnHeader columnHeader1;
     }
 }

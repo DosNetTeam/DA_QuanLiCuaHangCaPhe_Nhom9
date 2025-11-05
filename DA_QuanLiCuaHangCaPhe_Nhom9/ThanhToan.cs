@@ -152,9 +152,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             currentY += lblHoaDon.Height + 15;
 
             AddLabelToBill("Tên món", currentY, 9, FontStyle.Regular, 40);     // Cột Tên
-            AddLabelToBill("SL", currentY, 9, FontStyle.Regular, 360);   // Cột SL 
-            AddLabelToBill("Dơn giá", currentY, 9, FontStyle.Regular, 440);    // Cột Giá
-            AddLabelToBill("Thành tiền", currentY, 9, FontStyle.Regular, 590); // Cột Tổng 
+            AddLabelToBill("SL", currentY, 9, FontStyle.Regular, 250);   // Cột SL 
+            AddLabelToBill("Dơn giá", currentY, 9, FontStyle.Regular, 320);    // Cột Giá
+            AddLabelToBill("Thành tiền", currentY, 9, FontStyle.Regular, 450); // Cột Tổng 
 
             currentY += 30 // dãng cách tên cột với nd
                 ;
@@ -194,8 +194,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             // --- 6. ĐẶT VỊ TRÍ MÃ QR (ĐANG BỊ ẨN) ---
             // Thêm lại QR vào panel
             panelBillPreview.Controls.Add(pbQR_InBill);
-            pbQR_InBill.Top = currentY + 15;
-            pbQR_InBill.Left = (panelBillPreview.Width - pbQR_InBill.Width) / 2;
+            pbQR_InBill.Top = currentY + 13;
+            pbQR_InBill.Left = (panelBillPreview.Width - pbQR_InBill.Width)  / 2;
         }
 
         private void txtKhachDua_TextChanged(object sender, EventArgs e)
