@@ -28,149 +28,52 @@
         /// </summary>
         private void InitializeComponent()
         {
-            groupBoxEmployeeList = new GroupBox();
-            dgvEmployees = new DataGridView();
-            groupBoxPermissions = new GroupBox();
-            btnEmployee = new Button();
-            btnManageProducts = new Button();
-            btnViewReports = new Button();
-            btnEditAccount = new Button();
-            btnDeleteAccount = new Button();
-            btnManager = new Button();
             btnCreateAccount = new Button();
             btnExit = new Button();
-            lblTitle = new Label();
-            groupBoxEmployeeList.SuspendLayout();
+            btnDeleteAccount = new Button();
+            tabControl1 = new TabControl();
+            tabPage1 = new TabPage();
+            dgvOverview = new DataGridView();
+            tabPage2 = new TabPage();
+            dgvEmployees = new DataGridView();
+            tabPage3 = new TabPage();
+            dgvInventory = new DataGridView();
+            tabPage4 = new TabPage();
+            dgvRevenue = new DataGridView();
+            tabControl1.SuspendLayout();
+            tabPage1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvOverview).BeginInit();
+            tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvEmployees).BeginInit();
-            groupBoxPermissions.SuspendLayout();
+            tabPage3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvInventory).BeginInit();
+            tabPage4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvRevenue).BeginInit();
             SuspendLayout();
-            // 
-            // groupBoxEmployeeList
-            // 
-            groupBoxEmployeeList.Controls.Add(dgvEmployees);
-            groupBoxEmployeeList.Location = new Point(30, 70);
-            groupBoxEmployeeList.Name = "groupBoxEmployeeList";
-            groupBoxEmployeeList.Size = new Size(450, 300);
-            groupBoxEmployeeList.TabIndex = 0;
-            groupBoxEmployeeList.TabStop = false;
-            groupBoxEmployeeList.Text = "Danh sách nhân viên";
-            // 
-            // dgvEmployees
-            // 
-            dgvEmployees.AllowUserToAddRows = false;
-            dgvEmployees.AllowUserToDeleteRows = false;
-            dgvEmployees.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvEmployees.BackgroundColor = Color.White;
-            dgvEmployees.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvEmployees.Dock = DockStyle.Fill;
-            dgvEmployees.Location = new Point(3, 23);
-            dgvEmployees.MultiSelect = false;
-            dgvEmployees.Name = "dgvEmployees";
-            dgvEmployees.ReadOnly = true;
-            dgvEmployees.RowHeadersWidth = 51;
-            dgvEmployees.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvEmployees.Size = new Size(444, 274);
-            dgvEmployees.TabIndex = 0;
-            dgvEmployees.SelectionChanged += dgvEmployees_SelectionChanged;
-            // 
-            // groupBoxPermissions
-            // 
-            groupBoxPermissions.Controls.Add(btnEmployee);
-            groupBoxPermissions.Controls.Add(btnManageProducts);
-            groupBoxPermissions.Controls.Add(btnViewReports);
-            groupBoxPermissions.Controls.Add(btnEditAccount);
-            groupBoxPermissions.Controls.Add(btnDeleteAccount);
-            groupBoxPermissions.Controls.Add(btnManager);
-            groupBoxPermissions.Location = new Point(500, 70);
-            groupBoxPermissions.Name = "groupBoxPermissions";
-            groupBoxPermissions.Size = new Size(280, 300);
-            groupBoxPermissions.TabIndex = 1;
-            groupBoxPermissions.TabStop = false;
-            groupBoxPermissions.Text = "Phân quyền";
-            // 
-            // btnEmployee
-            // 
-            btnEmployee.BackColor = Color.FromArgb(96, 125, 139);
-            btnEmployee.ForeColor = Color.White;
-            btnEmployee.Location = new Point(20, 40);
-            btnEmployee.Name = "btnEmployee";
-            btnEmployee.Size = new Size(240, 35);
-            btnEmployee.TabIndex = 0;
-            btnEmployee.Text = "Nhân viên";
-            btnEmployee.UseVisualStyleBackColor = false;
-            btnEmployee.Click += btnEmployee_Click;
-            // 
-            // btnManager
-            // 
-            btnManager.BackColor = Color.FromArgb(156, 39, 176);
-            btnManager.ForeColor = Color.White;
-            btnManager.Location = new Point(20, 85);
-            btnManager.Name = "btnManager";
-            btnManager.Size = new Size(240, 35);
-            btnManager.TabIndex = 1;
-            btnManager.Text = "Quản lý";
-            btnManager.UseVisualStyleBackColor = false;
-            btnManager.Click += btnManager_Click;
-            // 
-            // btnManageProducts
-            // 
-            btnManageProducts.BackColor = Color.FromArgb(33, 150, 243);
-            btnManageProducts.ForeColor = Color.White;
-            btnManageProducts.Location = new Point(20, 130);
-            btnManageProducts.Name = "btnManageProducts";
-            btnManageProducts.Size = new Size(240, 35);
-            btnManageProducts.TabIndex = 2;
-            btnManageProducts.Text = "Quản lý sản phẩm";
-            btnManageProducts.UseVisualStyleBackColor = false;
-            btnManageProducts.Click += btnManageProducts_Click;
-            // 
-            // btnViewReports
-            // 
-            btnViewReports.BackColor = Color.FromArgb(255, 152, 0);
-            btnViewReports.ForeColor = Color.White;
-            btnViewReports.Location = new Point(20, 175);
-            btnViewReports.Name = "btnViewReports";
-            btnViewReports.Size = new Size(240, 35);
-            btnViewReports.TabIndex = 3;
-            btnViewReports.Text = "Xem báo cáo";
-            btnViewReports.UseVisualStyleBackColor = false;
-            btnViewReports.Click += btnViewReports_Click;
-            // 
-            // btnEditAccount
-            // 
-            btnEditAccount.BackColor = Color.FromArgb(76, 175, 80);
-            btnEditAccount.ForeColor = Color.White;
-            btnEditAccount.Location = new Point(20, 220);
-            btnEditAccount.Name = "btnEditAccount";
-            btnEditAccount.Size = new Size(240, 35);
-            btnEditAccount.TabIndex = 4;
-            btnEditAccount.Text = "Chỉnh sửa tài khoản";
-            btnEditAccount.UseVisualStyleBackColor = false;
-            btnEditAccount.Click += btnEditAccount_Click;
-            // 
-            // btnDeleteAccount
-            // 
-            btnDeleteAccount.BackColor = Color.FromArgb(244, 67, 54);
-            btnDeleteAccount.ForeColor = Color.White;
-            btnDeleteAccount.Location = new Point(20, 265);
-            btnDeleteAccount.Name = "btnDeleteAccount";
-            btnDeleteAccount.Size = new Size(115, 35);
-            btnDeleteAccount.TabIndex = 5;
-            btnDeleteAccount.Text = "Xóa tài khoản";
-            btnDeleteAccount.UseVisualStyleBackColor = false;
-            btnDeleteAccount.Click += btnDeleteAccount_Click;
             // 
             // btnCreateAccount
             // 
             btnCreateAccount.BackColor = Color.FromArgb(46, 125, 50);
             btnCreateAccount.ForeColor = Color.White;
-            btnCreateAccount.Location = new Point(500, 385);
+            btnCreateAccount.Location = new Point(340, 385);
             btnCreateAccount.Name = "btnCreateAccount";
             btnCreateAccount.Size = new Size(150, 40);
             btnCreateAccount.TabIndex = 2;
             btnCreateAccount.Text = "Tạo tài khoản";
             btnCreateAccount.UseVisualStyleBackColor = false;
             btnCreateAccount.Click += btnCreateAccount_Click;
+            // 
+            // btnDeleteAccount
+            // 
+            btnDeleteAccount.BackColor = Color.FromArgb(244, 67, 54);
+            btnDeleteAccount.ForeColor = Color.White;
+            btnDeleteAccount.Location = new Point(500, 385);
+            btnDeleteAccount.Name = "btnDeleteAccount";
+            btnDeleteAccount.Size = new Size(150, 40);
+            btnDeleteAccount.TabIndex = 4;
+            btnDeleteAccount.Text = "Xóa tài khoản";
+            btnDeleteAccount.UseVisualStyleBackColor = false;
+            btnDeleteAccount.Click += btnDeleteAccount_Click;
             // 
             // btnExit
             // 
@@ -184,52 +87,163 @@
             btnExit.UseVisualStyleBackColor = false;
             btnExit.Click += btnExit_Click;
             // 
-            // lblTitle
+            // tabControl1
             // 
-            lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            lblTitle.ForeColor = Color.FromArgb(33, 150, 243);
-            lblTitle.Location = new Point(310, 20);
-            lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(140, 37);
-            lblTitle.TabIndex = 4;
-            lblTitle.Text = "ADMIN";
+            tabControl1.Controls.Add(tabPage1);
+            tabControl1.Controls.Add(tabPage2);
+            tabControl1.Controls.Add(tabPage3);
+            tabControl1.Controls.Add(tabPage4);
+            tabControl1.Dock = DockStyle.Top;
+            tabControl1.Location = new Point(0, 0);
+            tabControl1.Name = "tabControl1";
+            tabControl1.SelectedIndex = 0;
+            tabControl1.Size = new Size(800, 370);
+            tabControl1.TabIndex = 4;
+            tabControl1.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
+            // 
+            // tabPage1
+            // 
+            tabPage1.Controls.Add(dgvOverview);
+            tabPage1.Location = new Point(4, 29);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new Padding(3);
+            tabPage1.Size = new Size(792, 337);
+            tabPage1.TabIndex = 0;
+            tabPage1.Text = "Tổng quát";
+            tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // dgvOverview
+            // 
+            dgvOverview.AllowUserToAddRows = false;
+            dgvOverview.AllowUserToDeleteRows = false;
+            dgvOverview.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvOverview.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvOverview.Dock = DockStyle.Fill;
+            dgvOverview.Location = new Point(3, 3);
+            dgvOverview.Name = "dgvOverview";
+            dgvOverview.ReadOnly = true;
+            dgvOverview.RowHeadersWidth = 51;
+            dgvOverview.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvOverview.Size = new Size(786, 331);
+            dgvOverview.TabIndex = 0;
+            // 
+            // tabPage2
+            // 
+            tabPage2.Controls.Add(dgvEmployees);
+            tabPage2.Location = new Point(4, 29);
+            tabPage2.Name = "tabPage2";
+            tabPage2.Padding = new Padding(3);
+            tabPage2.Size = new Size(792, 337);
+            tabPage2.TabIndex = 1;
+            tabPage2.Text = "Quản Lý Nhân Viên";
+            tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // dgvEmployees
+            // 
+            dgvEmployees.AllowUserToAddRows = false;
+            dgvEmployees.AllowUserToDeleteRows = false;
+            dgvEmployees.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvEmployees.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvEmployees.Dock = DockStyle.Fill;
+            dgvEmployees.Location = new Point(3, 3);
+            dgvEmployees.Name = "dgvEmployees";
+            dgvEmployees.ReadOnly = true;
+            dgvEmployees.RowHeadersWidth = 51;
+            dgvEmployees.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvEmployees.Size = new Size(786, 331);
+            dgvEmployees.TabIndex = 0;
+            // 
+            // tabPage3
+            // 
+            tabPage3.Controls.Add(dgvInventory);
+            tabPage3.Location = new Point(4, 29);
+            tabPage3.Name = "tabPage3";
+            tabPage3.Padding = new Padding(3);
+            tabPage3.Size = new Size(792, 337);
+            tabPage3.TabIndex = 2;
+            tabPage3.Text = "Quản Lý Kho";
+            tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // dgvInventory
+            // 
+            dgvInventory.AllowUserToAddRows = false;
+            dgvInventory.AllowUserToDeleteRows = false;
+            dgvInventory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvInventory.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvInventory.Dock = DockStyle.Fill;
+            dgvInventory.Location = new Point(3, 3);
+            dgvInventory.Name = "dgvInventory";
+            dgvInventory.ReadOnly = true;
+            dgvInventory.RowHeadersWidth = 51;
+            dgvInventory.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvInventory.Size = new Size(786, 331);
+            dgvInventory.TabIndex = 0;
+            // 
+            // tabPage4
+            // 
+            tabPage4.Controls.Add(dgvRevenue);
+            tabPage4.Location = new Point(4, 29);
+            tabPage4.Name = "tabPage4";
+            tabPage4.Padding = new Padding(3);
+            tabPage4.Size = new Size(792, 337);
+            tabPage4.TabIndex = 3;
+            tabPage4.Text = "Doanh thu";
+            tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // dgvRevenue
+            // 
+            dgvRevenue.AllowUserToAddRows = false;
+            dgvRevenue.AllowUserToDeleteRows = false;
+            dgvRevenue.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvRevenue.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvRevenue.Dock = DockStyle.Fill;
+            dgvRevenue.Location = new Point(3, 3);
+            dgvRevenue.Name = "dgvRevenue";
+            dgvRevenue.ReadOnly = true;
+            dgvRevenue.RowHeadersWidth = 51;
+            dgvRevenue.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvRevenue.Size = new Size(786, 331);
+            dgvRevenue.TabIndex = 0;
             // 
             // Admin
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(lblTitle);
+            Controls.Add(btnDeleteAccount);
             Controls.Add(btnExit);
             Controls.Add(btnCreateAccount);
-            Controls.Add(groupBoxPermissions);
-            Controls.Add(groupBoxEmployeeList);
+            Controls.Add(tabControl1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             Name = "Admin";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Admin";
-            groupBoxEmployeeList.ResumeLayout(false);
+            Text = "Quản Lý - Coffee Shop";
+            Load += Admin_Load;
+            tabControl1.ResumeLayout(false);
+            tabPage1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvOverview).EndInit();
+            tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvEmployees).EndInit();
-            groupBoxPermissions.ResumeLayout(false);
+            tabPage3.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvInventory).EndInit();
+            tabPage4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvRevenue).EndInit();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
-
-        private GroupBox groupBoxEmployeeList;
-        private DataGridView dgvEmployees;
-        private GroupBox groupBoxPermissions;
-        private Button btnEmployee;
-        private Button btnManager;
-        private Button btnManageProducts;
-        private Button btnViewReports;
-        private Button btnEditAccount;
-        private Button btnDeleteAccount;
         private Button btnCreateAccount;
+        private Button btnDeleteAccount;
         private Button btnExit;
-        private Label lblTitle;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
+        private TabPage tabPage2;
+        private TabPage tabPage3;
+        private TabPage tabPage4;
+        private DataGridView dgvOverview;
+        private DataGridView dgvEmployees;
+        private DataGridView dgvInventory;
+        private DataGridView dgvRevenue;
     }
 }
