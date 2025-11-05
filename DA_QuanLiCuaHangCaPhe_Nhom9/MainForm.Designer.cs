@@ -118,7 +118,7 @@
             panel1.Location = new Point(0, 38);
             panel1.Margin = new Padding(6);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1043, 1650);
+            panel1.Size = new Size(1043, 1785);
             panel1.TabIndex = 6;
             // 
             // lvDonHang
@@ -131,7 +131,7 @@
             lvDonHang.Location = new Point(0, 129);
             lvDonHang.Margin = new Padding(4);
             lvDonHang.Name = "lvDonHang";
-            lvDonHang.Size = new Size(1043, 1398);
+            lvDonHang.Size = new Size(1043, 1533);
             lvDonHang.TabIndex = 1;
             lvDonHang.UseCompatibleStateImageBehavior = false;
             lvDonHang.View = View.Details;
@@ -272,7 +272,7 @@
             tableLayoutPanel1.Controls.Add(btnXoaMon, 0, 0);
             tableLayoutPanel1.Controls.Add(btnGIamSoLuong, 1, 0);
             tableLayoutPanel1.Dock = DockStyle.Bottom;
-            tableLayoutPanel1.Location = new Point(0, 1527);
+            tableLayoutPanel1.Location = new Point(0, 1662);
             tableLayoutPanel1.Margin = new Padding(6);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
@@ -312,10 +312,10 @@
             panelTongTien.Controls.Add(label2);
             panelTongTien.Dock = DockStyle.Bottom;
             panelTongTien.Font = new Font("Times New Roman", 15.9000006F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            panelTongTien.Location = new Point(0, 1688);
+            panelTongTien.Location = new Point(0, 1823);
             panelTongTien.Margin = new Padding(4);
             panelTongTien.Name = "panelTongTien";
-            panelTongTien.Size = new Size(1043, 252);
+            panelTongTien.Size = new Size(1043, 117);
             panelTongTien.TabIndex = 2;
             // 
             // lblTongCong
