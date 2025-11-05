@@ -1,16 +1,21 @@
-namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
-    internal static class Program {
+using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+
+namespace DA_QuanLiCuaHangCaPhe_Nhom9
+{
+    internal static class Program
+    {
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main() {
+        static void Main()
+        {
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             //Application.Run(new Form1());
 
-            Application.Run(new MainForm());
+            Application.Run(new QuanLi());
         }
     }
 }
