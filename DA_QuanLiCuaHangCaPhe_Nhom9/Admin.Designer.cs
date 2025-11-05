@@ -63,18 +63,6 @@
             btnCreateAccount.UseVisualStyleBackColor = false;
             btnCreateAccount.Click += btnCreateAccount_Click;
             // 
-            // btnDeleteAccount
-            // 
-            btnDeleteAccount.BackColor = Color.FromArgb(244, 67, 54);
-            btnDeleteAccount.ForeColor = Color.White;
-            btnDeleteAccount.Location = new Point(500, 385);
-            btnDeleteAccount.Name = "btnDeleteAccount";
-            btnDeleteAccount.Size = new Size(150, 40);
-            btnDeleteAccount.TabIndex = 4;
-            btnDeleteAccount.Text = "Xóa tài khoản";
-            btnDeleteAccount.UseVisualStyleBackColor = false;
-            btnDeleteAccount.Click += btnDeleteAccount_Click;
-            // 
             // btnExit
             // 
             btnExit.BackColor = Color.FromArgb(211, 47, 47);
@@ -86,6 +74,18 @@
             btnExit.Text = "Thoát";
             btnExit.UseVisualStyleBackColor = false;
             btnExit.Click += btnExit_Click;
+            // 
+            // btnDeleteAccount
+            // 
+            btnDeleteAccount.BackColor = Color.FromArgb(244, 67, 54);
+            btnDeleteAccount.ForeColor = Color.White;
+            btnDeleteAccount.Location = new Point(500, 385);
+            btnDeleteAccount.Name = "btnDeleteAccount";
+            btnDeleteAccount.Size = new Size(150, 40);
+            btnDeleteAccount.TabIndex = 4;
+            btnDeleteAccount.Text = "Xóa tài khoản";
+            btnDeleteAccount.UseVisualStyleBackColor = false;
+            btnDeleteAccount.Click += btnDeleteAccount_Click;
             // 
             // tabControl1
             // 
@@ -218,7 +218,7 @@
             MaximizeBox = false;
             Name = "Admin";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Quản Lý - Coffee Shop";
+            Text = "ADMIN";
             Load += Admin_Load;
             tabControl1.ResumeLayout(false);
             tabPage1.ResumeLayout(false);
