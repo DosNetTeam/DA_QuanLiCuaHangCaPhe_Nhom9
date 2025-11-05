@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Linq;
+using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9
 {
@@ -9,84 +11,168 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         public string Username { get; private set; } = string.Empty;
   public string Password { get; private set; } = string.Empty;
   public string Position { get; private set; } = string.Empty;
-        public bool IsEmployee { get; private set; }
+        public string PhoneNumber { get; private set; } = string.Empty;
+  public bool IsEmployee { get; private set; }
         public bool IsManager { get; private set; }
 
-        public CreateEmployeeForm()
-        {
-      InitializeComponent();
+     public CreateEmployeeForm()
+  {
+    InitializeComponent();
   this.StartPosition = FormStartPosition.CenterParent;
-        }
+}
 
-        private void btnSave_Click(object sender, EventArgs e)
-        {
+      private void btnSave_Click(object sender, EventArgs e)
+   {
   // Validate
   if (string.IsNullOrWhiteSpace(txtFullName.Text))
-            {
+   {
    MessageBox.Show("Vui lòng nhập họ tên!", "Thông báo", 
       MessageBoxButtons.OK, MessageBoxIcon.Warning);
-       txtFullName.Focus();
-       return;
-            }
+ txtFullName.Focus();
+return;
+       }
 
-         if (string.IsNullOrWhiteSpace(txtUsername.Text))
-       {
+   if (string.IsNullOrWhiteSpace(txtUsername.Text))
+  {
           MessageBox.Show("Vui lòng nhập tên đăng nhập!", "Thông báo", 
-       MessageBoxButtons.OK, MessageBoxIcon.Warning);
+  MessageBoxButtons.OK, MessageBoxIcon.Warning);
 txtUsername.Focus();
-         return;
+    return;
    }
 
-            if (string.IsNullOrWhiteSpace(txtPassword.Text))
-            {
-       MessageBox.Show("Vui lòng nhập mật khẩu!", "Thông báo", 
+    if (string.IsNullOrWhiteSpace(txtPassword.Text))
+     {
+ MessageBox.Show("Vui lòng nhập mật khẩu!", "Thông báo", 
       MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            txtPassword.Focus();
+     txtPassword.Focus();
 return;
-         }
+       }
 
  if (txtPassword.Text.Length < 6)
-     {
-          MessageBox.Show("Mật khẩu phải có ít nhất 6 ký tự!", "Thông báo", 
+  {
+ MessageBox.Show("Mật khẩu phải có ít nhất 6 ký tự!", "Thông báo", 
        MessageBoxButtons.OK, MessageBoxIcon.Warning);
 txtPassword.Focus();
       return;
  }
 
-            if (txtPassword.Text != txtConfirmPassword.Text)
+ if (txtPassword.Text != txtConfirmPassword.Text)
      {
    MessageBox.Show("Mật khẩu xác nhận không khớp!", "Thông báo", 
      MessageBoxButtons.OK, MessageBoxIcon.Warning);
 txtConfirmPassword.Focus();
-       return;
-            }
+     return;
+    }
 
- if (string.IsNullOrWhiteSpace(txtPosition.Text))
+          // Validate phone number (optional but if entered, must be valid)
+            if (!string.IsNullOrWhiteSpace(txtPhoneNumber.Text))
+            {
+     string phone = txtPhoneNumber.Text.Trim();
+       if (phone.Length < 10 || phone.Length > 11 || !phone.All(char.IsDigit))
+    {
+         MessageBox.Show(
+               "Số điện thoại không hợp lệ!\nVui lòng nhập 10-11 chữ số.",
+         "Thông báo",
+      MessageBoxButtons.OK,
+        MessageBoxIcon.Warning);
+             txtPhoneNumber.Focus();
+             return;
+    }
+        }
+
+      // Save to database
+try
   {
-    MessageBox.Show("Vui lòng nhập chức vụ!", "Thông báo", 
-        MessageBoxButtons.OK, MessageBoxIcon.Warning);
-       txtPosition.Focus();
-        return;
-   }
+     using var db = new DataSqlContext();
 
-            // Check if at least one role is selected
-          if (!chkIsEmployee.Checked && !chkIsManager.Checked)
+          // Check if username already exists
+       if (db.TaiKhoans.Any(t => t.TenDangNhap == txtUsername.Text.Trim()))
+          {
+   MessageBox.Show(
+    "Tên đăng nhập đã tồn tại. Vui lòng chọn tên khác!",
+        "Lỗi",
+          MessageBoxButtons.OK,
+  MessageBoxIcon.Error);
+     txtUsername.Focus();
+      return;
+    }
+
+        // Determine position based on radio button selection
+        string chucVu = rbManager.Checked ? "Quản lý" : "Nhân viên";
+
+     // Create new NhanVien
+   var nhanVien = new NhanVien
    {
-       MessageBox.Show("Vui lòng chọn ít nhất một vai trò (Nhân viên hoặc Quản lý)!", "Thông báo", 
-     MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        return;
-            }
+              TenNv = txtFullName.Text.Trim(),
+       ChucVu = chucVu,
+    SoDienThoai = txtPhoneNumber.Text.Trim()
+   };
 
-            // Save data
-     FullName = txtFullName.Text.Trim();
-      Username = txtUsername.Text.Trim();
-      Password = txtPassword.Text;
-   Position = txtPosition.Text.Trim();
-IsEmployee = chkIsEmployee.Checked;
-            IsManager = chkIsManager.Checked;
+    db.NhanViens.Add(nhanVien);
+     db.SaveChanges(); // Save to get MaNv
 
-            this.DialogResult = DialogResult.OK;
+       // Determine VaiTro ID (1=Employee, 2=Manager - adjust based on your DB)
+          int maVaiTro = rbManager.Checked ? 2 : 1;
+
+     // Verify VaiTro exists
+          if (!db.VaiTros.Any(v => v.MaVaiTro == maVaiTro))
+          {
+      MessageBox.Show(
+    $"Vai trò với mã {maVaiTro} không tồn tại trong database!",
+         "Lỗi",
+MessageBoxButtons.OK,
+         MessageBoxIcon.Error);
+  
+       // Rollback - remove the employee we just added
+ db.NhanViens.Remove(nhanVien);
+  db.SaveChanges();
+   return;
+  }
+
+     // Create new TaiKhoan
+   var taiKhoan = new TaiKhoan
+  {
+      TenDangNhap = txtUsername.Text.Trim(),
+   MatKhau = txtPassword.Text, // NOTE: Should hash password in production
+    MaNv = nhanVien.MaNv,
+    MaVaiTro = maVaiTro,
+     TrangThai = true
+      };
+
+   db.TaiKhoans.Add(taiKhoan);
+          db.SaveChanges();
+
+    // Set properties for confirmation
+    FullName = txtFullName.Text.Trim();
+    Username = txtUsername.Text.Trim();
+          Password = txtPassword.Text;
+        Position = chucVu;
+          PhoneNumber = txtPhoneNumber.Text.Trim();
+  IsEmployee = rbEmployee.Checked;
+          IsManager = rbManager.Checked;
+
+       MessageBox.Show(
+$"Tạo tài khoản thành công!\n\n" +
+$"Họ tên: {FullName}\n" +
+ $"Tài khoản: {Username}\n" +
+  $"Chức vụ: {Position}\n" +
+       $"Số điện thoại: {(string.IsNullOrEmpty(PhoneNumber) ? "Chưa cập nhật" : PhoneNumber)}\n" +
+   $"Mã nhân viên: {nhanVien.MaNv}",
+           "Thành công",
+     MessageBoxButtons.OK,
+    MessageBoxIcon.Information);
+
+      this.DialogResult = DialogResult.OK;
   this.Close();
+      }
+      catch (Exception ex)
+ {
+          MessageBox.Show(
+       $"Lỗi khi lưu vào database:\n{ex.Message}\n\n{ex.InnerException?.Message}",
+   "Lỗi",
+    MessageBoxButtons.OK,
+              MessageBoxIcon.Error);
+      }
     }
 
         private void btnCancel_Click(object sender, EventArgs e)
@@ -95,31 +181,16 @@ IsEmployee = chkIsEmployee.Checked;
 this.Close();
         }
 
-        private void chkIsEmployee_CheckedChanged(object? sender, EventArgs e)
-        {
-     // If Employee is checked and Manager is also checked, uncheck Manager
-   // (Optional: You can allow both to be checked if needed)
-            if (chkIsEmployee.Checked && chkIsManager.Checked)
-     {
-           // Option 1: Allow both (do nothing)
-// Option 2: Only one at a time (uncomment below)
- // chkIsManager.Checked = false;
-   }
+   private void rbEmployee_CheckedChanged(object? sender, EventArgs e)
+ {
+    // RadioButtons automatically handle mutual exclusivity
+            // This event can be used for additional logic if needed
      }
 
-  private void chkIsManager_CheckedChanged(object? sender, EventArgs e)
-        {
-     // If Manager is checked, automatically check Employee
-// (Manager has all employee permissions plus more)
- if (chkIsManager.Checked)
-            {
-     chkIsEmployee.Checked = true;
-     chkIsEmployee.Enabled = false; // Disable because manager is always employee
-   }
-            else
-     {
-        chkIsEmployee.Enabled = true;
-       }
+  private void rbManager_CheckedChanged(object? sender, EventArgs e)
+   {
+            // RadioButtons automatically handle mutual exclusivity
+         // This event can be used for additional logic if needed
         }
     }
 }
