@@ -361,6 +361,17 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/DA_QuanLiCuaHangCaPhe_Nhom9/App.config
 /DA_QuanLiCuaHangCaPhe_Nhom9/Models/DataSqlContext.cs
+/DA_QuanLiCuaHangCaPhe_Nhom9/Program.cs
+/DA_QuanLiCuaHangCaPhe_Nhom9/QuanLi.cs
+/DA_QuanLiCuaHangCaPhe_Nhom9/ThemKhachHang.cs
+/DA_QuanLiCuaHangCaPhe_Nhom9/ThemKhachHang.Designer.cs
+/DA_QuanLiCuaHangCaPhe_Nhom9/Program.cs
+/DA_QuanLiCuaHangCaPhe_Nhom9/Models/DataSqlContext.cs
+/DA_QuanLiCuaHangCaPhe_Nhom9/Models/DataSqlContext.cs
+/DA_QuanLiCuaHangCaPhe_Nhom9/Models/DataSqlContext.cs
+/DA_QuanLiCuaHangCaPhe_Nhom9/Program.cs
+/.gitignore
 /DA_QuanLiCuaHangCaPhe_Nhom9/Models/DataSqlContext.cs
 /DA_QuanLiCuaHangCaPhe_Nhom9/Program.cs

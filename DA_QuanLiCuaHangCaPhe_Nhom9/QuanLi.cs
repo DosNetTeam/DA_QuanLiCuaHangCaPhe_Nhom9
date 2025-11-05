@@ -266,11 +266,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
         private void btnDangXuat_Click(object sender, EventArgs e)
         {
-            var confirm = MessageBox.Show("Bạn có chắc muốn đăng xuất không?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            var confirm = MessageBox.Show("Bạn có chắc muốn đăng xuất Không ?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm != DialogResult.Yes) return;
 
-            // Use Loginform instead of Form1
-            var existingLogin = Application.OpenForms.OfType<Loginform>().FirstOrDefault();
+            // If a login Form1 instance was hidden earlier, reuse it; otherwise create a new one.
+            var existingLogin = Application.OpenForms.OfType<Form1>().FirstOrDefault();
             if (existingLogin != null)
             {
                 existingLogin.Show();
@@ -278,7 +278,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             }
             else
             {
-                var login = new Loginform();
+                var login = new Form1();
                 login.StartPosition = FormStartPosition.CenterScreen;
                 login.Show();
             }
