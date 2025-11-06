@@ -13,693 +13,675 @@ using Microsoft.EntityFrameworkCore;
 namespace DA_QuanLiCuaHangCaPhe_Nhom9
 {
     public partial class Admin : Form
-  {
-        private Panel panelEmployeeDetail;
-   private GroupBox groupBoxDetail;
-    private Label lblDetailMaNv, lblDetailTenNv, lblDetailChucVu, lblDetailSoDienThoai;
- private Label lblDetailTaiKhoan, lblDetailVaiTro, lblDetailTrangThai;
-    private Label lblDetailSoDonHang, lblDetailDoanhThu;
-   private Button btnLockUnlock, btnCloseDetail;
-
-    public Admin()
-   {
-     InitializeComponent();
- 
-     // Set form centered
-  this.StartPosition = FormStartPosition.CenterScreen;
-
-// Subscribe to DataGridView click events
-dgvEmployees.CellClick += dgvEmployees_CellClick;
-   dgvEmployees.KeyDown += dgvEmployees_KeyDown;
-            
-      // Create employee detail panel
-      CreateEmployeeDetailPanel();
-   }
-
-    private void Admin_Load(object sender, EventArgs e)
- {
- // Load data for the first tab (Overview)
-      LoadOverviewData();
- }
-
-    private void tabControl1_SelectedIndexChanged(object? sender, EventArgs e)
-  {
-  // Load data based on selected tab
-    switch (tabControl1.SelectedIndex)
     {
-   case 0: // Tổng quát
-  LoadOverviewData();
-     break;
-  case 1: // Quản Lý Nhân Viên
-      LoadEmployeeData();
-   break;
-       case 2: // Quản Lý Kho
-       LoadInventoryData();
-  break;
-  case 3: // Doanh thu
-LoadRevenueData();
-  break;
-    }
-      }
+        private int selectedEmployeeId = 0;
 
-    private void CreateEmployeeDetailPanel()
-      {
-            // Create main panel for employee details
-  panelEmployeeDetail = new Panel
-     {
-          Location = new Point(410, 40),
-  Size = new Size(380, 320),
-     BorderStyle = BorderStyle.FixedSingle,
-    BackColor = Color.White,
-Visible = false
-  };
+        public Admin()
+        {
+            InitializeComponent();
 
-// Create GroupBox for better organization
-     groupBoxDetail = new GroupBox
-      {
-    Text = "THÔNG TIN NHÂN VIÊN",
-    Location = new Point(5, 5),
-    Size = new Size(368, 310),
-       Font = new Font("Segoe UI", 10F, FontStyle.Bold),
-       ForeColor = Color.FromArgb(33, 150, 243)
-      };
+            // Set form centered
+            this.StartPosition = FormStartPosition.CenterScreen;
 
-   // Create labels
-int yPos = 30;
-  int ySpacing = 35;
+            // Subscribe to DataGridView click events
+            dataGridView1.CellClick += dataGridView1_CellClick;
+            dataGridView1.KeyDown += dataGridView1_KeyDown;
 
-       lblDetailMaNv = CreateDetailLabel("Mã NV: ", yPos);
-     lblDetailTenNv = CreateDetailLabel("Họ tên: ", yPos += ySpacing);
-  lblDetailChucVu = CreateDetailLabel("Chức vụ: ", yPos += ySpacing);
-     lblDetailSoDienThoai = CreateDetailLabel("SĐT: ", yPos += ySpacing);
-   lblDetailTaiKhoan = CreateDetailLabel("Tài khoản: ", yPos += ySpacing);
-       lblDetailVaiTro = CreateDetailLabel("Vai trò: ", yPos += ySpacing);
-        lblDetailTrangThai = CreateDetailLabel("Trạng thái: ", yPos += ySpacing);
-  lblDetailSoDonHang = CreateDetailLabel("Số ĐH: ", yPos += ySpacing);
+            // Add Save button for updating ChucVu
+            CreateSaveButton();
 
-// Create buttons
-       btnLockUnlock = new Button
-       {
-     Text = "Khóa/Mở khóa",
-    Location = new Point(15, 250),
-      Size = new Size(130, 35),
-    BackColor = Color.FromArgb(255, 152, 0),
-   ForeColor = Color.White,
-       Font = new Font("Segoe UI", 9F, FontStyle.Bold)
-        };
-      btnLockUnlock.Click += BtnLockUnlock_Click;
-
-     btnCloseDetail = new Button
-   {
-   Text = "Đóng",
-        Location = new Point(160, 250),
-     Size = new Size(130, 35),
-          BackColor = Color.FromArgb(158, 158, 158),
-     ForeColor = Color.White,
-   Font = new Font("Segoe UI", 9F, FontStyle.Bold)
-   };
-   btnCloseDetail.Click += (s, e) => panelEmployeeDetail.Visible = false;
-
- // Add controls to GroupBox
-     groupBoxDetail.Controls.Add(lblDetailMaNv);
-      groupBoxDetail.Controls.Add(lblDetailTenNv);
-         groupBoxDetail.Controls.Add(lblDetailChucVu);
-     groupBoxDetail.Controls.Add(lblDetailSoDienThoai);
-   groupBoxDetail.Controls.Add(lblDetailTaiKhoan);
-            groupBoxDetail.Controls.Add(lblDetailVaiTro);
-       groupBoxDetail.Controls.Add(lblDetailTrangThai);
-      groupBoxDetail.Controls.Add(lblDetailSoDonHang);
-      groupBoxDetail.Controls.Add(btnLockUnlock);
-  groupBoxDetail.Controls.Add(btnCloseDetail);
-
-       // Add GroupBox to panel
-    panelEmployeeDetail.Controls.Add(groupBoxDetail);
-
- // Add panel to tabPage2 (Employee Management tab)
-      tabPage2.Controls.Add(panelEmployeeDetail);
-panelEmployeeDetail.BringToFront();
- }
-
-  private Label CreateDetailLabel(string prefix, int y)
-     {
-      return new Label
-     {
-    Text = prefix,
-      Location = new Point(15, y),
-     Size = new Size(340, 25),
-      Font = new Font("Segoe UI", 9.5F),
-          ForeColor = Color.Black,
-       AutoSize = false
-         };
+            // Initially hide the panel
+            panel1.Visible = false;
         }
 
-  // Load overview statistics
-     private void LoadOverviewData()
-{
-  try
- {
- using var db = new DataSqlContext();
+        private void CreateSaveButton()
+        {
+            // Check if button1 already exists for password change
+            // Add another button for saving ChucVu changes
+            Button btnSaveChucVu = new Button
+            {
+                Text = "Lưu thay đổi",
+                Location = new Point(520, 285),
+                Size = new Size(120, 41),
+                BackColor = Color.FromArgb(46, 125, 50),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                Name = "btnSaveChucVu"
+            };
+            btnSaveChucVu.Click += BtnSaveChucVu_Click;
 
-    // Create overview statistics
-      var overviewData = new[]
+            // Add to panel1
+            if (!panel1.Controls.Contains(btnSaveChucVu))
+            {
+                panel1.Controls.Add(btnSaveChucVu);
+            }
+        }
+
+        private void BtnSaveChucVu_Click(object? sender, EventArgs e)
+        {
+            if (selectedEmployeeId == 0)
+            {
+                MessageBox.Show(
+  "Vui lòng chọn nhân viên để cập nhật!",
+           "Thông báo",
+    MessageBoxButtons.OK,
+              MessageBoxIcon.Warning);
+   return;
+            }
+
+ try
+  {
+         using var db = new DataSqlContext();
+                var nhanVien = db.NhanViens.FirstOrDefault(nv => nv.MaNv == selectedEmployeeId);
+
+ if (nhanVien == null)
+        {
+          MessageBox.Show(
+             "Không tìm thấy nhân viên trong cơ sở dữ liệu!",
+        "Lỗi",
+    MessageBoxButtons.OK,
+          MessageBoxIcon.Error);
+         return;
+    }
+
+         // Get new value from ComboBox instead of TextBox
+    ComboBox? cboChucVuEdit = panel1.Controls.OfType<ComboBox>()
+    .FirstOrDefault(c => c.Name == "cboChucVuEdit");
+     
+        if (cboChucVuEdit == null || cboChucVuEdit.SelectedItem == null)
+            {
+   MessageBox.Show(
+          "Vui lòng chọn chức vụ!",
+    "Lỗi",
+      MessageBoxButtons.OK,
+    MessageBoxIcon.Warning);
+      return;
+    }
+
+         string newChucVu = cboChucVuEdit.SelectedItem.ToString() ?? "";
+
+         // Confirm update
+    var confirmResult = MessageBox.Show(
+          $"Bạn có chắc muốn cập nhật chức vụ của nhân viên '{nhanVien.TenNv}'?\n\n" +
+  $"Chức vụ cũ: {nhanVien.ChucVu}\n" +
+       $"Chức vụ mới: {newChucVu}",
+         "Xác nhận cập nhật",
+          MessageBoxButtons.YesNo,
+     MessageBoxIcon.Question);
+
+  if (confirmResult != DialogResult.Yes)
+{
+               return;
+           }
+
+ // Update ChucVu
+     nhanVien.ChucVu = newChucVu;
+      db.SaveChanges();
+
+MessageBox.Show(
+       $"Đã cập nhật chức vụ thành công!\n" +
+      $"Nhân viên: {nhanVien.TenNv}\n" +
+  $"Chức vụ mới: {newChucVu}",
+"Thành công",
+    MessageBoxButtons.OK,
+ MessageBoxIcon.Information);
+
+  // Refresh data
+ LoadEmployeeData();
+       panel1.Visible = false;
+  selectedEmployeeId = 0;
+     }
+   catch (Exception ex)
+{
+      MessageBox.Show(
+        $"Lỗi khi cập nhật chức vụ:\n{ex.Message}",
+ "Lỗi",
+     MessageBoxButtons.OK,
+      MessageBoxIcon.Error);
+     }
+        }
+
+        private void Admin_Load(object sender, EventArgs e)
      {
-   new { 
-Category = "Tổng số nhân viên",
-  Count = db.NhanViens.Count(),
- Details = "Nhân viên đang làm việc"
-     },
-    new { 
-  Category = "Tổng số sản phẩm",
-Count = db.SanPhams.Count(s => s.TrangThai == "Con ban"),
-    Details = "Sản phẩm đang bán"
-    },
-  new { 
-    Category = "Tổng số đơn hàng",
-   Count = db.DonHangs.Count(),
- Details = "Tất cả đơn hàng"
-     },
-  new { 
-      Category = "Đơn hàng hôm nay",
-   Count = db.DonHangs
-    .AsEnumerable()
-   .Count(d => d.NgayLap.HasValue && d.NgayLap.Value.Date == DateTime.Today),
-   Details = DateTime.Today.ToString("dd/MM/yyyy")
-  },
-   new { 
-  Category = "Nguyên liệu trong kho",
-  Count = db.NguyenLieus.Count(),
-   Details = "Tổng số loại nguyên liệu"
+// Load data for the first tab (Overview)
+  LoadOverviewData();
+        }
+
+        private void tabControl1_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            // Load data based on selected tab
+            switch (tabControl1.SelectedIndex)
+      {
+       case 0: // Tổng quát
+          LoadOverviewData();
+      break;
+        case 1: // Quản Lý Nhân Viên
+           LoadEmployeeData();
+        panel1.Visible = false;
+          break;
+ case 2: // Quản Lý Kho
+            LoadInventoryData();
+      break;
+     case 3: // Doanh thu
+LoadRevenueData();
+   break;
+            }
+        }
+
+        // Load overview statistics
+      private void LoadOverviewData()
+        {
+      try
+            {
+        using var db = new DataSqlContext();
+
+                // Create overview statistics
+                var overviewData = new[]
+  {
+         new {
+    Category = "Tổng số nhân viên",
+         Count = db.NhanViens.Count(),
+        Details = "Nhân viên đang làm việc"
+   },
+               new {
+       Category = "Tổng số sản phẩm",
+              Count = db.SanPhams.Count(s => s.TrangThai == "Con ban"),
+   Details = "Sản phẩm đang bán"
+       },
+             new {
+        Category = "Tổng số đơn hàng",
+    Count = db.DonHangs.Count(),
+    Details = "Tất cả đơn hàng"
+          },
+   new {
+  Category = "Đơn hàng hôm nay",
+     Count = db.DonHangs
+       .AsEnumerable()
+        .Count(d => d.NgayLap.HasValue && d.NgayLap.Value.Date == DateTime.Today),
+      Details = DateTime.Today.ToString("dd/MM/yyyy")
       },
-   new { 
-Category = "Khách hàng",
-    Count = db.KhachHangs.Count(),
+         new {
+         Category = "Nguyên liệu trong kho",
+ Count = db.NguyenLieus.Count(),
+           Details = "Tổng số loại nguyên liệu"
+            },
+               new {
+    Category = "Khách hàng",
+       Count = db.KhachHangs.Count(),
    Details = "Tổng số khách hàng"
    }
- };
+        };
 
-dgvOverview.DataSource = overviewData;
+     dgvOverview.DataSource = overviewData;
 
-// Format columns
-    StyleDataGridView(dgvOverview);
-     dgvOverview.Columns["Category"].HeaderText = "Danh mục";
-dgvOverview.Columns["Count"].HeaderText = "Số lượng";
- dgvOverview.Columns["Details"].HeaderText = "Chi tiết";
- }
-catch (Exception ex)
- {
- MessageBox.Show(
-   $"Lỗi khi tải dữ liệu tổng quan:\n{ex.Message}",
-  "Lỗi",
- MessageBoxButtons.OK,
-   MessageBoxIcon.Error);
-    }
-}
+  // Format columns
+                StyleDataGridView(dgvOverview);
+   dgvOverview.Columns["Category"].HeaderText = "Danh mục";
+              dgvOverview.Columns["Count"].HeaderText = "Số lượng";
+                dgvOverview.Columns["Details"].HeaderText = "Chi tiết";
+  }
+            catch (Exception ex)
+{
+         MessageBox.Show(
+ $"Lỗi khi tải dữ liệu tổng quan:\n{ex.Message}",
+       "Lỗi",
+    MessageBoxButtons.OK,
+    MessageBoxIcon.Error);
+            }
+        }
 
-  // Load employee data from database
+        // Load employee data from database
   private void LoadEmployeeData()
      {
-  try
-  {
-       using var db = new DataSqlContext();
+        try
+       {
+        using var db = new DataSqlContext();
 
-     var employees = db.NhanViens
-     .Select(nv => new
-  {
- nv.MaNv,
- nv.TenNv,
-    nv.ChucVu,
-   nv.SoDienThoai,
-  TaiKhoan = nv.TaiKhoan != null ? nv.TaiKhoan.TenDangNhap : "Chưa có",
-     VaiTro = nv.TaiKhoan != null ? nv.TaiKhoan.MaVaiTroNavigation.TenVaiTro : "N/A",
-         TrangThai = nv.TaiKhoan != null ? 
-   (nv.TaiKhoan.TrangThai == true ? "Hoạt động" : "Bị khóa") : "N/A"
-    })
- .ToList();
+                var employees = db.NhanViens
+                    .Select(nv => new
+        {
+        nv.MaNv,
+         nv.TenNv,
+             nv.ChucVu,
+nv.SoDienThoai,
+            TaiKhoan = nv.TaiKhoan != null ? nv.TaiKhoan.TenDangNhap : "Chưa có",
+         VaiTro = nv.TaiKhoan != null ? nv.TaiKhoan.MaVaiTroNavigation.TenVaiTro : "N/A",
+   TrangThai = nv.TaiKhoan != null ?
+     (nv.TaiKhoan.TrangThai == true ? "Hoạt động" : "Bị khóa") : "N/A"
+           })
+             .ToList();
 
-  dgvEmployees.DataSource = employees;
+       dataGridView1.DataSource = employees;
 
    // Format columns
-    StyleDataGridView(dgvEmployees);
-    dgvEmployees.Columns["MaNv"].HeaderText = "Mã NV";
- dgvEmployees.Columns["TenNv"].HeaderText = "Họ tên";
-  dgvEmployees.Columns["ChucVu"].HeaderText = "Chức vụ";
-   dgvEmployees.Columns["SoDienThoai"].HeaderText = "Số điện thoại";
- dgvEmployees.Columns["TaiKhoan"].HeaderText = "Tài khoản";
-     dgvEmployees.Columns["VaiTro"].HeaderText = "Vai trò";
-dgvEmployees.Columns["TrangThai"].HeaderText = "Trạng thái";
- }
-    catch (Exception ex)
-{
-    MessageBox.Show(
-     $"Lỗi khi tải dữ liệu nhân viên:\n{ex.Message}",
-   "Lỗi",
-   MessageBoxButtons.OK,
-   MessageBoxIcon.Error);
-  }
-   }
+  StyleDataGridView(dataGridView1);
+          dataGridView1.Columns["MaNv"].HeaderText = "Mã NV";
+       dataGridView1.Columns["TenNv"].HeaderText = "Họ tên";
+           dataGridView1.Columns["ChucVu"].HeaderText = "Chức vụ";
+   dataGridView1.Columns["SoDienThoai"].HeaderText = "Số điện thoại";
+     dataGridView1.Columns["TaiKhoan"].HeaderText = "Tài khoản";
+   dataGridView1.Columns["VaiTro"].HeaderText = "Vai trò";
+        dataGridView1.Columns["TrangThai"].HeaderText = "Trạng thái";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+          $"Lỗi khi tải dữ liệu nhân viên:\n{ex.Message}",
+        "Lỗi",
+        MessageBoxButtons.OK,
+     MessageBoxIcon.Error);
+            }
+}
 
-   // Load inventory data from database
- private void LoadInventoryData()
-    {
+        // Load inventory data from database
+        private void LoadInventoryData()
+      {
    try
- {
-using var db = new DataSqlContext();
-
-    var inventory = db.NguyenLieus
-     .Select(nl => new
- {
-nl.MaNl,
-    nl.TenNl,
-       nl.DonViTinh,
-   SoLuongTon = Math.Round(nl.SoLuongTon ?? 0, 2),
-  NguongCanhBao = Math.Round(nl.NguongCanhBao ?? 0, 2),
-   TinhTrang = (nl.SoLuongTon ?? 0) <= (nl.NguongCanhBao ?? 0) ? 
- "⚠️ Cần nhập" : "✓ Đủ"
-     })
-   .OrderBy(nl => nl.SoLuongTon)
-    .ToList();
-
-   dgvInventory.DataSource = inventory;
-
- // Format columns
- StyleDataGridView(dgvInventory);
-   dgvInventory.Columns["MaNl"].HeaderText = "Mã NL";
-   dgvInventory.Columns["TenNl"].HeaderText = "Tên nguyên liệu";
-     dgvInventory.Columns["DonViTinh"].HeaderText = "Đơn vị";
-  dgvInventory.Columns["SoLuongTon"].HeaderText = "Số lượng tồn";
-     dgvInventory.Columns["NguongCanhBao"].HeaderText = "Ngưỡng cảnh báo";
-dgvInventory.Columns["TinhTrang"].HeaderText = "Tình trạng";
-
-    // Highlight low stock items
-        foreach (DataGridViewRow row in dgvInventory.Rows)
- {
-   if (row.Cells["TinhTrang"].Value?.ToString()?.Contains("Cần nhập") == true)
- {
-    row.DefaultCellStyle.BackColor = Color.FromArgb(255, 235, 238);
- row.DefaultCellStyle.ForeColor = Color.FromArgb(211, 47, 47);
-  }
-   }
-  }
-catch (Exception ex)
-   {
-  MessageBox.Show(
-      $"Lỗi khi tải dữ liệu kho:\n{ex.Message}",
-   "Lỗi",
-     MessageBoxButtons.OK,
- MessageBoxIcon.Error);
-   }
-  }
-
-        // Load revenue data from database
-private void LoadRevenueData()
-        {
-     try
-     {
+          {
    using var db = new DataSqlContext();
 
-   var revenueData = db.DonHangs
-  .Where(dh => dh.TongTien.HasValue && dh.NgayLap.HasValue)
-  .ToList() // Load to memory first
-  .GroupBy(dh => new { 
- Year = dh.NgayLap!.Value.Year,
-    Month = dh.NgayLap!.Value.Month
-   })
-        .Select(g => new
-{
- Thang = $"{g.Key.Month:00}/{g.Key.Year}",
-   SoDonHang = g.Count(),
- TongDoanhThu = Math.Round(g.Sum(dh => dh.TongTien ?? 0), 0),
-    DoanhThuTrungBinh = Math.Round(g.Average(dh => dh.TongTien ?? 0), 0),
- DonHangLonNhat = Math.Round(g.Max(dh => dh.TongTien ?? 0), 0),
-      DonHangNhoNhat = Math.Round(g.Min(dh => dh.TongTien ?? 0), 0)
-})
- .OrderByDescending(x => x.Thang)
-.Take(12)
-.ToList();
-
-     dgvRevenue.DataSource = revenueData;
-
-    // Format columns
- StyleDataGridView(dgvRevenue);
-  dgvRevenue.Columns["Thang"].HeaderText = "Tháng";
-  dgvRevenue.Columns["SoDonHang"].HeaderText = "Số đơn hàng";
-dgvRevenue.Columns["TongDoanhThu"].HeaderText = "Tổng doanh thu";
- dgvRevenue.Columns["DoanhThuTrungBinh"].HeaderText = "TB/Đơn";
-    dgvRevenue.Columns["DonHangLonNhat"].HeaderText = "Cao nhất";
-  dgvRevenue.Columns["DonHangNhoNhat"].HeaderText = "Thấp nhất";
-
-  // Format currency columns
-  dgvRevenue.Columns["TongDoanhThu"].DefaultCellStyle.Format = "N0";
-    dgvRevenue.Columns["DoanhThuTrungBinh"].DefaultCellStyle.Format = "N0";
-    dgvRevenue.Columns["DonHangLonNhat"].DefaultCellStyle.Format = "N0";
-       dgvRevenue.Columns["DonHangNhoNhat"].DefaultCellStyle.Format = "N0";
- }
- catch (Exception ex)
-   {
-    MessageBox.Show(
- $"Lỗi khi tải dữ liệu doanh thu:\n{ex.Message}",
-  "Lỗi",
-  MessageBoxButtons.OK,
-      MessageBoxIcon.Error);
-      }
-  }
-
- // Apply consistent styling to DataGridViews
-   private void StyleDataGridView(DataGridView dgv)
-{
-    // Header style
-     dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(33, 150, 243);
- dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-  dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-    dgv.EnableHeadersVisualStyles = false;
-
-  // Alternate row colors
-  dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(240, 248, 255);
-  dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(100, 181, 246);
-  dgv.DefaultCellStyle.SelectionForeColor = Color.White;
-
-     // Auto size
-  dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-    }
-
-      // Event handler when user clicks on employee row
-   private void dgvEmployees_CellClick(object? sender, DataGridViewCellEventArgs e)
-  {
-     if (e.RowIndex >= 0) // Valid row clicked
-{
-       ShowEmployeeDetailInPanel(e.RowIndex);
-}
- }
-
-     // Event handler for keyboard navigation (Enter key)
-      private void dgvEmployees_KeyDown(object? sender, KeyEventArgs e)
- {
- if (e.KeyCode == Keys.Enter && dgvEmployees.CurrentRow != null)
-{
-   e.Handled = true; // Prevent default behavior
-     ShowEmployeeDetailInPanel(dgvEmployees.CurrentRow.Index);
-  }
-  }
-
-     private void ShowEmployeeDetailInPanel(int rowIndex)
-   {
-  try
- {
-    var row = dgvEmployees.Rows[rowIndex];
-       
-// Get employee ID from the row
-if (row.Cells["MaNv"].Value != null)
-    {
- int maNv = Convert.ToInt32(row.Cells["MaNv"].Value);
-   
-            // Load employee details from database
-      using var db = new DataSqlContext();
-
-       var employee = db.NhanViens
-      .Where(nv => nv.MaNv == maNv)
-        .Select(nv => new
+      var inventory = db.NguyenLieus
+  .Select(nl => new
       {
-  nv.MaNv,
-        nv.TenNv,
-           nv.ChucVu,
-           nv.SoDienThoai,
-  TenDangNhap = nv.TaiKhoan != null ? nv.TaiKhoan.TenDangNhap : "Chưa có",
-           VaiTro = nv.TaiKhoan != null ? nv.TaiKhoan.MaVaiTroNavigation.TenVaiTro : "N/A",
-TrangThai = nv.TaiKhoan != null ? 
-      (nv.TaiKhoan.TrangThai == true ? "Hoạt động" : "Bị khóa") : "N/A",
-           SoDonHang = nv.DonHangs.Count()
-   })
-                .FirstOrDefault();
+               nl.MaNl,
+     nl.TenNl,
+     nl.DonViTinh,
+        SoLuongTon = Math.Round(nl.SoLuongTon ?? 0, 2),
+           NguongCanhBao = Math.Round(nl.NguongCanhBao ?? 0, 2),
+       TinhTrang = (nl.SoLuongTon ?? 0) <= (nl.NguongCanhBao ?? 0) ?
+            "⚠️ Cần nhập" : "✓ Đủ"
+       })
+       .OrderBy(nl => nl.SoLuongTon)
+     .ToList();
 
-            if (employee != null)
-            {
-  // Update labels
-   lblDetailMaNv.Text = $"Mã NV: {employee.MaNv}";
-     lblDetailTenNv.Text = $"Họ tên: {employee.TenNv}";
-         lblDetailChucVu.Text = $"Chức vụ: {employee.ChucVu}";
-          lblDetailSoDienThoai.Text = $"SĐT: {(string.IsNullOrEmpty(employee.SoDienThoai) ? "Chưa cập nhật" : employee.SoDienThoai)}";
-           lblDetailTaiKhoan.Text = $"Tài khoản: {employee.TenDangNhap}";
-  lblDetailVaiTro.Text = $"Vai trò: {employee.VaiTro}";
-        lblDetailTrangThai.Text = $"Trạng thái: {employee.TrangThai}";
-              lblDetailSoDonHang.Text = $"Số đơn hàng: {employee.SoDonHang}";
-         
- // Set status color
-        if (employee.TrangThai == "Hoạt động")
-  lblDetailTrangThai.ForeColor = Color.Green;
-       else if (employee.TrangThai == "Bị khóa")
-           lblDetailTrangThai.ForeColor = Color.Red;
-         
-        // Store employee ID in Tag for later use
-        btnLockUnlock.Tag = maNv;
-                
-                // Show the panel
-     panelEmployeeDetail.Visible = true;
-            }
-  }
-    }
-      catch (Exception ex)
-     {
-    MessageBox.Show(
- $"Lỗi khi hiển thị chi tiết:\n{ex.Message}",
-  "Lỗi",
-      MessageBoxButtons.OK,
-        MessageBoxIcon.Error);
+                dgvInventory.DataSource = inventory;
+
+           // Format columns
+          StyleDataGridView(dgvInventory);
+           dgvInventory.Columns["MaNl"].HeaderText = "Mã NL";
+ dgvInventory.Columns["TenNl"].HeaderText = "Tên nguyên liệu";
+    dgvInventory.Columns["DonViTinh"].HeaderText = "Đơn vị";
+            dgvInventory.Columns["SoLuongTon"].HeaderText = "Số lượng tồn";
+           dgvInventory.Columns["NguongCanhBao"].HeaderText = "Ngưỡng cảnh báo";
+  dgvInventory.Columns["TinhTrang"].HeaderText = "Tình trạng";
+
+         // Highlight low stock items
+    foreach (DataGridViewRow row in dgvInventory.Rows)
+    {
+     if (row.Cells["TinhTrang"].Value?.ToString()?.Contains("Cần nhập") == true)
+           {
+    row.DefaultCellStyle.BackColor = Color.FromArgb(255, 235, 238);
+    row.DefaultCellStyle.ForeColor = Color.FromArgb(211, 47, 47);
    }
+    }
+            }
+       catch (Exception ex)
+     {
+                MessageBox.Show(
+        $"Lỗi khi tải dữ liệu kho:\n{ex.Message}",
+     "Lỗi",
+         MessageBoxButtons.OK,
+      MessageBoxIcon.Error);
+            }
+     }
+
+        // Load revenue data from database
+        private void LoadRevenueData()
+{
+       try
+          {
+  using var db = new DataSqlContext();
+
+ var revenueData = db.DonHangs
+           .Where(dh => dh.TongTien.HasValue && dh.NgayLap.HasValue)
+   .ToList()
+      .GroupBy(dh => new
+          {
+      Year = dh.NgayLap!.Value.Year,
+   Month = dh.NgayLap!.Value.Month
+         })
+        .Select(g => new
+  {
+      Thang = $"{g.Key.Month:00}/{g.Key.Year}",
+   SoDonHang = g.Count(),
+             TongDoanhThu = Math.Round(g.Sum(dh => dh.TongTien ?? 0), 0),
+  DoanhThuTrungBinh = Math.Round(g.Average(dh => dh.TongTien ?? 0), 0),
+    DonHangLonNhat = Math.Round(g.Max(dh => dh.TongTien ?? 0), 0),
+     DonHangNhoNhat = Math.Round(g.Min(dh => dh.TongTien ?? 0), 0)
+              })
+                  .OrderByDescending(x => x.Thang)
+         .Take(12)
+ .ToList();
+
+      dgvRevenue.DataSource = revenueData;
+
+        // Format columns
+     StyleDataGridView(dgvRevenue);
+        dgvRevenue.Columns["Thang"].HeaderText = "Tháng";
+     dgvRevenue.Columns["SoDonHang"].HeaderText = "Số đơn hàng";
+       dgvRevenue.Columns["TongDoanhThu"].HeaderText = "Tổng doanh thu";
+    dgvRevenue.Columns["DoanhThuTrungBinh"].HeaderText = "TB/Đơn";
+   dgvRevenue.Columns["DonHangLonNhat"].HeaderText = "Cao nhất";
+                dgvRevenue.Columns["DonHangNhoNhat"].HeaderText = "Thấp nhất";
+
+         // Format currency columns
+    dgvRevenue.Columns["TongDoanhThu"].DefaultCellStyle.Format = "N0";
+          dgvRevenue.Columns["DoanhThuTrungBinh"].DefaultCellStyle.Format = "N0";
+      dgvRevenue.Columns["DonHangLonNhat"].DefaultCellStyle.Format = "N0";
+    dgvRevenue.Columns["DonHangNhoNhat"].DefaultCellStyle.Format = "N0";
+        }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+          $"Lỗi khi tải dữ liệu doanh thu:\n{ex.Message}",
+                    "Lỗi",
+               MessageBoxButtons.OK,
+        MessageBoxIcon.Error);
+            }
+    }
+
+        // Apply consistent styling to DataGridViews
+        private void StyleDataGridView(DataGridView dgv)
+        {
+            dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(33, 150, 243);
+    dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+          dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+        dgv.EnableHeadersVisualStyles = false;
+        dgv.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(240, 248, 255);
+      dgv.DefaultCellStyle.SelectionBackColor = Color.FromArgb(100, 181, 246);
+       dgv.DefaultCellStyle.SelectionForeColor = Color.White;
+            dgv.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+   }
+
+        private void dataGridView1_CellClick(object? sender, DataGridViewCellEventArgs e)
+  {
+          if (e.RowIndex >= 0)
+          {
+  ShowEmployeeDetailInPanel(e.RowIndex);
+    }
+  }
+
+    private void dataGridView1_KeyDown(object? sender, KeyEventArgs e)
+    {
+  if (e.KeyCode == Keys.Enter && dataGridView1.CurrentRow != null)
+ {
+e.Handled = true;
+         ShowEmployeeDetailInPanel(dataGridView1.CurrentRow.Index);
+            }
+        }
+
+ private void ShowEmployeeDetailInPanel(int rowIndex)
+   {
+    try
+{
+  var row = dataGridView1.Rows[rowIndex];
+
+      if (row.Cells["MaNv"].Value != null)
+       {
+   int maNv = Convert.ToInt32(row.Cells["MaNv"].Value);
+         selectedEmployeeId = maNv;
+
+     using var db = new DataSqlContext();
+
+     var employee = db.NhanViens
+             .Where(nv => nv.MaNv == maNv)
+ .Select(nv => new
+      {
+      nv.MaNv,
+   nv.TenNv,
+        nv.ChucVu,
+      nv.SoDienThoai,
+   TenDangNhap = nv.TaiKhoan != null ? nv.TaiKhoan.TenDangNhap : "",
+  VaiTro = nv.TaiKhoan != null ? nv.TaiKhoan.MaVaiTroNavigation.TenVaiTro : "",
+       MaVaiTro = nv.TaiKhoan != null ? nv.TaiKhoan.MaVaiTro : 0
+      })
+   .FirstOrDefault();
+
+         if (employee != null)
+        {
+      textBox1.Text = employee.MaNv.ToString();
+   textBox2.Text = employee.TenNv ?? "";
+    textBox3.Text = employee.SoDienThoai ?? "";
+
+   // Replace textBox4 with ComboBox for ChucVu
+    ComboBox cboChucVuEdit = panel1.Controls.OfType<ComboBox>()
+    .FirstOrDefault(c => c.Name == "cboChucVuEdit");
+      
+if (cboChucVuEdit == null)
+    {
+   // Create ComboBox if it doesn't exist
+         cboChucVuEdit = new ComboBox
+         {
+      Name = "cboChucVuEdit",
+       Location = textBox4.Location,
+     Size = textBox4.Size,
+     DropDownStyle = ComboBoxStyle.DropDownList,
+      Font = textBox4.Font,
+       BackColor = Color.FromArgb(255, 255, 204) // Light yellow
+    };
+        cboChucVuEdit.Items.AddRange(new object[]
+{
+    "Nhân viên thu ngân",
+         "Nhân viên pha chế",
+   "Quản lý",
+       "Chủ hàng"
+      });
+           
+  // Hide textBox4 and add ComboBox
+    textBox4.Visible = false;
+    panel1.Controls.Add(cboChucVuEdit);
+     cboChucVuEdit.BringToFront();
+ }
+ 
+    // Set ComboBox value
+  string currentChucVu = employee.ChucVu ?? "";
+if (cboChucVuEdit.Items.Contains(currentChucVu))
+{
+  cboChucVuEdit.SelectedItem = currentChucVu;
+    }
+    else
+   {
+ if (!string.IsNullOrEmpty(currentChucVu))
+     {
+     cboChucVuEdit.Items.Add(currentChucVu);
+        cboChucVuEdit.SelectedItem = currentChucVu;
+    }
+        else
+    {
+  cboChucVuEdit.SelectedIndex = 0;
+     }
+      }
+
+     // Replace textBox5 with ComboBox for VaiTro
+           ComboBox cboVaiTroEdit = panel1.Controls.OfType<ComboBox>()
+   .FirstOrDefault(c => c.Name == "cboVaiTroEdit");
+           
+    if (cboVaiTroEdit == null)
+ {
+       // Create ComboBox for VaiTro
+    cboVaiTroEdit = new ComboBox
+     {
+          Name = "cboVaiTroEdit",
+         Location = textBox5.Location,
+      Size = textBox5.Size,
+     DropDownStyle = ComboBoxStyle.DropDownList,
+           Font = textBox5.Font,
+         BackColor = Color.FromArgb(255, 255, 204), // Light yellow
+     Tag = employee.MaVaiTro // Store current MaVaiTro
+     };
+  
+     // Load VaiTro from database
+    var vaiTros = db.VaiTros.OrderBy(v => v.MaVaiTro).ToList();
+       foreach (var vt in vaiTros)
+       {
+         cboVaiTroEdit.Items.Add(new { Text = vt.TenVaiTro, Value = vt.MaVaiTro });
+     }
+  cboVaiTroEdit.DisplayMember = "Text";
+      cboVaiTroEdit.ValueMember = "Value";
+  
+       // Hide textBox5 and add ComboBox
+ textBox5.Visible = false;
+    panel1.Controls.Add(cboVaiTroEdit);
+ cboVaiTroEdit.BringToFront();
+ }
+     else
+    {
+    // Update Tag with current MaVaiTro
+    cboVaiTroEdit.Tag = employee.MaVaiTro;
+  }
+      
+     // Set VaiTro ComboBox value
+            for (int i = 0; i < cboVaiTroEdit.Items.Count; i++)
+   {
+      dynamic item = cboVaiTroEdit.Items[i];
+           if (item.Value == employee.MaVaiTro)
+     {
+   cboVaiTroEdit.SelectedIndex = i;
+  break;
+        }
+      }
+
+         textBox6.Text = employee.TenDangNhap;
+
+  // Make textboxes readonly
+ textBox1.ReadOnly = true;
+      textBox2.ReadOnly = true;
+      textBox3.ReadOnly = true;
+     textBox6.ReadOnly = true;
+
+        panel1.Visible = true;
+}
+  }
+  }
+        catch (Exception ex)
+      {
+   MessageBox.Show(
+      $"Lỗi khi hiển thị chi tiết:\n{ex.Message}",
+   "Lỗi",
+       MessageBoxButtons.OK,
+       MessageBoxIcon.Error);
+    }
  }
 
-    private void BtnLockUnlock_Click(object? sender, EventArgs e)
-        {
-            try
-       {
-    if (btnLockUnlock.Tag == null) return;
-             
-      int maNv = (int)btnLockUnlock.Tag;
-     
-     using var db = new DataSqlContext();
-   var taiKhoan = db.TaiKhoans.FirstOrDefault(tk => tk.MaNv == maNv);
-                
-     if (taiKhoan == null)
-  {
-        MessageBox.Show("Nhân viên này chưa có tài khoản!", "Thông báo",
-        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+private void BtnSaveChucVu_Click(object? sender, EventArgs e)
+    {
+         if (selectedEmployeeId == 0)
+{
+      MessageBox.Show(
+  "Vui lòng chọn nhân viên để cập nhật!",
+      "Thông báo",
+    MessageBoxButtons.OK,
+      MessageBoxIcon.Warning);
    return;
     }
 
-          string action = taiKhoan.TrangThai == true ? "khóa" : "mở khóa";
-    
-      var result = MessageBox.Show(
-          $"Bạn có chắc muốn {action} tài khoản này?",
-            "Xác nhận",
-  MessageBoxButtons.YesNo,
-       MessageBoxIcon.Question);
-
-           if (result == DialogResult.Yes)
-    {
-          taiKhoan.TrangThai = !taiKhoan.TrangThai;
-     db.SaveChanges();
-
-        MessageBox.Show($"Đã {action} tài khoản thành công!", "Thành công",
-           MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-       // Refresh data
-    LoadEmployeeData();
-        panelEmployeeDetail.Visible = false;
-         }
-            }
-          catch (Exception ex)
-      {
-                MessageBox.Show(
-         $"Lỗi khi thay đổi trạng thái:\n{ex.Message}",
-          "Lỗi",
-        MessageBoxButtons.OK,
-          MessageBoxIcon.Error);
-          }
-    }
-
-   private void btnCreateAccount_Click(object sender, EventArgs e)
-{
  try
-      {
-   // Open create employee dialog
- CreateEmployeeForm createForm = new CreateEmployeeForm();
- 
- if (createForm.ShowDialog() == DialogResult.OK)
-   {
-  // Refresh employee data if on employee tab
-   if (tabControl1.SelectedIndex == 1)
-   {
- LoadEmployeeData();
-    }
-  else
-   {
-       // If not on employee tab, show message to navigate there
-       MessageBox.Show(
-       "Tài khoản đã được tạo thành công!\n" +
-  "Chuyển sang tab 'Quản Lý Nhân Viên' để xem danh sách.",
-      "Thành công",
-     MessageBoxButtons.OK,
-MessageBoxIcon.Information);
- }
-    }
-   }
- catch (Exception ex)
- {
-MessageBox.Show(
-     $"Lỗi khi tạo tài khoản:\n{ex.Message}",
-"Lỗi",
-  MessageBoxButtons.OK,
-   MessageBoxIcon.Error);
-  }
- }
-
-        private void btnDeleteAccount_Click(object sender, EventArgs e)
-        {
-      // Check if an employee is selected
-   if (dgvEmployees.SelectedRows.Count == 0)
   {
-         MessageBox.Show(
-        "Vui lòng chọn nhân viên cần xóa!",
-  "Thông báo",
+      using var db = new DataSqlContext();
+    var nhanVien = db.NhanViens.FirstOrDefault(nv => nv.MaNv == selectedEmployeeId);
+
+ if (nhanVien == null)
+  {
+        MessageBox.Show(
+   "Không tìm thấy nhân viên trong cơ sở dữ liệu!",
+     "Lỗi",
+ MessageBoxButtons.OK,
+    MessageBoxIcon.Error);
+         return;
+    }
+
+     // Get new values from ComboBoxes
+    ComboBox? cboChucVuEdit = panel1.Controls.OfType<ComboBox>()
+    .FirstOrDefault(c => c.Name == "cboChucVuEdit");
+     ComboBox? cboVaiTroEdit = panel1.Controls.OfType<ComboBox>()
+      .FirstOrDefault(c => c.Name == "cboVaiTroEdit");
+         
+        if (cboChucVuEdit == null || cboChucVuEdit.SelectedItem == null)
+   {
+   MessageBox.Show(
+          "Vui lòng chọn chức vụ!",
+    "Lỗi",
       MessageBoxButtons.OK,
-     MessageBoxIcon.Warning);
-    return;
+    MessageBoxIcon.Warning);
+      return;
+ }
+
+   if (cboVaiTroEdit == null || cboVaiTroEdit.SelectedItem == null)
+     {
+   MessageBox.Show(
+         "Vui lòng chọn vai trò!",
+  "Lỗi",
+  MessageBoxButtons.OK,
+   MessageBoxIcon.Warning);
+   return;
    }
 
-  try
+         string newChucVu = cboChucVuEdit.SelectedItem.ToString() ?? "";
+      dynamic selectedVaiTro = cboVaiTroEdit.SelectedItem;
+    int newMaVaiTro = selectedVaiTro.Value;
+          string newTenVaiTro = selectedVaiTro.Text;
+
+      int oldMaVaiTro = (int)(cboVaiTroEdit.Tag ?? 0);
+
+     // Build confirmation message
+    string message = $"Bạn có chắc muốn cập nhật thông tin của nhân viên '{nhanVien.TenNv}'?\n\n";
+    message += $"Chức vụ cũ: {nhanVien.ChucVu}\n";
+    message += $"Chức vụ mới: {newChucVu}\n\n";
+     
+ if (oldMaVaiTro != newMaVaiTro && nhanVien.TaiKhoan != null)
+      {
+       var oldVaiTro = db.VaiTros.FirstOrDefault(v => v.MaVaiTro == oldMaVaiTro);
+   message += $"Vai trò cũ: {oldVaiTro?.TenVaiTro}\n";
+     message += $"Vai trò mới: {newTenVaiTro}";
+  }
+
+ // Confirm update
+    var confirmResult = MessageBox.Show(
+   message,
+         "Xác nhận cập nhật",
+          MessageBoxButtons.YesNo,
+  MessageBoxIcon.Question);
+
+  if (confirmResult != DialogResult.Yes)
 {
-  var row = dgvEmployees.SelectedRows[0];
-   
-         if (row.Cells["MaNv"].Value == null)
-     {
-       MessageBox.Show(
- "Không thể xác định nhân viên được chọn!",
-              "Lỗi",
+    return;
+      }
+
+ // Update ChucVu
+     nhanVien.ChucVu = newChucVu;
+      
+      // Update VaiTro if changed and TaiKhoan exists
+    if (oldMaVaiTro != newMaVaiTro && nhanVien.TaiKhoan != null)
+  {
+   var taiKhoan = db.TaiKhoans.FirstOrDefault(tk => tk.MaNv == selectedEmployeeId);
+    if (taiKhoan != null)
+      {
+      taiKhoan.MaVaiTro = newMaVaiTro;
+   }
+       }
+
+    db.SaveChanges();
+
+MessageBox.Show(
+       $"Đã cập nhật thành công!\n" +
+      $"Nhân viên: {nhanVien.TenNv}\n" +
+  $"Chức vụ mới: {newChucVu}\n" +
+      $"Vai trò mới: {newTenVaiTro}",
+"Thành công",
+    MessageBoxButtons.OK,
+ MessageBoxIcon.Information);
+
+  // Refresh data
+ LoadEmployeeData();
+       panel1.Visible = false;
+  selectedEmployeeId = 0;
+     }
+   catch (Exception ex)
+{
+      MessageBox.Show(
+        $"Lỗi khi cập nhật:\n{ex.Message}",
+ "Lỗi",
      MessageBoxButtons.OK,
       MessageBoxIcon.Error);
-         return;
- }
-
-     int maNv = Convert.ToInt32(row.Cells["MaNv"].Value);
-      string tenNv = row.Cells["TenNv"].Value?.ToString() ?? "N/A";
-
-// Confirm deletion
-       var confirmResult = MessageBox.Show(
-     $"Bạn có chắc muốn xóa nhân viên này?\n\n" +
-  $"Mã NV: {maNv}\n" +
-   $"Họ tên: {tenNv}\n\n" +
-        "⚠️ CẢNH BÁO: Hành động này sẽ xóa:\n" +
-   "- Thông tin nhân viên\n" +
-     "- Tài khoản đăng nhập\n" +
-         "- Tất cả dữ liệu liên quan\n\n" +
-        "Dữ liệu sau khi xóa KHÔNG THỂ KHÔI PHỤC!",
-    "⚠️ Xác nhận xóa",
-          MessageBoxButtons.YesNo,
-      MessageBoxIcon.Warning);
-
-      if (confirmResult != DialogResult.Yes)
-      {
-     return;
-  }
-
-  using var db = new DataSqlContext();
-   
-     // Find employee
-  var nhanVien = db.NhanViens
-       .Include(nv => nv.TaiKhoan)
-  .Include(nv => nv.DonHangs)
-     .Include(nv => nv.PhieuKhos)
-  .FirstOrDefault(nv => nv.MaNv == maNv);
-
-     if (nhanVien == null)
-   {
-     MessageBox.Show(
-    "Không tìm thấy nhân viên trong cơ sở dữ liệu!",
-        "Lỗi",
-            MessageBoxButtons.OK,
-           MessageBoxIcon.Error);
- return;
-        }
-
-   // Check if employee has orders or warehouse receipts
-     bool hasOrders = nhanVien.DonHangs.Any();
-       bool hasReceipts = nhanVien.PhieuKhos.Any();
-
-  if (hasOrders || hasReceipts)
-     {
- var warningResult = MessageBox.Show(
-    $"⚠️ CÀNH BÁO NGHIÊM TRỌNG:\n\n" +
-     $"Nhân viên này có:\n" +
-      $"- {nhanVien.DonHangs.Count} đơn hàng\n" +
- $"- {nhanVien.PhieuKhos.Count} phiếu kho\n\n" +
- "Xóa nhân viên này có thể ảnh hưởng đến:\n" +
-        "- Báo cáo doanh thu\n" +
-   "- Lịch sử đơn hàng\n" +
- "- Quản lý kho\n\n" +
-    "Khuyến nghị: NÊN KHÓA TÀI KHOẢN thay vì xóa.\n\n" +
-  "Bạn vẫn muốn tiếp tục xóa?",
-         "⚠️⚠️ Cảnh báo nghiêm trọng",
-   MessageBoxButtons.YesNo,
- MessageBoxIcon.Stop);
-
-     if (warningResult != DialogResult.Yes)
- {
-        return;
-  }
-         }
-
-    // Delete TaiKhoan first (if exists)
-    if (nhanVien.TaiKhoan != null)
-  {
-     db.TaiKhoans.Remove(nhanVien.TaiKhoan);
- }
-
-    // Delete NhanVien
-  db.NhanViens.Remove(nhanVien);
-        
- // Save changes
-     db.SaveChanges();
-
-   MessageBox.Show(
-$"Đã xóa nhân viên '{tenNv}' thành công!",
-       "Thành công",
-    MessageBoxButtons.OK,
-      MessageBoxIcon.Information);
-
-      // Refresh the employee list
-       LoadEmployeeData();
- 
-     // Refresh overview if needed
-      if (tabControl1.SelectedIndex == 0)
-            {
-      LoadOverviewData();
-  }
-       
-            // Hide detail panel if visible
-            panelEmployeeDetail.Visible = false;
-        }
-        catch (Exception ex)
- {
-   MessageBox.Show(
-     $"Lỗi khi xóa nhân viên:\n{ex.Message}\n\n" +
-  $"Chi tiết: {ex.InnerException?.Message}",
-          "Lỗi",
-  MessageBoxButtons.OK,
- MessageBoxIcon.Error);
-        }
-    }
-
-   private void btnExit_Click(object sender, EventArgs e)
-  {
-   DialogResult result = MessageBox.Show(
- "Bạn có chắc muốn thoát?",
-    "Xác nhận",
- MessageBoxButtons.YesNo,
- MessageBoxIcon.Question);
-
-       if (result == DialogResult.Yes)
-   {
-Application.Exit();
-    }
- }
-  }
-}
+     }
+      }
