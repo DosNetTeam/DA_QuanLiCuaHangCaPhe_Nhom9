@@ -59,21 +59,12 @@ LoadData_NhanVien();
     }
      cbThang.SelectedIndex = 0;
 
-
-            // Cài đặt cho ComboBox Trạng thái Hóa Đơn
-            cbTrangThaiHD.Items.Clear();
-            cbTrangThaiHD.Items.Add("Tất cả");
-            cbTrangThaiHD.Items.Add("Đang xử lý");
-            cbTrangThaiHD.Items.Add("Đã thanh toán");
-            cbTrangThaiHD.Items.Add("Đã hủy");
-
       // Cài đặt cho ComboBox Trạng thái Hóa Đơn
          cbTrangThaiHD.Items.Clear();
       cbTrangThaiHD.Items.Add("Tất cả");
 cbTrangThaiHD.Items.Add("Đang xu ly");
     cbTrangThaiHD.Items.Add("Đã thanh toán");
 cbTrangThaiHD.Items.Add("Đã hủy");
-
             cbTrangThaiHD.SelectedIndex = 0;
 
       // Placeholder text handling (nếu cần)
@@ -269,21 +260,6 @@ private void btnDangXuat_Click(object sender, EventArgs e)
          var confirm = MessageBox.Show("Bạn có chắc muốn đăng xuất không?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm != DialogResult.Yes) return;
 
-
-            // If a login Form1 instance was hidden earlier, reuse it; otherwise create a new one.
-            var existingLogin = Application.OpenForms.OfType<Loginform>().FirstOrDefault();
-            if (existingLogin != null)
-            {
-                existingLogin.Show();
-                existingLogin.BringToFront();
-            }
-            else
-            {
-                var login = new Loginform();
-                login.StartPosition = FormStartPosition.CenterScreen;
-                login.Show();
-            }
-
       // Use Loginform instead of Form1
  var existingLogin = Application.OpenForms.OfType<Loginform>().FirstOrDefault();
   if (existingLogin != null)
@@ -297,7 +273,6 @@ private void btnDangXuat_Click(object sender, EventArgs e)
       login.StartPosition = FormStartPosition.CenterScreen;
    login.Show();
       }
-
 
      this.Close();
    }

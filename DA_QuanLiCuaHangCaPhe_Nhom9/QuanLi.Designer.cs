@@ -76,7 +76,7 @@
             panelMenu.Dock = DockStyle.Left;
             panelMenu.Location = new Point(0, 0);
             panelMenu.Name = "panelMenu";
-            panelMenu.Size = new Size(260, 600);
+            panelMenu.Size = new Size(250, 450);
             panelMenu.TabIndex = 1;
             // 
             // btnDangXuat
@@ -85,10 +85,9 @@
             btnDangXuat.Dock = DockStyle.Bottom;
             btnDangXuat.FlatAppearance.BorderSize = 0;
             btnDangXuat.FlatStyle = FlatStyle.Flat;
-            btnDangXuat.ForeColor = Color.White;
-            btnDangXuat.Location = new Point(0, 553);
+            btnDangXuat.Location = new Point(0, 403);
             btnDangXuat.Name = "btnDangXuat";
-            btnDangXuat.Size = new Size(260, 47);
+            btnDangXuat.Size = new Size(250, 47);
             btnDangXuat.TabIndex = 6;
             btnDangXuat.Text = "Đăng xuất";
             btnDangXuat.UseVisualStyleBackColor = false;
@@ -97,9 +96,9 @@
             // lblCoffee
             // 
             lblCoffee.AutoSize = true;
-            lblCoffee.Font = new Font("Segoe UI", 26F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblCoffee.ForeColor = Color.White;
-            lblCoffee.Location = new Point(24, 40);
+            lblCoffee.Font = new Font("Segoe UI", 25.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblCoffee.ForeColor = Color.FromArgb(192, 64, 0);
+            lblCoffee.Location = new Point(24, 93);
             lblCoffee.Name = "lblCoffee";
             lblCoffee.Size = new Size(176, 60);
             lblCoffee.TabIndex = 1;
@@ -109,10 +108,9 @@
             // 
             panelContent.Controls.Add(tabControlMain);
             panelContent.Dock = DockStyle.Fill;
-            panelContent.Location = new Point(260, 0);
+            panelContent.Location = new Point(250, 0);
             panelContent.Name = "panelContent";
-            panelContent.Padding = new Padding(18);
-            panelContent.Size = new Size(900, 600);
+            panelContent.Size = new Size(550, 450);
             panelContent.TabIndex = 2;
             // 
             // tabControlMain
@@ -121,21 +119,20 @@
             tabControlMain.Controls.Add(tabPageHoaDon);
             tabControlMain.Controls.Add(tabPageTonKho);
             tabControlMain.Dock = DockStyle.Fill;
-            tabControlMain.Font = new Font("Segoe UI", 10.5F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            tabControlMain.Location = new Point(18, 18);
+            tabControlMain.Location = new Point(0, 0);
             tabControlMain.Name = "tabControlMain";
             tabControlMain.SelectedIndex = 0;
-            tabControlMain.Size = new Size(864, 564);
+            tabControlMain.Size = new Size(550, 450);
             tabControlMain.TabIndex = 0;
             // 
             // tabPageQuanLyNV
             // 
             tabPageQuanLyNV.Controls.Add(panel1);
             tabPageQuanLyNV.Controls.Add(label2);
-            tabPageQuanLyNV.Location = new Point(4, 32);
+            tabPageQuanLyNV.Location = new Point(4, 29);
             tabPageQuanLyNV.Name = "tabPageQuanLyNV";
-            tabPageQuanLyNV.Padding = new Padding(3);
-            tabPageQuanLyNV.Size = new Size(856, 528);
+            tabPageQuanLyNV.Padding = new Padding(3, 3, 3, 3);
+            tabPageQuanLyNV.Size = new Size(542, 417);
             tabPageQuanLyNV.TabIndex = 0;
             tabPageQuanLyNV.Text = "Nhân viên";
             tabPageQuanLyNV.UseVisualStyleBackColor = true;
@@ -148,10 +145,10 @@
             panel1.Controls.Add(cbThang);
             panel1.Controls.Add(lblTieuDeHieuSuat);
             panel1.Dock = DockStyle.Fill;
-            panel1.Location = new Point(3, 69);
+            panel1.Location = new Point(3, 64);
             panel1.Name = "panel1";
-            panel1.Padding = new Padding(15);
-            panel1.Size = new Size(850, 456);
+            panel1.Padding = new Padding(15, 15, 15, 15);
+            panel1.Size = new Size(536, 350);
             panel1.TabIndex = 1;
             // 
             // dgvPerformance
@@ -162,13 +159,12 @@
             dgvPerformance.BackgroundColor = SystemColors.Control;
             dgvPerformance.BorderStyle = BorderStyle.None;
             dgvPerformance.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvPerformance.Location = new Point(15, 95);
+            dgvPerformance.Location = new Point(15, 90);
             dgvPerformance.Name = "dgvPerformance";
             dgvPerformance.ReadOnly = true;
             dgvPerformance.RowHeadersVisible = false;
             dgvPerformance.RowHeadersWidth = 51;
-            dgvPerformance.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvPerformance.Size = new Size(820, 336);
+            dgvPerformance.Size = new Size(516, 255);
             dgvPerformance.TabIndex = 3;
             dgvPerformance.CellContentClick += dgvPerformance_CellContentClick;
             // 
@@ -179,9 +175,9 @@
             btnLoc.FlatStyle = FlatStyle.Flat;
             btnLoc.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnLoc.ForeColor = Color.White;
-            btnLoc.Location = new Point(200, 52);
+            btnLoc.Location = new Point(172, 50);
             btnLoc.Name = "btnLoc";
-            btnLoc.Size = new Size(90, 30);
+            btnLoc.Size = new Size(94, 29);
             btnLoc.TabIndex = 2;
             btnLoc.Text = "Lọc";
             btnLoc.UseVisualStyleBackColor = false;
@@ -191,10 +187,10 @@
             // 
             cbThang.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 0);
             cbThang.FormattingEnabled = true;
-            cbThang.Items.AddRange(new object[] { "Tất cả", "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12" });
-            cbThang.Location = new Point(15, 52);
+            cbThang.Items.AddRange(new object[] { "10/2025" });
+            cbThang.Location = new Point(15, 50);
             cbThang.Name = "cbThang";
-            cbThang.Size = new Size(170, 31);
+            cbThang.Size = new Size(151, 31);
             cbThang.TabIndex = 1;
             cbThang.SelectedIndexChanged += cbThang_SelectedIndexChanged;
             // 
@@ -202,10 +198,10 @@
             // 
             lblTieuDeHieuSuat.AutoSize = true;
             lblTieuDeHieuSuat.Dock = DockStyle.Top;
-            lblTieuDeHieuSuat.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblTieuDeHieuSuat.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblTieuDeHieuSuat.Location = new Point(15, 15);
             lblTieuDeHieuSuat.Name = "lblTieuDeHieuSuat";
-            lblTieuDeHieuSuat.Size = new Size(402, 32);
+            lblTieuDeHieuSuat.Size = new Size(334, 28);
             lblTieuDeHieuSuat.TabIndex = 0;
             lblTieuDeHieuSuat.Text = "Hiệu suất bán hàng của nhân viên";
             // 
@@ -213,11 +209,11 @@
             // 
             label2.AutoSize = true;
             label2.Dock = DockStyle.Top;
-            label2.Font = new Font("Segoe UI", 20F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.Location = new Point(3, 3);
             label2.Name = "label2";
-            label2.Padding = new Padding(10);
-            label2.Size = new Size(478, 66);
+            label2.Padding = new Padding(10, 10, 10, 10);
+            label2.Size = new Size(424, 61);
             label2.TabIndex = 0;
             label2.Text = "Quản lí nhân viên bán hàng";
             // 
@@ -225,10 +221,10 @@
             // 
             tabPageHoaDon.Controls.Add(panelHoaDon);
             tabPageHoaDon.Controls.Add(label3);
-            tabPageHoaDon.Location = new Point(4, 32);
+            tabPageHoaDon.Location = new Point(4, 29);
             tabPageHoaDon.Name = "tabPageHoaDon";
-            tabPageHoaDon.Padding = new Padding(3);
-            tabPageHoaDon.Size = new Size(856, 528);
+            tabPageHoaDon.Padding = new Padding(3, 3, 3, 3);
+            tabPageHoaDon.Size = new Size(542, 417);
             tabPageHoaDon.TabIndex = 1;
             tabPageHoaDon.Text = "Hóa đơn";
             tabPageHoaDon.UseVisualStyleBackColor = true;
@@ -241,10 +237,10 @@
             panelHoaDon.Controls.Add(txtTimKiemHD);
             panelHoaDon.Controls.Add(label4);
             panelHoaDon.Dock = DockStyle.Fill;
-            panelHoaDon.Location = new Point(3, 69);
+            panelHoaDon.Location = new Point(3, 64);
             panelHoaDon.Name = "panelHoaDon";
-            panelHoaDon.Padding = new Padding(15);
-            panelHoaDon.Size = new Size(850, 456);
+            panelHoaDon.Padding = new Padding(15, 15, 15, 15);
+            panelHoaDon.Size = new Size(536, 350);
             panelHoaDon.TabIndex = 1;
             // 
             // dgvHoaDon
@@ -253,40 +249,39 @@
             dgvHoaDon.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvHoaDon.BackgroundColor = SystemColors.Control;
             dgvHoaDon.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvHoaDon.Location = new Point(15, 95);
+            dgvHoaDon.Location = new Point(15, 90);
             dgvHoaDon.Name = "dgvHoaDon";
             dgvHoaDon.ReadOnly = true;
             dgvHoaDon.RowHeadersWidth = 51;
-            dgvHoaDon.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvHoaDon.Size = new Size(820, 336);
+            dgvHoaDon.Size = new Size(503, 242);
             dgvHoaDon.TabIndex = 3;
             // 
             // cbTrangThaiHD
             // 
             cbTrangThaiHD.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             cbTrangThaiHD.FormattingEnabled = true;
-            cbTrangThaiHD.Location = new Point(685, 52);
+            cbTrangThaiHD.Location = new Point(385, 50);
             cbTrangThaiHD.Name = "cbTrangThaiHD";
-            cbTrangThaiHD.Size = new Size(150, 31);
+            cbTrangThaiHD.Size = new Size(133, 28);
             cbTrangThaiHD.TabIndex = 2;
             // 
             // txtTimKiemHD
             // 
             txtTimKiemHD.ForeColor = Color.Gray;
-            txtTimKiemHD.Location = new Point(15, 52);
+            txtTimKiemHD.Location = new Point(15, 50);
             txtTimKiemHD.Name = "txtTimKiemHD";
-            txtTimKiemHD.PlaceholderText = "Tìm kiếm mã HD";
-            txtTimKiemHD.Size = new Size(250, 31);
+            txtTimKiemHD.PlaceholderText = "Tim kiem ma hd";
+            txtTimKiemHD.Size = new Size(125, 27);
             txtTimKiemHD.TabIndex = 1;
             // 
             // label4
             // 
             label4.AutoSize = true;
             label4.Dock = DockStyle.Top;
-            label4.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label4.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label4.Location = new Point(15, 15);
             label4.Name = "label4";
-            label4.Size = new Size(340, 32);
+            label4.Size = new Size(283, 28);
             label4.TabIndex = 0;
             label4.Text = "Danh sách hóa đơn gần nhất";
             // 
@@ -294,11 +289,11 @@
             // 
             label3.AutoSize = true;
             label3.Dock = DockStyle.Top;
-            label3.Font = new Font("Segoe UI", 20F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label3.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label3.Location = new Point(3, 3);
             label3.Name = "label3";
-            label3.Padding = new Padding(10);
-            label3.Size = new Size(377, 66);
+            label3.Padding = new Padding(10, 10, 10, 10);
+            label3.Size = new Size(336, 61);
             label3.TabIndex = 0;
             label3.Text = "Hoá đơn và giao dịch";
             // 
@@ -306,9 +301,9 @@
             // 
             tabPageTonKho.Controls.Add(panel2);
             tabPageTonKho.Controls.Add(label5);
-            tabPageTonKho.Location = new Point(4, 32);
+            tabPageTonKho.Location = new Point(4, 29);
             tabPageTonKho.Name = "tabPageTonKho";
-            tabPageTonKho.Size = new Size(856, 528);
+            tabPageTonKho.Size = new Size(542, 417);
             tabPageTonKho.TabIndex = 2;
             tabPageTonKho.Text = "Kho";
             tabPageTonKho.UseVisualStyleBackColor = true;
@@ -321,10 +316,10 @@
             panel2.Controls.Add(txtTimKiemKho);
             panel2.Controls.Add(label6);
             panel2.Dock = DockStyle.Fill;
-            panel2.Location = new Point(0, 66);
+            panel2.Location = new Point(0, 61);
             panel2.Name = "panel2";
-            panel2.Padding = new Padding(15);
-            panel2.Size = new Size(856, 462);
+            panel2.Padding = new Padding(15, 15, 15, 15);
+            panel2.Size = new Size(542, 356);
             panel2.TabIndex = 1;
             // 
             // dgvTonKho
@@ -336,13 +331,12 @@
             dgvTonKho.BackgroundColor = SystemColors.Control;
             dgvTonKho.BorderStyle = BorderStyle.None;
             dgvTonKho.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvTonKho.Location = new Point(15, 95);
+            dgvTonKho.Location = new Point(15, 90);
             dgvTonKho.Name = "dgvTonKho";
             dgvTonKho.ReadOnly = true;
             dgvTonKho.RowHeadersVisible = false;
             dgvTonKho.RowHeadersWidth = 51;
-            dgvTonKho.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvTonKho.Size = new Size(820, 336);
+            dgvTonKho.Size = new Size(477, 248);
             dgvTonKho.TabIndex = 3;
             // 
             // btnThemMoiKho
@@ -353,9 +347,9 @@
             btnThemMoiKho.FlatStyle = FlatStyle.Flat;
             btnThemMoiKho.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnThemMoiKho.ForeColor = Color.White;
-            btnThemMoiKho.Location = new Point(685, 52);
+            btnThemMoiKho.Location = new Point(371, 50);
             btnThemMoiKho.Name = "btnThemMoiKho";
-            btnThemMoiKho.Size = new Size(150, 30);
+            btnThemMoiKho.Size = new Size(120, 29);
             btnThemMoiKho.TabIndex = 2;
             btnThemMoiKho.Text = "+ Thêm mới";
             btnThemMoiKho.UseVisualStyleBackColor = false;
@@ -363,20 +357,19 @@
             // txtTimKiemKho
             // 
             txtTimKiemKho.ForeColor = Color.Gray;
-            txtTimKiemKho.Location = new Point(15, 52);
+            txtTimKiemKho.Location = new Point(15, 50);
             txtTimKiemKho.Name = "txtTimKiemKho";
-            txtTimKiemKho.PlaceholderText = "Tìm kiếm nguyên liệu";
-            txtTimKiemKho.Size = new Size(300, 31);
+            txtTimKiemKho.Size = new Size(151, 27);
             txtTimKiemKho.TabIndex = 1;
             // 
             // label6
             // 
             label6.AutoSize = true;
             label6.Dock = DockStyle.Top;
-            label6.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label6.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label6.Location = new Point(15, 15);
             label6.Name = "label6";
-            label6.Size = new Size(290, 32);
+            label6.Size = new Size(242, 28);
             label6.TabIndex = 0;
             label6.Text = "Danh sách hàng tồn kho";
             // 
@@ -387,8 +380,8 @@
             label5.Font = new Font("Segoe UI", 20F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label5.Location = new Point(0, 0);
             label5.Name = "label5";
-            label5.Padding = new Padding(10);
-            label5.Size = new Size(288, 66);
+            label5.Padding = new Padding(10, 10, 10, 10);
+            label5.Size = new Size(264, 61);
             label5.TabIndex = 0;
             label5.Text = "Quản lí tồn kho";
             // 
@@ -397,7 +390,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
-            ClientSize = new Size(1160, 600);
+            ClientSize = new Size(800, 450);
             Controls.Add(panelContent);
             Controls.Add(panelMenu);
             Name = "QuanLi";

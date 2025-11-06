@@ -19,8 +19,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // Ban đầu mặc định là "Tất Cả"
         private string _currentMaLoai = "TatCa";
 
-        public MainForm() {
+        public MainForm(int MaNV) {
             InitializeComponent();
+            _currentMaNV = MaNV;
         }
 
         private void MainForm_Load(object sender, EventArgs e) {

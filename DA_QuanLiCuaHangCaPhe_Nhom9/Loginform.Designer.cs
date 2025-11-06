@@ -80,7 +80,6 @@
             label3.Size = new Size(87, 25);
             label3.TabIndex = 9;
             label3.Text = "Mật Khẩu";
-            label3.Click += label3_Click;
             // 
             // label2
             // 
@@ -93,31 +92,28 @@
             label2.Size = new Size(86, 25);
             label2.TabIndex = 10;
             label2.Text = "Tài Khoản";
-            label2.Click += label2_Click;
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 163);
-            label1.Location = new Point(159, 19);
+            label1.Location = new Point(149, 22);
             label1.Margin = new Padding(1, 0, 1, 0);
             label1.Name = "label1";
             label1.Size = new Size(194, 46);
             label1.TabIndex = 11;
             label1.Text = "Đăng nhập";
-            label1.Click += label1_Click;
             // 
             // pictureBox1
             // 
             pictureBox1.BorderStyle = BorderStyle.Fixed3D;
             pictureBox1.Image = Properties.Resources.download;
-            pictureBox1.Location = new Point(298, 105);
+            pictureBox1.Location = new Point(298, 114);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(237, 183);
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 15;
             pictureBox1.TabStop = false;
-            pictureBox1.Click += pictureBox1_Click;
             // 
             // btnThoat
             // 
@@ -149,7 +145,6 @@
             Margin = new Padding(1);
             Name = "Loginform";
             Text = "Loginform";
-            Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
