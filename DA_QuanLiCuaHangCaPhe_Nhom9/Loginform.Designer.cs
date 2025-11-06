@@ -145,7 +145,6 @@
             Margin = new Padding(1);
             Name = "Loginform";
             Text = "Loginform";
-            Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
