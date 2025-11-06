@@ -14,29 +14,30 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         {
             InitializeComponent();
 
-            // Start centered on screen
+            // Bắt đầu form ở giữa
             StartPosition = FormStartPosition.CenterScreen;
             CenterToScreen();
 
-            // Set form title
+            // cài đặt tiêu đề form
+
             this.Text = "Coffee Shop Login";
 
-            // Configure password textbox to hide characters
+            // chấp nhận mật khẩu
             txtPass.UseSystemPasswordChar = true;
 
-            // Set tab order for better UX
+            // cài đặt tab order
             txtUser.TabIndex = 0;
             txtPass.TabIndex = 1;
             btnOK.TabIndex = 2;
             btnThoat.TabIndex = 3;
 
-            // Allow Enter key to submit form
+            // Được Enter để đăng nhập
             this.AcceptButton = btnOK;
 
-            // Keep centered if display settings change (resolution/scale)
+            // Giữ ở giữa nếu cài đặt hiển thị thay đổi (độ phân giải/tỷ lệ)
             SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
 
-            // Initialize login button state
+            // Nút đăng nhập bị vô hiệu hóa ban đầu
             UpdateLoginButtonState();
         }
 
@@ -51,11 +52,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);
-            // Unsubscribe to avoid memory leaks
+            // Huủy đăng ký sự kiện khi form đóng
             SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
         }
 
-        // --- Event handlers referenced by Designer ---
+        // --- trình xử lý sự kiện được designer tham chiếu ---
         private void textBox1_TextChanged(object? sender, EventArgs e)
         {
             UpdateLoginButtonState();
@@ -68,11 +69,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
         private void button1_Click(object? sender, EventArgs e)
         {
-            // Get input values
+            // nhận giá trị đầu vào từ các trường
             string username = txtUser.Text.Trim();
             string password = txtPass.Text;
 
-            // Validate input
+            // đầu vào hợp lệ
             if (string.IsNullOrWhiteSpace(username))
             {
                 MessageBox.Show(
@@ -97,12 +98,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                 return;
             }
 
-            // Authenticate against database
+            // xác minh đăng nhập với cơ sở dữ liệu
             try
             {
                 using var db = new DataSqlContext();
 
-                // Find account by username
+                // Tìm tài khoản theo tên đăng nhập
                 var account = db.TaiKhoans
           .Where(t => t.TenDangNhap == username)
           .Select(t => new
@@ -129,7 +130,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                     return;
                 }
 
-                // Verify password (NOTE: Update this if passwords are hashed)
+                // xác minh mật khẩu  (NOTE: Cập nhật điều này nếu mật khẩu được băm)
                 if (account.MatKhau != password)
                 {
                     MessageBox.Show(
@@ -143,72 +144,73 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                     return;
                 }
 
-   // Check account status
-     if (account.TrangThai.HasValue && account.TrangThai.Value == false)
-        {
-             MessageBox.Show(
-            "Tài khoản đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.",
-          "Tài khoản bị khóa",
-        MessageBoxButtons.OK,
-   MessageBoxIcon.Warning
-           );
-       return;
-     }
+                // kiểm tra trạng thái tài khoản
+                if (account.TrangThai.HasValue && account.TrangThai.Value == false)
+                {
+                    MessageBox.Show(
+                   "Tài khoản đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.",
+                 "Tài khoản bị khóa",
+               MessageBoxButtons.OK,
+          MessageBoxIcon.Warning
+                  );
+                    return;
+                }
 
-                // Authentication successful - Show welcome message
-          MessageBox.Show(
-           $"Đăng nhập thành công!\n" +
-           $"Xin chào: {account.NhanVien}\n" +
-       $"Vai trò: {account.VaiTro}",
-          "Thành công",
-      MessageBoxButtons.OK,
-         MessageBoxIcon.Information
-   );
+                // Authentication successful - hiển thị tin nhắn xin chào
 
-                // Route to appropriate form based on role
-    //this.Hide(); // Hide login form first
+                MessageBox.Show(
+                 $"Đăng nhập thành công!\n" +
+                 $"Xin chào: {account.NhanVien}\n" +
+             $"Vai trò: {account.VaiTro}",
+                "Thành công",
+            MessageBoxButtons.OK,
+               MessageBoxIcon.Information
+         );
 
-       if (account.VaiTro == "Admin" || account.VaiTro == "Quản lý")
-       {
-           // Admin/Manager role - Open Admin form
-         Admin adminForm = new Admin();
-               adminForm.FormClosed += (s, args) => this.Close();
-          adminForm.Show();
-       }
-     else if (account.VaiTro == "Nhân viên" || account.VaiTro == "Employee")
-           {
-              // Employee role - Open MainForm with MaNv parameter
-      MainForm mainForm = new MainForm(account.MaNv);
-           mainForm.FormClosed += (s, args) => this.Close();
+                // Lộ trình dựa trên vai trò
+                //this.Hide(); // ẩn form đăng nhập
 
-         mainForm.Show();
-  }
-         else
-            {
-        // Unknown role - show error and return to login
-           MessageBox.Show(
+                if (account.VaiTro == "Admin" || account.VaiTro == "Quản lý")
+                {
+                    // Admin/Manager role - mở form Admin
+                    Admin adminForm = new Admin();
+                    adminForm.FormClosed += (s, args) => this.Close();
+                    adminForm.Show();
+                }
+                else if (account.VaiTro == "Nhân viên" || account.VaiTro == "Employee")
+                {
+                    // vai trò nhân viên   - mở Mainform và chuyển mã nhân viên
+                    MainForm mainForm = new MainForm(account.MaNv);
+                    mainForm.FormClosed += (s, args) => this.Close();
+
+                    mainForm.Show();
+                }
+                else
+                {
+                    // không có vai trò hợp lệ - hiển thị lỗi - trả về form đăng nhập
+                    MessageBox.Show(
      $"Vai trò '{account.VaiTro}' không được hỗ trợ!\n" +
               "Vui lòng liên hệ quản trị viên.",
         "Lỗi vai trò",
         MessageBoxButtons.OK,
         MessageBoxIcon.Error
      );
-  this.Show(); // Show login form again
-         }
+                    this.Show(); // Hiển thị forrm đăng nhập lại
+                }
             }
-catch (Exception ex)
- {
-        MessageBox.Show(
-            $"Lỗi kết nối cơ sở dữ liệu:\n{ex.Message}",
-      "Lỗi",
-         MessageBoxButtons.OK,
-          MessageBoxIcon.Error
-   );
-      }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Lỗi kết nối cơ sở dữ liệu:\n{ex.Message}",
+              "Lỗi",
+                 MessageBoxButtons.OK,
+                  MessageBoxIcon.Error
+           );
+            }
         }
 
-     // Handler for Cancel button
-    private void btnThoat_Click(object? sender, EventArgs e)
+        // nút thoát
+        private void btnThoat_Click(object? sender, EventArgs e)
         {
             var result = MessageBox.Show(
        "Bạn có chắc muốn thoát?",
@@ -217,37 +219,17 @@ catch (Exception ex)
              MessageBoxIcon.Question
  );
 
- if (result == DialogResult.Yes)
-   {
-    Application.Exit();
+            if (result == DialogResult.Yes)
+            {
+                Application.Exit();
             }
         }
 
-        private void label1_Click(object? sender, EventArgs e)
-        {
-   // Not needed for labels
- }
-
-        private void label3_Click(object? sender, EventArgs e)
-        {
-        // Not needed for labels
-        }
-
-// Helper method to enable/disable login button
+        // phương pháp trợ giúp để giúp kích hoạt/tắt nút đăng nhập
         private void UpdateLoginButtonState()
         {
-  btnOK.Enabled = !string.IsNullOrWhiteSpace(txtUser.Text) &&
-    !string.IsNullOrWhiteSpace(txtPass.Text);
+            btnOK.Enabled = !string.IsNullOrWhiteSpace(txtUser.Text) &&
+              !string.IsNullOrWhiteSpace(txtPass.Text);
         }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-    // Form load logic if needed
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-  // PictureBox click logic if needed
-        }
- }
+    }
 }

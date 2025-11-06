@@ -80,7 +80,6 @@
             label3.Size = new Size(87, 25);
             label3.TabIndex = 9;
             label3.Text = "Mật Khẩu";
-            label3.Click += label3_Click;
             // 
             // label2
             // 
@@ -104,7 +103,6 @@
             label1.Size = new Size(194, 46);
             label1.TabIndex = 11;
             label1.Text = "Đăng nhập";
-            label1.Click += label1_Click;
             // 
             // pictureBox1
             // 
@@ -116,7 +114,6 @@
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 15;
             pictureBox1.TabStop = false;
-            pictureBox1.Click += pictureBox1_Click;
             // 
             // btnThoat
             // 
@@ -148,7 +145,6 @@
             Margin = new Padding(1);
             Name = "Loginform";
             Text = "Loginform";
-            Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
