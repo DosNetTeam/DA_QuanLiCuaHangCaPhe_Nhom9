@@ -169,9 +169,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
                 // (Giả sử panelBillPreview rộng khoảng 380px)
                 AddLabelToBill(tenMon, currentY, 9, FontStyle.Regular, 40);     // Cột Tên
-                AddLabelToBill(soLuong, currentY, 9, FontStyle.Regular, 370);   // Cột SL 
-                AddLabelToBill(donGia, currentY, 9, FontStyle.Regular, 450);    // Cột Giá
-                AddLabelToBill(thanhTien, currentY, 9, FontStyle.Regular, 600); // Cột Tổng 
+                AddLabelToBill(soLuong, currentY, 9, FontStyle.Regular, 250);   // Cột SL 
+                AddLabelToBill(donGia, currentY, 9, FontStyle.Regular, 320);    // Cột Giá
+                AddLabelToBill(thanhTien, currentY, 9, FontStyle.Regular,450); // Cột Tổng 
 
                 currentY += 30;
             }
@@ -189,7 +189,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             AddLabelToBill("Xin cảm ơn quý khách!", currentY, 9, FontStyle.Italic);
             currentY += 35; 
             AddLabelToBill("Hẹn gặp lại quý khách!", currentY, 9, FontStyle.Italic);
-            currentY += 35;
+            currentY += 25;
 
             // --- 6. ĐẶT VỊ TRÍ MÃ QR (ĐANG BỊ ẨN) ---
             // Thêm lại QR vào panel

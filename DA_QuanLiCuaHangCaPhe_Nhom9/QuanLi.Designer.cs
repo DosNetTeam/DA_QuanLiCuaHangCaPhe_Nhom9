@@ -128,7 +128,7 @@
             tabPageQuanLyNV.Controls.Add(label2);
             tabPageQuanLyNV.Location = new Point(4, 29);
             tabPageQuanLyNV.Name = "tabPageQuanLyNV";
-            tabPageQuanLyNV.Padding = new Padding(3, 3, 3, 3);
+            tabPageQuanLyNV.Padding = new Padding(3);
             tabPageQuanLyNV.Size = new Size(542, 417);
             tabPageQuanLyNV.TabIndex = 0;
             tabPageQuanLyNV.Text = "Nhan vien";
@@ -144,7 +144,7 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(3, 64);
             panel1.Name = "panel1";
-            panel1.Padding = new Padding(15, 15, 15, 15);
+            panel1.Padding = new Padding(15);
             panel1.Size = new Size(536, 350);
             panel1.TabIndex = 1;
             // 
@@ -206,7 +206,7 @@
             label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.Location = new Point(3, 3);
             label2.Name = "label2";
-            label2.Padding = new Padding(10, 10, 10, 10);
+            label2.Padding = new Padding(10);
             label2.Size = new Size(424, 61);
             label2.TabIndex = 0;
             label2.Text = "Quan li nhan vien ban hang";
@@ -217,7 +217,7 @@
             tabPageHoaDon.Controls.Add(label3);
             tabPageHoaDon.Location = new Point(4, 29);
             tabPageHoaDon.Name = "tabPageHoaDon";
-            tabPageHoaDon.Padding = new Padding(3, 3, 3, 3);
+            tabPageHoaDon.Padding = new Padding(3);
             tabPageHoaDon.Size = new Size(542, 417);
             tabPageHoaDon.TabIndex = 1;
             tabPageHoaDon.Text = "Hoa don";
@@ -233,7 +233,7 @@
             panelHoaDon.Dock = DockStyle.Fill;
             panelHoaDon.Location = new Point(3, 64);
             panelHoaDon.Name = "panelHoaDon";
-            panelHoaDon.Padding = new Padding(15, 15, 15, 15);
+            panelHoaDon.Padding = new Padding(15);
             panelHoaDon.Size = new Size(536, 350);
             panelHoaDon.TabIndex = 1;
             // 
@@ -285,7 +285,7 @@
             label3.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label3.Location = new Point(3, 3);
             label3.Name = "label3";
-            label3.Padding = new Padding(10, 10, 10, 10);
+            label3.Padding = new Padding(10);
             label3.Size = new Size(336, 61);
             label3.TabIndex = 0;
             label3.Text = "Hoa don va giao dich";
@@ -311,7 +311,7 @@
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 61);
             panel2.Name = "panel2";
-            panel2.Padding = new Padding(15, 15, 15, 15);
+            panel2.Padding = new Padding(15);
             panel2.Size = new Size(542, 356);
             panel2.TabIndex = 1;
             // 
@@ -371,7 +371,7 @@
             label5.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label5.Location = new Point(0, 0);
             label5.Name = "label5";
-            label5.Padding = new Padding(10, 10, 10, 10);
+            label5.Padding = new Padding(10);
             label5.Size = new Size(264, 61);
             label5.TabIndex = 0;
             label5.Text = "Quan li ton kho ";
