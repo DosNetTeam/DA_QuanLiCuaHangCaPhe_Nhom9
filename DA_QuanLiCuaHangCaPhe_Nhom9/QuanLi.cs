@@ -62,7 +62,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             // Cài đặt cho ComboBox Trạng thái Hóa Đơn
             cbTrangThaiHD.Items.Clear();
             cbTrangThaiHD.Items.Add("Tất cả");
-            cbTrangThaiHD.Items.Add("Đang xu ly");
+            cbTrangThaiHD.Items.Add("Đang xử lý");
             cbTrangThaiHD.Items.Add("Đã thanh toán");
             cbTrangThaiHD.Items.Add("Đã hủy");
             cbTrangThaiHD.SelectedIndex = 0;
@@ -270,7 +270,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             if (confirm != DialogResult.Yes) return;
 
             // If a login Form1 instance was hidden earlier, reuse it; otherwise create a new one.
-            var existingLogin = Application.OpenForms.OfType<Form1>().FirstOrDefault();
+            var existingLogin = Application.OpenForms.OfType<Loginform>().FirstOrDefault();
             if (existingLogin != null)
             {
                 existingLogin.Show();
@@ -278,7 +278,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             }
             else
             {
-                var login = new Form1();
+                var login = new Loginform();
                 login.StartPosition = FormStartPosition.CenterScreen;
                 login.Show();
             }
