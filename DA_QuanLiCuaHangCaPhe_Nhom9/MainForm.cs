@@ -19,9 +19,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // Ban đầu mặc định là "Tất Cả"
         private string _currentMaLoai = "TatCa";
 
-        public MainForm(int MaNV) {
+        //public MainForm(int MaNV) {
+        //    InitializeComponent();
+        //    _currentMaNV = MaNV;
+        //}
+
+        public MainForm() {
             InitializeComponent();
-            _currentMaNV = MaNV;
         }
 
         private void MainForm_Load(object sender, EventArgs e) {
@@ -118,7 +122,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                         query = query.Where(sp => sp.LoaiSp == maLoai);
                     }
 
-
                     //Lọc theo Tên SP ---
                     // Nếu ô tìm kiếm không rỗng
                     if (!string.IsNullOrEmpty(searchText)) {
@@ -131,6 +134,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                     // Thêm một điều kiện 'Where' nữa: chỉ lấy sp "Con ban"
                     var spCanHienThi = query.Where(sp => sp.TrangThai == "Con ban").ToList();
+
+
 
                     // Tạo các nút sản phẩm
                     foreach (var sp in spCanHienThi) {
@@ -152,6 +157,38 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                         btn.FlatAppearance.BorderSize = 1;
                         btn.FlatAppearance.BorderColor = Color.Gainsboro; // Màu viền xám nhạt
+
+                        // Gọi hàm kiểm tra kho (sẽ viết ở dưới)
+                        // Hàm này trả về 1 trong 3 chữ:
+                        // "DU_HANG", "SAP_HET", "HET_HANG"
+                        string trangThaiKho = KiemTraDuNguyenLieu(sp.MaSp);
+
+                        // Dùng switch case (hoặc if/else) để xử lý 3 trường hợp
+                        switch (trangThaiKho) {
+                            case "DU_HANG":
+                                // Đủ hàng: Nút trắng, cho bấm
+                                btn.Enabled = true;
+                                btn.BackColor = Color.White;
+                                btn.ForeColor = Color.Black;
+                                break;
+
+                            case "SAP_HET":
+                                // Sắp hết: Nút CAM, vẫn cho bấm
+                                btn.Enabled = true;
+                                btn.BackColor = Color.Orange; // Màu cam
+                                btn.ForeColor = Color.White; // Chữ trắng
+                                btn.Text += "\n(Sắp hết)";
+                                break;
+
+                            case "HET_HANG":
+                            default:
+                                // Hết hàng: Nút XÁM, không cho bấm
+                                btn.Enabled = false;
+                                btn.BackColor = Color.LightGray;
+                                btn.ForeColor = Color.Gray; // Chữ mờ
+                                btn.Text += "\n(HẾT HÀNG)";
+                                break;
+                        }
 
                         btn.Click += BtnSanPham_Click;
                         flpSanPham.Controls.Add(btn);
@@ -196,7 +233,81 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         #endregion
 
         #region Các hàm logic nghiệp vụ (Business Logic)
+        private String KiemTraDuNguyenLieu(int maSP) {
+            // Mở kết nối CSDL (chỉ để kiểm tra)
+            using (DataSqlContext db = new DataSqlContext()) {
 
+                // 1. Lấy công thức cho sản phẩm này (Truy vấn CSDL)
+                // Bằng cách thêm .ToList(), chúng ta buộc C# phải lấy
+                // hết danh sách công thức về bộ nhớ và "đóng" DataReader 1.
+                var congThuc = db.DinhLuongs.Where(dl => dl.MaSp == maSP).ToList();
+
+                // 2. Kiểm tra xem có công thức nào không
+
+                if (congThuc.Count == 0) {
+                    return "DU_HANG"; // Không có công thức (ví dụ: bánh mua sẵn), luôn đủ hàng
+                }
+
+                // Biến này để theo dõi trạng thái chung
+                // Bắt đầu bằng "Đủ hàng"
+                string trangThaiTongQuat = "DU_HANG";
+
+                // 3. Lặp qua TỪNG NGUYÊN LIỆU trong công thức
+                foreach (var nguyenLieuCan in congThuc) {
+                    // 4. Lấy nguyên liệu trong kho (Mở kết nối 2)
+                    var nguyenLieuTrongKho = db.NguyenLieus
+                                               .FirstOrDefault(nl => nl.MaNl == nguyenLieuCan.MaNl);
+
+                    // 5. Kiểm tra
+                    if (nguyenLieuTrongKho == null) {
+                        return "HET_HANG"; // Lỗi CSDL, coi như hết
+                    }
+
+                    // --- LOGIC MỚI (3 TRẠNG THÁI) ---
+
+                    // 5.1. KIỂM TRA HẾT HẲN (<= 0)
+                    if (nguyenLieuTrongKho.SoLuongTon <= 0) {
+                        return "HET_HANG"; // Hết hẳn, không cần kiểm tra thêm
+                    }
+
+                    // 5.2. KIỂM TRA SẮP HẾT (dưới ngưỡng)
+                    if (nguyenLieuTrongKho.SoLuongTon <= nguyenLieuTrongKho.NguongCanhBao) {
+                        // Nếu có bất kỳ 1 NL nào sắp hết,
+                        // ta đánh dấu trạng thái chung là "SAP_HET"
+                        trangThaiTongQuat = "SAP_HET";
+                    }
+
+                    // 5.3. Nếu không (tức là > ngưỡng)
+                    // thì ta không làm gì, giữ nguyên trạng thái "DU_HANG"
+                    // (hoặc "SAP_HET" nếu đã bị đánh dấu từ trước)
+                }
+
+                // 6. Sau khi kiểm tra HẾT TẤT CẢ nguyên liệu,
+                // trả về trạng thái chung
+                return trangThaiTongQuat;
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+
+        // ---------------------------------
         // Hàm này xử lý việc thêm SP vào giỏ hàng (ListView)
         private void ThemSanPhamVaoDonHang(SanPham sp) {
             // Bước 1: Kiểm tra xem SP này đã có trong giỏ hàng chưa
@@ -273,8 +384,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             lblTongCong.Text = tongTien.ToString("N0") + " đ";
         }
 
-        #endregion
-
         // Hàm này được gọi khi bấm nút "Thanh Toán"
         // (Tên hàm _1 là do bạn double-click vào nút trong designer)
         private void btnThanhToan_Click(object sender, EventArgs e) {
@@ -294,10 +403,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             decimal tongTien = decimal.Parse(tongTienStr, CultureInfo.InvariantCulture);
 
             ThanhToan frmThanhToan = new ThanhToan(lvDonHang.Items, decimal.Parse(lblTongCong.Text.Replace(" đ", "").Replace(".", ""), CultureInfo.InvariantCulture), _currentMaNV);
-            //frmThanhToan.ShowDialog();
-
-
-
 
             // 4. HIỂN THỊ và LẮNG NGHE TÍN HIỆU TRẢ VỀ
             var result = frmThanhToan.ShowDialog();
@@ -308,11 +413,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 // thì chúng ta "Làm mới hóa đơn" (như bạn muốn)
                 lvDonHang.Items.Clear(); // Xóa giỏ hàng
                 CapNhatTongTien(); // Cập nhật tổng tiền (về 0)
+
+                TaiSanPham(_currentMaLoai);
             }
             // Nếu result == DialogResult.Cancel (người dùng bấm "Hủy" hoặc nút X), 
             // thì không làm gì cả, giỏ hàng vẫn còn đó.
 
-
+            #region
             //try
             //{
 
@@ -376,6 +483,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             //{
             //    MessageBox.Show("Lỗi khi lưu đơn hàng: " + ex.InnerException?.Message ?? ex.Message);
             //}
+
+            #endregion
         }
 
         // Hàm này được gọi khi bấm nút "Hủy Đơn"
@@ -392,9 +501,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        private void panelCol3_Paint(object sender, PaintEventArgs e) {
 
-        }
 
         private void btnXoaMon_Click(object sender, EventArgs e) {
             // Bước 1: Kiểm tra xem người dùng đã chọn món nào chưa
@@ -472,18 +579,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        private void txtTimKiemKH_TextChanged(object sender, EventArgs e) {
-
-        }
-
-        private void label6_Click(object sender, EventArgs e) {
-
-        }
-
-        private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e) {
-
-        }
-
         private void txtTimKiemSP_TextChanged(object sender, EventArgs e) {
             // Gọi lại hàm TaiSanPham với loại SP ta đang chọn
             TaiSanPham(_currentMaLoai);
@@ -537,6 +632,23 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 this.btnThem.Enabled = false;
             }
         }
+
+        #endregion
+
+
+        private void txtTimKiemKH_TextChanged(object sender, EventArgs e) {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e) {
+
+        }
+
+        private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e) {
+
+        }
+
+
     }
 }
 
