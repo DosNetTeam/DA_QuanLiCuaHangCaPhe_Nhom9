@@ -81,7 +81,7 @@
             panelLeft.Location = new Point(0, 0);
             panelLeft.Margin = new Padding(2);
             panelLeft.Name = "panelLeft";
-            panelLeft.Size = new Size(325, 515);
+            panelLeft.Size = new Size(325, 672);
             panelLeft.TabIndex = 1;
             // 
             // tableLayoutPanel1
@@ -91,7 +91,7 @@
             tableLayoutPanel1.Controls.Add(groupBox1, 0, 0);
             tableLayoutPanel1.Controls.Add(groupBox2, 0, 1);
             tableLayoutPanel1.Dock = DockStyle.Bottom;
-            tableLayoutPanel1.Location = new Point(0, 306);
+            tableLayoutPanel1.Location = new Point(0, 463);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 2;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 58.8516731F));
@@ -225,7 +225,7 @@
             lvChiTietBill.Location = new Point(0, 30);
             lvChiTietBill.Margin = new Padding(2);
             lvChiTietBill.Name = "lvChiTietBill";
-            lvChiTietBill.Size = new Size(325, 485);
+            lvChiTietBill.Size = new Size(325, 642);
             lvChiTietBill.TabIndex = 1;
             lvChiTietBill.UseCompatibleStateImageBehavior = false;
             lvChiTietBill.View = View.Details;
@@ -266,7 +266,7 @@
             panelRight.Margin = new Padding(2);
             panelRight.Name = "panelRight";
             panelRight.Padding = new Padding(4, 0, 0, 0);
-            panelRight.Size = new Size(580, 515);
+            panelRight.Size = new Size(609, 672);
             panelRight.TabIndex = 1;
             // 
             // panelBillPreview
@@ -277,16 +277,16 @@
             panelBillPreview.Location = new Point(4, 0);
             panelBillPreview.Margin = new Padding(2);
             panelBillPreview.Name = "panelBillPreview";
-            panelBillPreview.Size = new Size(576, 515);
+            panelBillPreview.Size = new Size(605, 672);
             panelBillPreview.TabIndex = 1;
             // 
             // pbQR_InBill
             // 
             pbQR_InBill.Dock = DockStyle.Bottom;
-            pbQR_InBill.Location = new Point(0, 306);
+            pbQR_InBill.Location = new Point(0, 463);
             pbQR_InBill.Margin = new Padding(2);
             pbQR_InBill.Name = "pbQR_InBill";
-            pbQR_InBill.Size = new Size(576, 209);
+            pbQR_InBill.Size = new Size(605, 209);
             pbQR_InBill.SizeMode = PictureBoxSizeMode.Zoom;
             pbQR_InBill.TabIndex = 0;
             pbQR_InBill.TabStop = false;
@@ -296,7 +296,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(905, 515);
+            ClientSize = new Size(934, 672);
             Controls.Add(panelRight);
             Controls.Add(panelLeft);
             FormBorderStyle = FormBorderStyle.FixedDialog;
