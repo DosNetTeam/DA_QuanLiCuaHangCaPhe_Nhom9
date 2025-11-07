@@ -55,6 +55,11 @@
             dgvEmployees = new DataGridView();
             tabPage3 = new TabPage();
             dgvInventory = new DataGridView();
+            panel2 = new Panel();
+            label11 = new Label();
+            label10 = new Label();
+            label12 = new Label();
+            label9 = new Label();
             tabPage4 = new TabPage();
             dgvRevenue = new DataGridView();
             tabControl1.SuspendLayout();
@@ -65,6 +70,7 @@
             ((System.ComponentModel.ISupportInitialize)dgvEmployees).BeginInit();
             tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvInventory).BeginInit();
+            panel2.SuspendLayout();
             tabPage4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvRevenue).BeginInit();
             SuspendLayout();
@@ -351,6 +357,7 @@
             // tabPage3
             // 
             tabPage3.Controls.Add(dgvInventory);
+            tabPage3.Controls.Add(panel2);
             tabPage3.Location = new Point(4, 29);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
@@ -365,14 +372,63 @@
             dgvInventory.AllowUserToDeleteRows = false;
             dgvInventory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvInventory.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvInventory.Dock = DockStyle.Fill;
+            dgvInventory.Dock = DockStyle.Top;
             dgvInventory.Location = new Point(3, 3);
             dgvInventory.Name = "dgvInventory";
             dgvInventory.ReadOnly = true;
             dgvInventory.RowHeadersWidth = 51;
             dgvInventory.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvInventory.Size = new Size(786, 331);
+            dgvInventory.Size = new Size(786, 253);
             dgvInventory.TabIndex = 0;
+            // 
+            // panel2
+            // 
+            panel2.Controls.Add(label11);
+            panel2.Controls.Add(label10);
+            panel2.Controls.Add(label12);
+            panel2.Controls.Add(label9);
+            panel2.Dock = DockStyle.Bottom;
+            panel2.Location = new Point(3, 186);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(786, 148);
+            panel2.TabIndex = 1;
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(28, 118);
+            label11.Name = "label11";
+            label11.Size = new Size(33, 20);
+            label11.TabIndex = 0;
+            label11.Text = "Mã:";
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 163);
+            label10.Location = new Point(275, 73);
+            label10.Name = "label10";
+            label10.Size = new Size(260, 28);
+            label10.TabIndex = 0;
+            label10.Text = "THÔNG TIN NGUYÊN LIỆU";
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new Point(584, 118);
+            label12.Name = "label12";
+            label12.Size = new Size(75, 20);
+            label12.TabIndex = 0;
+            label12.Text = "Số Lượng:";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(321, 118);
+            label9.Name = "label9";
+            label9.Size = new Size(35, 20);
+            label9.TabIndex = 0;
+            label9.Text = "Tên:";
             // 
             // tabPage4
             // 
@@ -425,6 +481,8 @@
             ((System.ComponentModel.ISupportInitialize)dgvEmployees).EndInit();
             tabPage3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvInventory).EndInit();
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
             tabPage4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvRevenue).EndInit();
             ResumeLayout(false);
@@ -449,5 +507,10 @@
         private TextBox textBox1, textBox2, textBox3, textBox4, textBox5, textBox6;
         private Button button1;
         private Label label8;
+        private Panel panel2;
+        private Label label11;
+        private Label label10;
+        private Label label12;
+        private Label label9;
     }
 }

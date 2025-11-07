@@ -117,7 +117,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
           })
                 .SingleOrDefault();
 
-                if (account == null)
+                if (account.TenDangNhap == null)
                 {
                     MessageBox.Show(
                      "Tên đăng nhập hoặc mật khẩu không đúng!",
@@ -170,14 +170,20 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                 // Lộ trình dựa trên vai trò
                 //this.Hide(); // ẩn form đăng nhập
 
-                if (account.VaiTro == "Admin" || account.VaiTro == "Quản lý")
+                if (account.VaiTro == "Admin" )
                 {
                     // Admin/Manager role - mở form Admin
                     Admin adminForm = new Admin();
                     adminForm.FormClosed += (s, args) => this.Close();
                     adminForm.Show();
+                } else if (account.VaiTro == "Quản lý")
+                {
+                    // vai trò quản lý - mở Mainform và chuyển mã nhân viên
+                    QuanLi ql = new QuanLi();
+                    ql.FormClosed += (s, args) => this.Close();
+                    ql.Show();
                 }
-                else if (account.VaiTro == "Nhân viên" || account.VaiTro == "Employee")
+                else if (account.VaiTro == "Nhân viên")
                 {
                     // vai trò nhân viên   - mở Mainform và chuyển mã nhân viên
                     MainForm mainForm = new MainForm(account.MaNv);
