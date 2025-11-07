@@ -56,9 +56,17 @@
             tabPage3 = new TabPage();
             dgvInventory = new DataGridView();
             panel2 = new Panel();
+            button3 = new Button();
+            button4 = new Button();
+            button2 = new Button();
+            textBox8 = new TextBox();
+            textBox10 = new TextBox();
+            textBox7 = new TextBox();
+            textBox9 = new TextBox();
+            label12 = new Label();
             label11 = new Label();
             label10 = new Label();
-            label12 = new Label();
+            label13 = new Label();
             label9 = new Label();
             tabPage4 = new TabPage();
             dgvRevenue = new DataGridView();
@@ -208,7 +216,7 @@
             button1.TabIndex = 1;
             button1.Text = "Đổi mật khẩu";
             button1.UseVisualStyleBackColor = false;
-            button1.Click += btnLogout_Click;
+            button1.Click += button1_Click;
             // 
             // textBox6
             // 
@@ -378,14 +386,22 @@
             dgvInventory.ReadOnly = true;
             dgvInventory.RowHeadersWidth = 51;
             dgvInventory.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvInventory.Size = new Size(786, 253);
+            dgvInventory.Size = new Size(786, 223);
             dgvInventory.TabIndex = 0;
             // 
             // panel2
             // 
+            panel2.Controls.Add(button3);
+            panel2.Controls.Add(button4);
+            panel2.Controls.Add(button2);
+            panel2.Controls.Add(textBox8);
+            panel2.Controls.Add(textBox10);
+            panel2.Controls.Add(textBox7);
+            panel2.Controls.Add(textBox9);
+            panel2.Controls.Add(label12);
             panel2.Controls.Add(label11);
             panel2.Controls.Add(label10);
-            panel2.Controls.Add(label12);
+            panel2.Controls.Add(label13);
             panel2.Controls.Add(label9);
             panel2.Dock = DockStyle.Bottom;
             panel2.Location = new Point(3, 186);
@@ -393,12 +409,91 @@
             panel2.Size = new Size(786, 148);
             panel2.TabIndex = 1;
             // 
+            // button3
+            // 
+            button3.BackColor = Color.Red;
+            button3.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 163);
+            button3.Location = new Point(645, 116);
+            button3.Name = "button3";
+            button3.Size = new Size(138, 29);
+            button3.TabIndex = 2;
+            button3.Text = "Xóa nguyên liệu";
+            button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
+            // 
+            // button4
+            // 
+            button4.BackColor = Color.Cyan;
+            button4.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 163);
+            button4.Location = new Point(463, 116);
+            button4.Name = "button4";
+            button4.Size = new Size(176, 29);
+            button4.TabIndex = 2;
+            button4.Text = "Thêm nguyên liêu mới";
+            button4.UseVisualStyleBackColor = false;
+            button4.Click += button4_Click;
+            // 
+            // button2
+            // 
+            button2.BackColor = Color.Cyan;
+            button2.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 163);
+            button2.Location = new Point(332, 116);
+            button2.Name = "button2";
+            button2.Size = new Size(125, 29);
+            button2.TabIndex = 2;
+            button2.Text = "Cập nhật";
+            button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click;
+            // 
+            // textBox8
+            // 
+            textBox8.Location = new Point(287, 79);
+            textBox8.Name = "textBox8";
+            textBox8.Size = new Size(244, 27);
+            textBox8.TabIndex = 1;
+            textBox8.TextChanged += textBox7_TextChanged;
+            // 
+            // textBox10
+            // 
+            textBox10.Location = new Point(630, 79);
+            textBox10.Name = "textBox10";
+            textBox10.Size = new Size(125, 27);
+            textBox10.TabIndex = 1;
+            textBox10.TextChanged += textBox7_TextChanged;
+            // 
+            // textBox7
+            // 
+            textBox7.Location = new Point(69, 116);
+            textBox7.Name = "textBox7";
+            textBox7.Size = new Size(125, 27);
+            textBox7.TabIndex = 1;
+            textBox7.TextChanged += textBox7_TextChanged;
+            // 
+            // textBox9
+            // 
+            textBox9.Location = new Point(69, 79);
+            textBox9.Name = "textBox9";
+            textBox9.Size = new Size(125, 27);
+            textBox9.TabIndex = 1;
+            textBox9.TextChanged += textBox7_TextChanged;
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 163);
+            label12.Location = new Point(5, 116);
+            label12.Name = "label12";
+            label12.Size = new Size(64, 23);
+            label12.TabIndex = 0;
+            label12.Text = "Đơn vị:";
+            // 
             // label11
             // 
             label11.AutoSize = true;
-            label11.Location = new Point(28, 118);
+            label11.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 163);
+            label11.Location = new Point(24, 81);
             label11.Name = "label11";
-            label11.Size = new Size(33, 20);
+            label11.Size = new Size(39, 23);
             label11.TabIndex = 0;
             label11.Text = "Mã:";
             // 
@@ -406,27 +501,29 @@
             // 
             label10.AutoSize = true;
             label10.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 163);
-            label10.Location = new Point(275, 73);
+            label10.Location = new Point(275, 39);
             label10.Name = "label10";
             label10.Size = new Size(260, 28);
             label10.TabIndex = 0;
             label10.Text = "THÔNG TIN NGUYÊN LIỆU";
             // 
-            // label12
+            // label13
             // 
-            label12.AutoSize = true;
-            label12.Location = new Point(584, 118);
-            label12.Name = "label12";
-            label12.Size = new Size(75, 20);
-            label12.TabIndex = 0;
-            label12.Text = "Số Lượng:";
+            label13.AutoSize = true;
+            label13.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 163);
+            label13.Location = new Point(537, 81);
+            label13.Name = "label13";
+            label13.Size = new Size(87, 23);
+            label13.TabIndex = 0;
+            label13.Text = "Số Lượng:";
             // 
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(321, 118);
+            label9.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 163);
+            label9.Location = new Point(241, 81);
             label9.Name = "label9";
-            label9.Size = new Size(35, 20);
+            label9.Size = new Size(40, 23);
             label9.TabIndex = 0;
             label9.Text = "Tên:";
             // 
@@ -503,14 +600,33 @@
         private DataGridView dgvInventory;
         private DataGridView dgvRevenue;
         private Panel panel1;
-        private Label label1, label2, label3, label4, label5, label6, label7;
-        private TextBox textBox1, textBox2, textBox3, textBox4, textBox5, textBox6;
-        private Button button1;
+        private Label label1;
+    private Label label2;
+        private Label label3;
+        private Label label4;
+        private Label label5;
+        private Label label6;
+        private Label label7;
         private Label label8;
+        private TextBox textBox1;
+  private TextBox textBox2;
+    private TextBox textBox3;
+        private TextBox textBox4;
+   private TextBox textBox5;
+        private TextBox textBox6;
+  private Button button1;
         private Panel panel2;
-        private Label label11;
+  private Label label9;
         private Label label10;
+        private Label label11;
         private Label label12;
-        private Label label9;
+ private Label label13;
+        private TextBox textBox7;
+        private TextBox textBox8;
+        private TextBox textBox9;
+        private TextBox textBox10;
+  private Button button2;
+        private Button button3;
+        private Button button4;
     }
 }
