@@ -226,7 +226,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         private void btnThanhToan_Click(object sender, EventArgs e) {
-            #region đang sửa lại
+            #region code thanh toán v2 - chuyển sang thanh toán chờ
             /*
             // Kiểm tra xem có hàng trong giỏ chưa
             if (lvDonHang.Items.Count == 0) {
@@ -260,10 +260,54 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             */
             #endregion
 
+            #region code v3 - chọn đơn hàng chờ 
+            /*
             ChonDonHangCho cdhc = new ChonDonHangCho();
             cdhc.ShowDialog();
 
-            TaiSanPham(_currentMaLoai);
+            TaiSanPham(_currentMaLoai); */
+            #endregion
+
+            // KIỂM TRA: Giỏ hàng có món không?
+            if (lvDonHang.Items.Count > 0) {
+                // TRƯỜNG HỢP 1: CÓ MÓN (THANH TOÁN NHANH)
+                // 1. Tự động "Lưu Tạm" (Lưu CSDL, Trừ Kho, Tạo ThanhToan "Chưa TT")
+                int maDonHangVuaTao = ThucHienLuuTam();
+
+                // 2. Kiểm tra xem Lưu Tạm có thành công không
+                if (maDonHangVuaTao > 0) {
+                    // 3. Mở thẳng form Thanh Toán
+                    ThanhToan frmThanhToan = new ThanhToan(maDonHangVuaTao);
+                    var result = frmThanhToan.ShowDialog();
+
+                    // 4. Reset MainForm nếu thanh toán OK
+                    // (Nếu Cancel thì đơn hàng đó vẫn nằm trong "Đơn chờ")
+                    if ((result == DialogResult.OK) || (result == DialogResult.Cancel)) {
+                        ResetMainForm();
+                    }
+                }
+                // (Nếu Lưu Tạm lỗi (return -1), hàm ThucHienLuuTam đã tự báo lỗi rồi)
+            }
+            else {
+                // TRƯỜNG HỢP 2: GIỎ HÀNG RỖNG (THANH TOÁN ĐƠN CŨ)
+                ChonDonHangCho cdhc = new ChonDonHangCho();
+                var resultChon = cdhc.ShowDialog();
+
+                if (resultChon == DialogResult.OK) {
+                    // Lấy MaDH từ form trung gian
+                    int maDonHangChon = cdhc.MaDonHangDaChon;
+
+                    // Mở form ThanhToan
+                    ThanhToan thanhtoan = new ThanhToan(maDonHangChon);
+                    var resultThanhToan = thanhtoan.ShowDialog();
+
+                    // Nếu thanh toán thành công, tải lại DS sản phẩm
+                    // (Vì kho của các đơn khác có thể đã thay đổi)
+                    if (resultThanhToan == DialogResult.OK) {
+                        TaiSanPham(_currentMaLoai);
+                    }
+                }
+            }
 
             #region code cũ lưu đơn hàng trực tiếp trong MainForm (bây giờ chuyển sang form ThanhToan) - code thời tiền sử
             //try
@@ -479,6 +523,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         private void btnLuuTam_Click(object sender, EventArgs e) {
+            #region chỉnh sửa tiếp
+            /*
             // 1. Kiểm tra giỏ hàng
             if (lvDonHang.Items.Count == 0) {
                 MessageBox.Show("Vui lòng thêm sản phẩm vào đơn hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -567,6 +613,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
             catch (Exception ex) {
                 MessageBox.Show("Lỗi khi lưu tạm đơn hàng: " + ex.InnerException?.Message ?? ex.Message);
+            }
+            */
+            #endregion
+
+            // 1. Gọi hàm ThucHienLuuTam
+            int maDonHangMoi = ThucHienLuuTam();
+
+            // 2. Kiểm tra kết quả
+            if (maDonHangMoi > 0) // (Hàm ThucHienLuuTam trả về -1 nếu lỗi)
+            {
+                MessageBox.Show($"Đã lưu tạm đơn hàng {maDonHangMoi}", "Lưu tạm thành công");
+                // 3. Reset Form
+                ResetMainForm();
             }
         }
 
@@ -759,6 +818,31 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             lblTongCong.Text = tongTien.ToString("N0") + " đ";
         }
 
+        private void txtTimKiemKH_KeyPress(object sender, KeyPressEventArgs e) {
+
+            // 'e.KeyChar' là ký tự mà người dùng vừa gõ (ví dụ: 'a', '1', '%')
+
+            // Bước 1: Kiểm tra xem phím vừa gõ có phải là SỐ (Digit) không
+            // (char.IsDigit() là hàm cơ bản của C# để kiểm tra số 0-9)
+            bool laSo = char.IsDigit(e.KeyChar);
+
+            // Bước 2: Kiểm tra xem phím vừa gõ có phải là phím "Điều khiển" không
+            // (Phím điều khiển là các phím như Backspace (xóa), Enter, Ctrl+C, Ctrl+V)
+            // (Chúng ta phải cho phép phím Backspace để người dùng còn sửa lỗi)
+            bool laPhimDieuKhien = char.IsControl(e.KeyChar);
+
+            // Bước 3: Ra quyết định
+            // Nếu phím gõ KHÔNG PHẢI là số VÀ cũng KHÔNG PHẢI là phím điều khiển
+            if (laSo == false && laPhimDieuKhien == false) {
+                // ...thì chúng ta "hủy" phím gõ đó đi
+
+                // e.Handled = true; có nghĩa là:
+                // "Tôi đã xử lý phím này rồi, TextBox không cần làm gì nữa"
+                // -> Kết quả: Ký tự (ví dụ: 'a') sẽ không bao giờ xuất hiện.
+                e.Handled = true;
+            }
+        }
+
         // (Hàm này trả về MaDH mới, hoặc -1 nếu lỗi)
         private int ThucHienLuuTam() {
             // 1. Kiểm tra giỏ hàng
@@ -778,7 +862,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     var donHangMoi = new DonHang {
                         NgayLap = DateTime.Now,
                         MaNv = _currentMaNV,
-                        TrangThai = "Dang xu ly", // Trạng thái chờ
+                        TrangThai = "Đang xử lý", // Trạng thái chờ
                         TongTien = tongTien,
                         MaKh = _currentMaKH // Gán MaKH (có thể null)
                     };
@@ -802,7 +886,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     // Bước 3: Tạo ThanhToan (Trạng thái "Chưa thanh toán")
                     var thanhToanMoi = new Models.ThanhToan {
                         MaDhNavigation = donHangMoi, // Gán vào đơn hàng mẹ
-                        HinhThuc = "Chua xac dinh",
+                        HinhThuc = null,
                         SoTien = tongTien,
                         TrangThai = "Chưa thanh toán"
                     };
@@ -829,6 +913,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                                 if (nguyenLieuTrongKho != null) {
                                     decimal luongCanTru = nguyenLieuCan.SoLuongCan * soLuongBan;
                                     nguyenLieuTrongKho.SoLuongTon -= luongCanTru;
+
+                                    db.Update(nguyenLieuTrongKho);
                                 }
                             }
                         }
@@ -847,29 +933,18 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        private void txtTimKiemKH_KeyPress(object sender, KeyPressEventArgs e) {
-
-            // 'e.KeyChar' là ký tự mà người dùng vừa gõ (ví dụ: 'a', '1', '%')
-
-            // Bước 1: Kiểm tra xem phím vừa gõ có phải là SỐ (Digit) không
-            // (char.IsDigit() là hàm cơ bản của C# để kiểm tra số 0-9)
-            bool laSo = char.IsDigit(e.KeyChar);
-
-            // Bước 2: Kiểm tra xem phím vừa gõ có phải là phím "Điều khiển" không
-            // (Phím điều khiển là các phím như Backspace (xóa), Enter, Ctrl+C, Ctrl+V)
-            // (Chúng ta phải cho phép phím Backspace để người dùng còn sửa lỗi)
-            bool laPhimDieuKhien = char.IsControl(e.KeyChar);
-
-            // Bước 3: Ra quyết định
-            // Nếu phím gõ KHÔNG PHẢI là số VÀ cũng KHÔNG PHẢI là phím điều khiển
-            if (laSo == false && laPhimDieuKhien == false) {
-                // ...thì chúng ta "hủy" phím gõ đó đi
-
-                // e.Handled = true; có nghĩa là:
-                // "Tôi đã xử lý phím này rồi, TextBox không cần làm gì nữa"
-                // -> Kết quả: Ký tự (ví dụ: 'a') sẽ không bao giờ xuất hiện.
-                e.Handled = true;
-            }
+        private void ResetMainForm() {
+            // 1. Xóa giỏ hàng
+            lvDonHang.Items.Clear();
+            // 2. Cập nhật tổng tiền (về 0)
+            CapNhatTongTien();
+            // 3. Reset thông tin khách hàng
+            lblTenKH.Text = "Khách vãng lai";
+            _currentMaKH = null;
+            txtTimKiemKH.Text = "";
+            // 4. Tải lại danh sách sản phẩm (Vì kho đã bị trừ)
+            TaiSanPham(_currentMaLoai);
+            lvDonHang.SelectedItems.Clear();
         }
         #endregion
 

@@ -2,6 +2,8 @@
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
     public partial class ChonDonHangCho : Form {
+
+        public int MaDonHangDaChon { get; private set; }
         public ChonDonHangCho() {
             InitializeComponent();
         }
@@ -21,21 +23,28 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 return;
             }
 
-            // 2. Lấy đơn hàng đã chọn
+            // 2. Lấy MaDH từ 'Tag' của dòng đã chọn
             ListViewItem itemDaChon = lvDonHangCho.SelectedItems[0];
-
-            // Lấy MaDH (số 101, 102,...) mà ta đã lưu trong Tag
             int maDHCanThanhToan = (int)itemDaChon.Tag;
 
-            // 3. Mở Form ThanhToan (frmHoaDonThanhToan)
-            //    và truyền MaDH này qua
-            // (Chúng ta sẽ sửa Form ThanhToan ở bước sau)
-            ThanhToan frmBill = new ThanhToan(maDHCanThanhToan);
-            frmBill.ShowDialog();
+            // --- BƯỚC 2: GÁN GIÁ TRỊ CHO BIẾN PUBLIC ---           
+            this.MaDonHangDaChon = maDHCanThanhToan;
 
-            // 4. Sau khi form ThanhToan đóng, tải lại danh sách
-            // (Vì đơn hàng vừa thanh toán sẽ biến mất khỏi list "Đang xử lý")
-            TaiDanhSachDonHangCho();
+            // --- BƯỚC 3: SỬA LỖI CS7036 (Constructor) ---
+            // (Mở form ThanhToan mới và truyền *chỉ* MaDH vào,
+            // vì form ThanhToan (Bước 4) sẽ tự tải dữ liệu)
+            ThanhToan frmThanhToan = new ThanhToan(maDHCanThanhToan);
+            var result = frmThanhToan.ShowDialog();
+
+            // 4. KIỂM TRA KẾT QUẢ
+            // Nếu thanh toán thành công (bấm "In Hóa Đơn")
+            if (result == DialogResult.OK) {
+                // Tự động tải lại danh sách
+                // (Đơn hàng vừa thanh toán sẽ biến mất khỏi list)
+                TaiDanhSachDonHangCho();
+            }
+
+            // (Nếu bấm "Cancel" trên form ThanhToan thì không làm gì)
 
         }
 
@@ -102,5 +111,113 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
+        private void btnHuyDonCho_Click(object sender, EventArgs e) {
+
+
+            // 1. Kiểm tra xem người dùng đã chọn đơn nào chưa
+            if (lvDonHangCho.SelectedItems.Count == 0) {
+                MessageBox.Show("Vui lòng chọn một đơn hàng để HỦY.");
+                return;
+            }
+
+            // 2. Lấy MaDH từ 'Tag' của dòng đã chọn
+            ListViewItem itemDaChon = lvDonHangCho.SelectedItems[0];
+            int maDHCanHuy = (int)itemDaChon.Tag;
+
+            // 3. Hỏi xác nhận
+            var confirm = MessageBox.Show(
+                $"Bạn có chắc muốn HỦY đơn hàng [MaDH: {maDHCanHuy}] không?\n\nHÀNH ĐỘNG NÀY SẼ HOÀN TRẢ NGUYÊN LIỆU VỀ KHO.",
+                "Xác nhận Hủy Đơn",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (confirm == DialogResult.No) {
+                return; // Người dùng không muốn hủy
+            }
+
+            // 4. Bắt đầu quá trình HỦY và HOÀN KHO
+            try {
+                // Mở kết nối CSDL
+                using (DataSqlContext db = new DataSqlContext()) {
+                    // --- BẮT ĐẦU GIAO DỊCH AN TOÀN ---
+                    // (Transaction đảm bảo tất cả cùng thành công,
+                    // hoặc tất cả cùng thất bại)
+                    using (var transaction = db.Database.BeginTransaction()) {
+                        // 5. Tải các đối tượng cần thiết
+                        var donHang = db.DonHangs.FirstOrDefault(dh => dh.MaDh == maDHCanHuy);
+                        var thanhToan = db.ThanhToans.FirstOrDefault(tt => tt.MaDh == maDHCanHuy && tt.TrangThai == "Chưa thanh toán");
+                        var chiTiet = db.ChiTietDonHangs
+                                        .Where(ct => ct.MaDh == maDHCanHuy)
+                                        .ToList(); // (Dùng .ToList() để tránh lỗi DataReader)
+
+                        if (donHang == null || thanhToan == null) {
+                            MessageBox.Show("Lỗi: Không tìm thấy đơn hàng hoặc thanh toán để hủy.");
+                            transaction.Rollback(); // Hủy bỏ giao dịch
+                            return;
+                        }
+
+                        // --- 6. HOÀN KHO (LOGIC QUAN TRỌNG) ---
+                        // Lặp qua từng món ăn đã bị trừ kho
+                        foreach (var monAn in chiTiet) {
+                            int maSP = monAn.MaSp;
+                            int soLuongBiTru = monAn.SoLuong;
+
+                            // Lấy công thức của món đó
+                            var congThuc = db.DinhLuongs
+                                             .Where(dl => dl.MaSp == maSP)
+                                             .ToList();
+
+                            if (congThuc.Count > 0) {
+                                // Lặp qua từng nguyên liệu trong công thức
+                                foreach (var nguyenLieuCan in congThuc) {
+                                    // Tìm nguyên liệu đó trong kho
+                                    var nguyenLieuTrongKho = db.NguyenLieus
+                                                               .FirstOrDefault(nl => nl.MaNl == nguyenLieuCan.MaNl);
+
+                                    if (nguyenLieuTrongKho != null) {
+                                        // Tính toán lượng CỘNG TRẢ LẠI
+                                        decimal luongCanCong = nguyenLieuCan.SoLuongCan * soLuongBiTru;
+
+                                        // CỘNG TRẢ
+                                        nguyenLieuTrongKho.SoLuongTon += luongCanCong;
+
+                                        // Báo cho CSDL biết là ta đã sửa nó
+                                        db.Update(nguyenLieuTrongKho);
+                                    }
+                                }
+                            }
+                        }
+
+                        // --- 7. CẬP NHẬT TRẠNG THÁI ---
+                        donHang.TrangThai = "Đã huỷ";
+                        thanhToan.TrangThai = "Đã huỷ";
+                        db.Update(donHang);
+                        db.Update(thanhToan);
+
+                        // --- 8. LƯU TẤT CẢ THAY ĐỔI ---
+                        db.SaveChanges(); // Lưu (Cộng kho + Đổi trạng thái)
+                        transaction.Commit(); // Hoàn tất giao dịch an toàn
+
+                        MessageBox.Show($"Đã hủy thành công đơn hàng {maDHCanHuy}. \nĐã hoàn trả nguyên liệu về kho.", "Thông báo");
+
+                        // 9. Tải lại danh sách (đơn hàng 101 sẽ biến mất)
+                        TaiDanhSachDonHangCho();
+                    }
+                }
+            }
+            catch (Exception ex) {
+                MessageBox.Show("Lỗi nghiêm trọng khi hủy đơn hàng: " + ex.Message);
+            }
+
+        }
+
+        // Bấm đúp vào 1 dòng = Bấm nút "Thanh Toán"
+        private void lvDonHangCho_MouseDoubleClick(object sender, MouseEventArgs e) {
+
+
+            // Giả lập việc bấm nút "Thanh Toán"
+            btnChonThanhToan_Click(sender, e);
+
+        }
     }
 }
