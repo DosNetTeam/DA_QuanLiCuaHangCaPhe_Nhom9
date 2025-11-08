@@ -24,6 +24,7 @@
         /// </summary>
         private void InitializeComponent() {
             panel1 = new Panel();
+            btnHuyDonCho = new Button();
             btnTaiLai = new Button();
             btnChonThanhToan = new Button();
             lvDonHangCho = new ListView();
@@ -36,13 +37,25 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(btnHuyDonCho);
             panel1.Controls.Add(btnTaiLai);
             panel1.Controls.Add(btnChonThanhToan);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 544);
+            panel1.Location = new Point(0, 533);
             panel1.Name = "panel1";
-            panel1.Size = new Size(803, 102);
+            panel1.Size = new Size(940, 102);
             panel1.TabIndex = 0;
+            // 
+            // btnHuyDonCho
+            // 
+            btnHuyDonCho.Dock = DockStyle.Fill;
+            btnHuyDonCho.Location = new Point(260, 0);
+            btnHuyDonCho.Name = "btnHuyDonCho";
+            btnHuyDonCho.Size = new Size(352, 102);
+            btnHuyDonCho.TabIndex = 2;
+            btnHuyDonCho.Text = "Hủy Đơn Chờ Đã Chọn";
+            btnHuyDonCho.UseVisualStyleBackColor = true;
+            btnHuyDonCho.Click += btnHuyDonCho_Click;
             // 
             // btnTaiLai
             // 
@@ -58,7 +71,7 @@
             // btnChonThanhToan
             // 
             btnChonThanhToan.Dock = DockStyle.Right;
-            btnChonThanhToan.Location = new Point(475, 0);
+            btnChonThanhToan.Location = new Point(612, 0);
             btnChonThanhToan.Name = "btnChonThanhToan";
             btnChonThanhToan.Size = new Size(328, 102);
             btnChonThanhToan.TabIndex = 0;
@@ -74,10 +87,11 @@
             lvDonHangCho.GridLines = true;
             lvDonHangCho.Location = new Point(0, 0);
             lvDonHangCho.Name = "lvDonHangCho";
-            lvDonHangCho.Size = new Size(803, 544);
+            lvDonHangCho.Size = new Size(940, 533);
             lvDonHangCho.TabIndex = 1;
             lvDonHangCho.UseCompatibleStateImageBehavior = false;
             lvDonHangCho.View = View.Details;
+            lvDonHangCho.MouseDoubleClick += lvDonHangCho_MouseDoubleClick;
             // 
             // MaDH
             // 
@@ -103,7 +117,7 @@
             // 
             AutoScaleDimensions = new SizeF(17F, 41F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(803, 646);
+            ClientSize = new Size(940, 635);
             Controls.Add(lvDonHangCho);
             Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -125,5 +139,6 @@
         private ColumnHeader TenKH;
         private ColumnHeader NgayLap;
         private ColumnHeader TongTien;
+        private Button btnHuyDonCho;
     }
 }
