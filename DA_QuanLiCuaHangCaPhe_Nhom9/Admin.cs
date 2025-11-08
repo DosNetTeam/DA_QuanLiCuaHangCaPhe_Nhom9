@@ -365,10 +365,10 @@ Category = "Khách hàng",
            textBox6.Text = employee.TenDangNhap;
     textBox5.Text = employee.VaiTro;
                 
-       // Hiển thị mật khẩu (readonly ban đầu)
-      textBoxPassword.Text = employee.MatKhau;
-             textBoxPassword.ReadOnly = true;
- textBoxPassword.UseSystemPasswordChar = true;
+ //      // Hiển thị mật khẩu (readonly ban đầu)
+ //     textBoxPassword.Text = employee.MatKhau;
+ //            textBoxPassword.ReadOnly = true;
+ //textBoxPassword.UseSystemPasswordChar = true;
 
             // Show panel1
       panel1.Visible = true;
@@ -416,10 +416,10 @@ $"Lỗi khi hiển thị chi tiết:\n{ex.Message}",
              }
 
        // Cho phép chỉnh sửa mật khẩu
-         textBoxPassword.ReadOnly = false;
-           textBoxPassword.UseSystemPasswordChar = false;
-   textBoxPassword.Focus();
-        textBoxPassword.SelectAll();
+   //      textBoxPassword.ReadOnly = false;
+   //        textBoxPassword.UseSystemPasswordChar = false;
+   //textBoxPassword.Focus();
+   //     textBoxPassword.SelectAll();
 
            // Hiển thị hộp thoại nhập mật khẩu mới
    using (Form promptForm = new Form())
@@ -627,9 +627,9 @@ $"Đổi mật khẩu thành công!\n\n" +
       MessageBoxIcon.Information);
 
        // Update textbox to show new password
-      textBoxPassword.Text = txtNewPass.Text;
-         textBoxPassword.ReadOnly = true;
-     textBoxPassword.UseSystemPasswordChar = true;
+     // textBoxPassword.Text = txtNewPass.Text;
+     //    textBoxPassword.ReadOnly = true;
+     //textBoxPassword.UseSystemPasswordChar = true;
 
           // Refresh employee data
        LoadEmployeeData();
@@ -637,8 +637,8 @@ $"Đổi mật khẩu thành công!\n\n" +
       else
    {
        // User cancelled - restore readonly state
-   textBoxPassword.ReadOnly = true;
-  textBoxPassword.UseSystemPasswordChar = true;
+  // textBoxPassword.ReadOnly = true;
+  //textBoxPassword.UseSystemPasswordChar = true;
            }
      }
             }
@@ -652,11 +652,11 @@ $"Đổi mật khẩu thành công!\n\n" +
                MessageBoxIcon.Error);
 
  // Restore readonly state on error
-             if (textBoxPassword != null)
-      {
-        textBoxPassword.ReadOnly = true;
-     textBoxPassword.UseSystemPasswordChar = true;
-         }
+     //        if (textBoxPassword != null)
+     // {
+     //   textBoxPassword.ReadOnly = true;
+     //textBoxPassword.UseSystemPasswordChar = true;
+      //   }
             }
       }
 
