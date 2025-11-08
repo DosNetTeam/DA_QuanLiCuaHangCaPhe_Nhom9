@@ -113,6 +113,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
               t.TrangThai,
               t.MaNv,
               NhanVien = t.MaNvNavigation.TenNv,
+              ChucVu = t.MaNvNavigation.ChucVu,
               VaiTro = t.MaVaiTroNavigation.TenVaiTro
           })
                 .SingleOrDefault();
@@ -130,21 +131,21 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                     return;
                 }
 
-                // xác minh mật khẩu  (NOTE: Cập nhật điều này nếu mật khẩu được băm)
+                // Verify password (NOTE: Cập nhật điều này nếu mật khẩu được băm)
                 if (account.MatKhau != password)
                 {
                     MessageBox.Show(
                       "Tên đăng nhập hoặc mật khẩu không đúng!",
                        "Lỗi đăng nhập",
                       MessageBoxButtons.OK,
-                  MessageBoxIcon.Error
+                        MessageBoxIcon.Error
                  );
                     txtPass.Clear();
                     txtUser.Focus();
                     return;
                 }
 
-                // kiểm tra trạng thái tài khoản
+                // Check account status
                 if (account.TrangThai.HasValue && account.TrangThai.Value == false)
                 {
                     MessageBox.Show(
@@ -156,52 +157,44 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                     return;
                 }
 
-                // Authentication successful - hiển thị tin nhắn xin chào
+                // Authentication successful - Hide login form
+                this.Hide();
 
-                MessageBox.Show(
-                 $"Đăng nhập thành công!\n" +
-                 $"Xin chào: {account.NhanVien}\n" +
-             $"Vai trò: {account.VaiTro}",
-                "Thành công",
-            MessageBoxButtons.OK,
-               MessageBoxIcon.Information
-         );
-
-                // Lộ trình dựa trên vai trò
-                //this.Hide(); // ẩn form đăng nhập
-
-                if (account.VaiTro == "Admin" )
+                // Route to appropriate form based on role and position
+                // Priority: Admin > Chủ hàng > Quản lý > Nhân viên
+                if (account.VaiTro == "Admin")
                 {
-                    // Admin/Manager role - mở form Admin
+                    // Admin role OR Chủ hàng position - Open Admin form
                     Admin adminForm = new Admin();
                     adminForm.FormClosed += (s, args) => this.Close();
                     adminForm.Show();
-                } else if (account.VaiTro == "Quản lý")
+                }
+               
+                else if (account.VaiTro == "Quản lý")
                 {
-                    // vai trò quản lý - mở Mainform và chuyển mã nhân viên
+                    // Manager role - Open QuanLi form
                     QuanLi ql = new QuanLi();
                     ql.FormClosed += (s, args) => this.Close();
                     ql.Show();
                 }
                 else if (account.VaiTro == "Nhân viên")
                 {
-                    // vai trò nhân viên   - mở Mainform và chuyển mã nhân viên
+                    // Employee role - Open MainForm with MaNv parameter
                     MainForm mainForm = new MainForm(account.MaNv);
                     mainForm.FormClosed += (s, args) => this.Close();
-
                     mainForm.Show();
                 }
                 else
                 {
-                    // không có vai trò hợp lệ - hiển thị lỗi - trả về form đăng nhập
+                    // Unknown role - show error and return to login
                     MessageBox.Show(
-     $"Vai trò '{account.VaiTro}' không được hỗ trợ!\n" +
-              "Vui lòng liên hệ quản trị viên.",
-        "Lỗi vai trò",
-        MessageBoxButtons.OK,
-        MessageBoxIcon.Error
-     );
-                    this.Show(); // Hiển thị forrm đăng nhập lại
+              $"Vai trò '{account.VaiTro}' không được hỗ trợ!\n" +
+                       "Vui lòng liên hệ quản trị viên.",
+                 "Lỗi vai trò",
+                 MessageBoxButtons.OK,
+                 MessageBoxIcon.Error
+              );
+                    this.Show(); // Show login form again
                 }
             }
             catch (Exception ex)
@@ -215,7 +208,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             }
         }
 
-        // nút thoát
+        // Handler for Cancel button
         private void btnThoat_Click(object? sender, EventArgs e)
         {
             var result = MessageBox.Show(
@@ -231,11 +224,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             }
         }
 
-        // phương pháp trợ giúp để giúp kích hoạt/tắt nút đăng nhập
+
+
+        // Helper method to enable/disable login button
         private void UpdateLoginButtonState()
         {
             btnOK.Enabled = !string.IsNullOrWhiteSpace(txtUser.Text) &&
               !string.IsNullOrWhiteSpace(txtPass.Text);
         }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            // Form load logic if needed
+        }
+
     }
 }
