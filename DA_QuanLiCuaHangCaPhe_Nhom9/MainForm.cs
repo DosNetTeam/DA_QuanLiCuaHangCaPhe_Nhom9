@@ -5,10 +5,8 @@ using System.Globalization;
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
     public partial class MainForm : Form {
 
-
         // Giả định ID nhân viên đang đăng nhập.
         private int _currentMaNV = 3;
-
 
         // Biến này sẽ lưu Mã Khách Hàng sau khi tìm thấy
         // Dấu ? có nghĩa là "nullable" (có thể rỗng,
@@ -24,6 +22,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         //    _currentMaNV = MaNV;
         //}
 
+        #region Hàm khởi tạo và tải form
         public MainForm() {
             InitializeComponent();
         }
@@ -43,28 +42,21 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
             this.btnThem.Enabled = false;
         }
-
-
-
+        #endregion
 
         #region Các hàm tải dữ liệu (Load Data - Dùng EF Core)
-
         // Tải các nút Loại Sản Phẩm (từ CSDL)
         private void TaiLoaiSanPham() {
             flpLoaiSP.Controls.Clear();
             flpLoaiSP.FlowDirection = FlowDirection.TopDown;
 
             try {
-
-                using (DataSqlContext db = new DataSqlContext())
-                // -----------------------------------------------------------------
-                {
+                using (DataSqlContext db = new DataSqlContext()) {
                     var cacLoaiSP = db.SanPhams
                                      .Select(sp => sp.LoaiSp)
                                      .Where(loai => loai != null && loai != "")
                                      .Distinct()
                                      .ToList();
-                    // -----------------------------------------------------------------
 
                     // 1. Tạo nút "Tất Cả"
                     Button btnTatCa = new Button {
@@ -76,6 +68,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                         Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                         BackColor = Color.LightGray
                     };
+
                     btnTatCa.Click += BtnLoai_Click;
                     flpLoaiSP.Controls.Add(btnTatCa);
 
@@ -106,10 +99,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             string searchText = txtTimKiemSP.Text.Trim().ToLower();
 
             try {
-
-                using (DataSqlContext db = new DataSqlContext())
-                // -----------------------------------------------------------------
-                {
+                using (DataSqlContext db = new DataSqlContext()) {
                     // Biến 'query' này sẽ lưu câu lệnh truy vấn
                     IQueryable<SanPham> query;
 
@@ -135,7 +125,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     // Thêm một điều kiện 'Where' nữa: chỉ lấy sp "Con ban"
                     var spCanHienThi = query.Where(sp => sp.TrangThai == "Con ban").ToList();
 
-
+                    // Chúng ta cần lấy công thức và nguyên liệu
+                    // ra 2 danh sách TẠM
+                    var allDinhLuong = db.DinhLuongs.ToList();
+                    var allNguyenLieu = db.NguyenLieus.ToList();
 
                     // Tạo các nút sản phẩm
                     foreach (var sp in spCanHienThi) {
@@ -158,10 +151,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                         btn.FlatAppearance.BorderSize = 1;
                         btn.FlatAppearance.BorderColor = Color.Gainsboro; // Màu viền xám nhạt
 
-                        // Gọi hàm kiểm tra kho (sẽ viết ở dưới)
                         // Hàm này trả về 1 trong 3 chữ:
                         // "DU_HANG", "SAP_HET", "HET_HANG"
-                        string trangThaiKho = KiemTraDuNguyenLieu(sp.MaSp);
+                        //string trangThaiKho = KiemTraDuNguyenLieu(sp.MaSp);
+
+                        // (Hàm này giờ dùng 2 List tạm, không gọi CSDL)
+                        string trangThaiKho = KiemTraDuNguyenLieu(sp.MaSp, allDinhLuong, allNguyenLieu);
 
                         // Dùng switch case (hoặc if/else) để xử lý 3 trường hợp
                         switch (trangThaiKho) {
@@ -230,166 +225,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             ThemSanPhamVaoDonHang(spDuocChon);
         }
 
-        #endregion
-
-        #region Các hàm logic nghiệp vụ (Business Logic)
-        private String KiemTraDuNguyenLieu(int maSP) {
-            // Mở kết nối CSDL (chỉ để kiểm tra)
-            using (DataSqlContext db = new DataSqlContext()) {
-
-                // 1. Lấy công thức cho sản phẩm này (Truy vấn CSDL)
-                // Bằng cách thêm .ToList(), chúng ta buộc C# phải lấy
-                // hết danh sách công thức về bộ nhớ và "đóng" DataReader 1.
-                var congThuc = db.DinhLuongs.Where(dl => dl.MaSp == maSP).ToList();
-
-                // 2. Kiểm tra xem có công thức nào không
-
-                if (congThuc.Count == 0) {
-                    return "DU_HANG"; // Không có công thức (ví dụ: bánh mua sẵn), luôn đủ hàng
-                }
-
-                // Biến này để theo dõi trạng thái chung
-                // Bắt đầu bằng "Đủ hàng"
-                string trangThaiTongQuat = "DU_HANG";
-
-                // 3. Lặp qua TỪNG NGUYÊN LIỆU trong công thức
-                foreach (var nguyenLieuCan in congThuc) {
-                    // 4. Lấy nguyên liệu trong kho (Mở kết nối 2)
-                    var nguyenLieuTrongKho = db.NguyenLieus
-                                               .FirstOrDefault(nl => nl.MaNl == nguyenLieuCan.MaNl);
-
-                    // 5. Kiểm tra
-                    if (nguyenLieuTrongKho == null) {
-                        return "HET_HANG"; // Lỗi CSDL, coi như hết
-                    }
-
-                    // --- LOGIC MỚI (3 TRẠNG THÁI) ---
-
-                    // 5.1. KIỂM TRA HẾT HẲN (<= 0)
-                    if (nguyenLieuTrongKho.SoLuongTon <= 0) {
-                        return "HET_HANG"; // Hết hẳn, không cần kiểm tra thêm
-                    }
-
-                    // 5.2. KIỂM TRA SẮP HẾT (dưới ngưỡng)
-                    if (nguyenLieuTrongKho.SoLuongTon <= nguyenLieuTrongKho.NguongCanhBao) {
-                        // Nếu có bất kỳ 1 NL nào sắp hết,
-                        // ta đánh dấu trạng thái chung là "SAP_HET"
-                        trangThaiTongQuat = "SAP_HET";
-                    }
-
-                    // 5.3. Nếu không (tức là > ngưỡng)
-                    // thì ta không làm gì, giữ nguyên trạng thái "DU_HANG"
-                    // (hoặc "SAP_HET" nếu đã bị đánh dấu từ trước)
-                }
-
-                // 6. Sau khi kiểm tra HẾT TẤT CẢ nguyên liệu,
-                // trả về trạng thái chung
-                return trangThaiTongQuat;
-            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        }
-
-
-        // ---------------------------------
-        // Hàm này xử lý việc thêm SP vào giỏ hàng (ListView)
-        private void ThemSanPhamVaoDonHang(SanPham sp) {
-            // Bước 1: Kiểm tra xem SP này đã có trong giỏ hàng chưa
-            foreach (ListViewItem item in lvDonHang.Items) {
-                // 'Tag' của mỗi dòng trong ListView ta lưu MaSp (kiểu int)
-                int maSpTrongGio = (int)item.Tag;
-
-                // Nếu MaSp trong giỏ == MaSp của SP vừa bấm
-                if (maSpTrongGio == sp.MaSp) {
-                    // ----- ĐÃ CÓ, TĂNG SỐ LƯỢNG -----
-                    // 1. Lấy số lượng cũ (từ cột 1)
-                    int soLuongCu = int.Parse(item.SubItems[1].Text);
-
-                    // 2. Tăng số lượng lên
-                    int soLuongMoi = soLuongCu + 1;
-
-                    // 3. Tính thành tiền mới
-                    decimal thanhTienMoi = soLuongMoi * sp.DonGia;
-
-                    // 4. Cập nhật lại ListView
-                    item.SubItems[1].Text = soLuongMoi.ToString();
-                    item.SubItems[3].Text = thanhTienMoi.ToString("N0");
-
-                    // 5. Cập nhật tổng tiền
-                    CapNhatTongTien();
-
-                    // 6. Thoát hàm, không làm gì nữa
-                    return;
-                }
-            }
-
-            // ----- CHƯA CÓ, THÊM DÒNG MỚI -----
-            // Nếu vòng lặp 'foreach' chạy hết mà không 'return',
-            // nghĩa là đây là sản phẩm mới.
-
-            // 1. Tạo một dòng (ListViewItem) mới, cột đầu tiên là Tên SP
-            ListViewItem lvi = new ListViewItem(sp.TenSp);
-
-            // 2. Gán 'Tag' là MaSp để sau này kiểm tra
-            lvi.Tag = sp.MaSp;
-
-            // 3. Thêm các cột phụ (SubItems)
-            lvi.SubItems.Add("1"); // Cột [1]: Số lượng
-            lvi.SubItems.Add(sp.DonGia.ToString("N0")); // Cột [2]: Đơn giá
-            lvi.SubItems.Add(sp.DonGia.ToString("N0")); // Cột [3]: Thành tiền
-
-            // 4. Thêm dòng mới này vào ListView
-            lvDonHang.Items.Add(lvi);
-
-            // 5. Cập nhật tổng tiền
-            CapNhatTongTien();
-        }
-
-        // Hàm này tính lại tổng tiền từ đầu
-        private void CapNhatTongTien() {
-            decimal tongTien = 0;
-
-            // Lặp qua TẤT CẢ các dòng trong giỏ hàng
-            foreach (ListViewItem item in lvDonHang.Items) {
-                // Lấy giá trị của cột Thành Tiền (cột 3)
-                // Phải .Replace(".", "") để xóa dấu phẩy hàng nghìn
-                // ví dụ: "20.000" -> "20000"
-                string chuoiThanhTien = item.SubItems[3].Text.Replace(".", "");
-
-                // Chuyển chữ "20000" thành số 20000
-                decimal thanhTien = decimal.Parse(chuoiThanhTien, CultureInfo.CurrentCulture);
-
-                // Cộng dồn vào tổng tiền
-                tongTien = tongTien + thanhTien;
-            }
-
-            // Hiển thị tổng tiền lên Label (thêm "N0" để nó tự format
-            // thành "20.000 đ")
-            lblTongCong.Text = tongTien.ToString("N0") + " đ";
-        }
-
-        // Hàm này được gọi khi bấm nút "Thanh Toán"
-        // (Tên hàm _1 là do bạn double-click vào nút trong designer)
         private void btnThanhToan_Click(object sender, EventArgs e) {
-
-            //ThanhToan frmThanhToan = new ThanhToan(lvDonHang.Items, decimal.Parse(lblTongCong.Text.Replace(" đ", "").Replace(".", ""), CultureInfo.InvariantCulture));
-            //frmThanhToan.ShowDialog();
 
             // Kiểm tra xem có hàng trong giỏ chưa
             if (lvDonHang.Items.Count == 0) {
@@ -397,12 +233,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 return; // Thoát hàm
             }
 
-
             // 2. Lấy tổng tiền (Phải Parse đúng cách)
             string tongTienStr = lblTongCong.Text.Replace(" đ", "").Replace(".", "");
             decimal tongTien = decimal.Parse(tongTienStr, CultureInfo.InvariantCulture);
 
-            ThanhToan frmThanhToan = new ThanhToan(lvDonHang.Items, decimal.Parse(lblTongCong.Text.Replace(" đ", "").Replace(".", ""), CultureInfo.InvariantCulture), _currentMaNV);
+            ThanhToan frmThanhToan = new ThanhToan(lvDonHang.Items, decimal.Parse(lblTongCong.Text.Replace(" đ", "").Replace(".", ""), CultureInfo.InvariantCulture), _currentMaNV, _currentMaKH);
 
             // 4. HIỂN THỊ và LẮNG NGHE TÍN HIỆU TRẢ VỀ
             var result = frmThanhToan.ShowDialog();
@@ -415,11 +250,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 CapNhatTongTien(); // Cập nhật tổng tiền (về 0)
 
                 TaiSanPham(_currentMaLoai);
+
             }
             // Nếu result == DialogResult.Cancel (người dùng bấm "Hủy" hoặc nút X), 
             // thì không làm gì cả, giỏ hàng vẫn còn đó.
 
-            #region
+            #region code cũ lưu đơn hàng trực tiếp trong MainForm (bây giờ chuyển sang form ThanhToan) - code thời tiền sử
             //try
             //{
 
@@ -501,8 +337,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-
-
         private void btnXoaMon_Click(object sender, EventArgs e) {
             // Bước 1: Kiểm tra xem người dùng đã chọn món nào chưa
             // (ListView cho phép chọn nhiều, nhưng ta chỉ xử lý 1)
@@ -537,6 +371,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 // Bước 4: Xử lý logic
                 if (soLuongHienTai > 1) {
+
                     // ----- TRƯỜNG HỢP 1: SỐ LƯỢNG > 1 (Ví dụ: 3 -> 2) -----
                     int soLuongMoi = soLuongHienTai - 1;
 
@@ -633,22 +468,222 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
+
+
+
+
         #endregion
 
+        #region Các hàm logic nghiệp vụ (Business Logic)
+        private string KiemTraDuNguyenLieu(int maSP, List<DinhLuong> allDinhLuong, List<NguyenLieu> allNguyenLieu) {
+            // 1. Lấy công thức từ List tạm
+            var congThuc = new List<DinhLuong>();
+            foreach (var dl in allDinhLuong) {
+                if (dl.MaSp == maSP) {
+                    congThuc.Add(dl);
+                }
+            }
 
-        private void txtTimKiemKH_TextChanged(object sender, EventArgs e) {
+            if (congThuc.Count == 0) {
+                return "DU_HANG"; // Không có công thức = Luôn đủ
+            }
 
+            string trangThaiTongQuat = "DU_HANG";
+
+            // 3. Lặp qua TỪNG NGUYÊN LIỆU trong công thức
+            foreach (var nguyenLieuCan in congThuc) {
+                // 4. Lấy nguyên liệu trong kho từ List tạm
+                NguyenLieu nguyenLieuTrongKho = null;
+                foreach (var nl in allNguyenLieu) {
+                    if (nl.MaNl == nguyenLieuCan.MaNl) {
+                        nguyenLieuTrongKho = nl;
+                        break;
+                    }
+                }
+
+                if (nguyenLieuTrongKho == null) {
+                    return "HET_HANG"; // Lỗi CSDL, coi như hết
+                }
+
+                // 5.1. KIỂM TRA HẾT HẲN (<= 0)
+                if (nguyenLieuTrongKho.SoLuongTon <= 0) {
+                    return "HET_HANG"; // Hết hẳn
+                }
+
+                // 5.2. KIỂM TRA SẮP HẾT (dưới ngưỡng)
+                if (nguyenLieuTrongKho.SoLuongTon <= nguyenLieuTrongKho.NguongCanhBao) {
+                    trangThaiTongQuat = "SAP_HET";
+                }
+            }
+
+            return trangThaiTongQuat;
         }
 
-        private void label6_Click(object sender, EventArgs e) {
+        // Hàm này được gọi KHI THÊM VÀO GIỎ HÀNG
+        // Nó sẽ kiểm tra xem kho có đủ cho (X) ly không
+        private bool KiemTraSoLuongTonThucTe(int maSP, int soLuongMuonKiemTra) {
+            // Mở CSDL (chỉ để kiểm tra)
+            using (DataSqlContext db = new DataSqlContext()) {
+                // 1. Lấy công thức (Sửa lỗi DataReader)
+                var congThuc = db.DinhLuongs
+                                 .Where(dl => dl.MaSp == maSP)
+                                 .ToList(); // .ToList()
 
+                if (congThuc.Count == 0) {
+                    return true; // Không có công thức, luôn đủ
+                }
+
+                // 2. Lặp qua công thức
+                foreach (var nguyenLieuCan in congThuc) {
+                    // 3. Lấy NL trong kho
+                    var nguyenLieuTrongKho = db.NguyenLieus
+                                               .FirstOrDefault(nl => nl.MaNl == nguyenLieuCan.MaNl);
+
+                    if (nguyenLieuTrongKho == null) {
+                        MessageBox.Show($"Lỗi CSDL: Không tìm thấy nguyên liệu '{nguyenLieuCan.MaNl}'");
+                        return false; // Lỗi, không cho bán
+                    }
+
+                    // 4. Tính toán
+                    // (Lượng NL cần cho 1 ly) * (Tổng số ly muốn mua)
+                    decimal tongNguyenLieuCan = nguyenLieuCan.SoLuongCan * soLuongMuonKiemTra;
+
+                    // 5. KIỂM TRA QUAN TRỌNG
+                    if (nguyenLieuTrongKho.SoLuongTon < tongNguyenLieuCan) {
+                        // Nếu số lượng tồn THỰC TẾ
+                        // nhỏ hơn số lượng TỔNG CỘNG ta cần
+                        MessageBox.Show(
+                            $"Không đủ hàng trong kho cho {soLuongMuonKiemTra} ly!\n\n" +
+                            $"Nguyên liệu: {nguyenLieuTrongKho.TenNl}\n" +
+                            $"Chỉ còn: {nguyenLieuTrongKho.SoLuongTon}\n" +
+                            $"Cần: {tongNguyenLieuCan}",
+                            "Hết Hàng",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return false; // KHÔNG ĐỦ
+                    }
+                }
+
+                // Nếu lặp hết mà không 'return false'
+                return true; // TẤT CẢ ĐỀU ĐỦ
+            }
         }
 
-        private void tableLayoutPanel3_Paint(object sender, PaintEventArgs e) {
+        // Hàm này xử lý việc thêm SP vào giỏ hàng (ListView)
+        private void ThemSanPhamVaoDonHang(SanPham sp) {
 
+            // Bước 1: Kiểm tra xem SP này đã có trong giỏ hàng chưa
+            foreach (ListViewItem item in lvDonHang.Items) {
+
+                // 'Tag' của mỗi dòng trong ListView ta lưu MaSp (kiểu int)
+                int maSpTrongGio = (int)item.Tag;
+
+                // Nếu MaSp trong giỏ == MaSp của SP vừa bấm
+                if (maSpTrongGio == sp.MaSp) {
+
+                    // ----- ĐÃ CÓ, TĂNG SỐ LƯỢNG -----
+                    // 1. Lấy số lượng cũ (từ cột 1)
+                    int soLuongCu = int.Parse(item.SubItems[1].Text);
+
+                    // 2. Tăng số lượng lên
+                    int soLuongMoi = soLuongCu + 1;
+
+                    // Kiểm tra kho có đủ không
+                    bool duHang = KiemTraSoLuongTonThucTe(sp.MaSp, soLuongMoi);
+                    if (duHang == false) {
+                        return; // Dừng lại, không tăng SL
+                    }
+
+                    // 3. Tính thành tiền mới
+                    decimal thanhTienMoi = soLuongMoi * sp.DonGia;
+
+                    // 4. Cập nhật lại ListView
+                    item.SubItems[1].Text = soLuongMoi.ToString();
+                    item.SubItems[3].Text = thanhTienMoi.ToString("N0");
+
+                    // 5. Cập nhật tổng tiền
+                    CapNhatTongTien();
+
+                    // 6. Thoát hàm, không làm gì nữa
+                    return;
+                }
+            }
+
+            // ----- CHƯA CÓ, THÊM DÒNG MỚI -----
+            // Nếu vòng lặp 'foreach' chạy hết mà không 'return',
+            // nghĩa là đây là sản phẩm mới.
+
+            // KIỂM TRA KHO TRƯỚC KHI THÊM  
+            bool duHangMoi = KiemTraSoLuongTonThucTe(sp.MaSp, 1);
+            if (duHangMoi == false) {
+                return; // Dừng lại, không thêm
+            }
+
+            // 1. Tạo một dòng (ListViewItem) mới, cột đầu tiên là Tên SP
+            ListViewItem lvi = new ListViewItem(sp.TenSp);
+
+            // 2. Gán 'Tag' là MaSp để sau này kiểm tra
+            lvi.Tag = sp.MaSp;
+
+            // 3. Thêm các cột phụ (SubItems)
+            lvi.SubItems.Add("1"); // Cột [1]: Số lượng
+            lvi.SubItems.Add(sp.DonGia.ToString("N0")); // Cột [2]: Đơn giá
+            lvi.SubItems.Add(sp.DonGia.ToString("N0")); // Cột [3]: Thành tiền
+
+            // 4. Thêm dòng mới này vào ListView
+            lvDonHang.Items.Add(lvi);
+
+            // 5. Cập nhật tổng tiền
+            CapNhatTongTien();
         }
 
+        // Hàm này tính lại tổng tiền từ đầu
+        private void CapNhatTongTien() {
+            decimal tongTien = 0;
+
+            // Lặp qua TẤT CẢ các dòng trong giỏ hàng
+            foreach (ListViewItem item in lvDonHang.Items) {
+                // Lấy giá trị của cột Thành Tiền (cột 3)
+                // Phải .Replace(".", "") để xóa dấu phẩy hàng nghìn
+                // ví dụ: "20.000" -> "20000"
+                string chuoiThanhTien = item.SubItems[3].Text.Replace(".", "");
+
+                // Chuyển chữ "20000" thành số 20000
+                decimal thanhTien = decimal.Parse(chuoiThanhTien, CultureInfo.CurrentCulture);
+
+                // Cộng dồn vào tổng tiền
+                tongTien = tongTien + thanhTien;
+            }
+
+            // Hiển thị tổng tiền lên Label (thêm "N0" để nó tự format
+            // thành "20.000 đ")
+            lblTongCong.Text = tongTien.ToString("N0") + " đ";
+        }
+
+        private void txtTimKiemKH_KeyPress(object sender, KeyPressEventArgs e) {
+
+            // 'e.KeyChar' là ký tự mà người dùng vừa gõ (ví dụ: 'a', '1', '%')
+
+            // Bước 1: Kiểm tra xem phím vừa gõ có phải là SỐ (Digit) không
+            // (char.IsDigit() là hàm cơ bản của C# để kiểm tra số 0-9)
+            bool laSo = char.IsDigit(e.KeyChar);
+
+            // Bước 2: Kiểm tra xem phím vừa gõ có phải là phím "Điều khiển" không
+            // (Phím điều khiển là các phím như Backspace (xóa), Enter, Ctrl+C, Ctrl+V)
+            // (Chúng ta phải cho phép phím Backspace để người dùng còn sửa lỗi)
+            bool laPhimDieuKhien = char.IsControl(e.KeyChar);
+
+            // Bước 3: Ra quyết định
+            // Nếu phím gõ KHÔNG PHẢI là số VÀ cũng KHÔNG PHẢI là phím điều khiển
+            if (laSo == false && laPhimDieuKhien == false) {
+                // ...thì chúng ta "hủy" phím gõ đó đi
+
+                // e.Handled = true; có nghĩa là:
+                // "Tôi đã xử lý phím này rồi, TextBox không cần làm gì nữa"
+                // -> Kết quả: Ký tự (ví dụ: 'a') sẽ không bao giờ xuất hiện.
+                e.Handled = true;
+            }
+        }
 
     }
+    #endregion
 }
-
