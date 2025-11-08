@@ -70,6 +70,7 @@
             // 
             // panelMenu
             // 
+            panelMenu.BackColor = Color.FromArgb(45, 45, 48);
             panelMenu.Controls.Add(btnDangXuat);
             panelMenu.Controls.Add(lblCoffee);
             panelMenu.Dock = DockStyle.Left;
@@ -80,14 +81,16 @@
             // 
             // btnDangXuat
             // 
+            btnDangXuat.BackColor = Color.FromArgb(220, 80, 0);
             btnDangXuat.Dock = DockStyle.Bottom;
+            btnDangXuat.FlatAppearance.BorderSize = 0;
             btnDangXuat.FlatStyle = FlatStyle.Flat;
             btnDangXuat.Location = new Point(0, 403);
             btnDangXuat.Name = "btnDangXuat";
             btnDangXuat.Size = new Size(250, 47);
             btnDangXuat.TabIndex = 6;
-            btnDangXuat.Text = "Dang Xuat";
-            btnDangXuat.UseVisualStyleBackColor = true;
+            btnDangXuat.Text = "Đăng xuất";
+            btnDangXuat.UseVisualStyleBackColor = false;
             btnDangXuat.Click += btnDangXuat_Click;
             // 
             // lblCoffee
@@ -131,7 +134,7 @@
             tabPageQuanLyNV.Padding = new Padding(3);
             tabPageQuanLyNV.Size = new Size(542, 417);
             tabPageQuanLyNV.TabIndex = 0;
-            tabPageQuanLyNV.Text = "Nhan vien";
+            tabPageQuanLyNV.Text = "Nhân viên";
             tabPageQuanLyNV.UseVisualStyleBackColor = true;
             // 
             // panel1
@@ -151,6 +154,8 @@
             // dgvPerformance
             // 
             dgvPerformance.AllowUserToAddRows = false;
+            dgvPerformance.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvPerformance.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvPerformance.BackgroundColor = SystemColors.Control;
             dgvPerformance.BorderStyle = BorderStyle.None;
             dgvPerformance.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -165,7 +170,8 @@
             // 
             // btnLoc
             // 
-            btnLoc.BackColor = Color.FromArgb(255, 192, 128);
+            btnLoc.BackColor = Color.FromArgb(255, 153, 77);
+            btnLoc.FlatAppearance.BorderSize = 0;
             btnLoc.FlatStyle = FlatStyle.Flat;
             btnLoc.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnLoc.ForeColor = Color.White;
@@ -173,7 +179,7 @@
             btnLoc.Name = "btnLoc";
             btnLoc.Size = new Size(94, 29);
             btnLoc.TabIndex = 2;
-            btnLoc.Text = "Loc";
+            btnLoc.Text = "Lọc";
             btnLoc.UseVisualStyleBackColor = false;
             btnLoc.Click += btnLoc_Click;
             // 
@@ -197,7 +203,7 @@
             lblTieuDeHieuSuat.Name = "lblTieuDeHieuSuat";
             lblTieuDeHieuSuat.Size = new Size(334, 28);
             lblTieuDeHieuSuat.TabIndex = 0;
-            lblTieuDeHieuSuat.Text = "Hieu suat ban hang cua nhan vien";
+            lblTieuDeHieuSuat.Text = "Hiệu suất bán hàng của nhân viên";
             // 
             // label2
             // 
@@ -209,7 +215,7 @@
             label2.Padding = new Padding(10);
             label2.Size = new Size(424, 61);
             label2.TabIndex = 0;
-            label2.Text = "Quan li nhan vien ban hang";
+            label2.Text = "Quản lí nhân viên bán hàng";
             // 
             // tabPageHoaDon
             // 
@@ -220,7 +226,7 @@
             tabPageHoaDon.Padding = new Padding(3);
             tabPageHoaDon.Size = new Size(542, 417);
             tabPageHoaDon.TabIndex = 1;
-            tabPageHoaDon.Text = "Hoa don";
+            tabPageHoaDon.Text = "Hóa đơn";
             tabPageHoaDon.UseVisualStyleBackColor = true;
             // 
             // panelHoaDon
@@ -240,10 +246,12 @@
             // dgvHoaDon
             // 
             dgvHoaDon.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvHoaDon.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvHoaDon.BackgroundColor = SystemColors.Control;
             dgvHoaDon.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvHoaDon.Location = new Point(15, 90);
             dgvHoaDon.Name = "dgvHoaDon";
+            dgvHoaDon.ReadOnly = true;
             dgvHoaDon.RowHeadersWidth = 51;
             dgvHoaDon.Size = new Size(503, 242);
             dgvHoaDon.TabIndex = 3;
@@ -256,7 +264,6 @@
             cbTrangThaiHD.Name = "cbTrangThaiHD";
             cbTrangThaiHD.Size = new Size(133, 28);
             cbTrangThaiHD.TabIndex = 2;
-            cbTrangThaiHD.Text = "Tat ca trang thai";
             // 
             // txtTimKiemHD
             // 
@@ -276,7 +283,7 @@
             label4.Name = "label4";
             label4.Size = new Size(283, 28);
             label4.TabIndex = 0;
-            label4.Text = "Danh sach hoa don gan nhat";
+            label4.Text = "Danh sách hóa đơn gần nhất";
             // 
             // label3
             // 
@@ -288,7 +295,7 @@
             label3.Padding = new Padding(10);
             label3.Size = new Size(336, 61);
             label3.TabIndex = 0;
-            label3.Text = "Hoa don va giao dich";
+            label3.Text = "Hoá đơn và giao dịch";
             // 
             // tabPageTonKho
             // 
@@ -320,11 +327,13 @@
             dgvTonKho.AllowDrop = true;
             dgvTonKho.AllowUserToAddRows = false;
             dgvTonKho.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvTonKho.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvTonKho.BackgroundColor = SystemColors.Control;
             dgvTonKho.BorderStyle = BorderStyle.None;
             dgvTonKho.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvTonKho.Location = new Point(15, 90);
             dgvTonKho.Name = "dgvTonKho";
+            dgvTonKho.ReadOnly = true;
             dgvTonKho.RowHeadersVisible = false;
             dgvTonKho.RowHeadersWidth = 51;
             dgvTonKho.Size = new Size(477, 248);
@@ -333,7 +342,8 @@
             // btnThemMoiKho
             // 
             btnThemMoiKho.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnThemMoiKho.BackColor = Color.FromArgb(224, 224, 224);
+            btnThemMoiKho.BackColor = Color.FromArgb(255, 153, 77);
+            btnThemMoiKho.FlatAppearance.BorderSize = 0;
             btnThemMoiKho.FlatStyle = FlatStyle.Flat;
             btnThemMoiKho.Font = new Font("Segoe UI", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnThemMoiKho.ForeColor = Color.White;
@@ -341,7 +351,7 @@
             btnThemMoiKho.Name = "btnThemMoiKho";
             btnThemMoiKho.Size = new Size(120, 29);
             btnThemMoiKho.TabIndex = 2;
-            btnThemMoiKho.Text = "+ Thêm Mới";
+            btnThemMoiKho.Text = "+ Thêm mới";
             btnThemMoiKho.UseVisualStyleBackColor = false;
             // 
             // txtTimKiemKho
@@ -351,7 +361,6 @@
             txtTimKiemKho.Name = "txtTimKiemKho";
             txtTimKiemKho.Size = new Size(151, 27);
             txtTimKiemKho.TabIndex = 1;
-            txtTimKiemKho.Text = "Tim kiem nguyen lieu";
             // 
             // label6
             // 
@@ -362,19 +371,19 @@
             label6.Name = "label6";
             label6.Size = new Size(242, 28);
             label6.TabIndex = 0;
-            label6.Text = "Danh sach hang ton kho";
+            label6.Text = "Danh sách hàng tồn kho";
             // 
             // label5
             // 
             label5.AutoSize = true;
             label5.Dock = DockStyle.Top;
-            label5.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            label5.Font = new Font("Segoe UI", 20F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label5.Location = new Point(0, 0);
             label5.Name = "label5";
             label5.Padding = new Padding(10);
             label5.Size = new Size(264, 61);
             label5.TabIndex = 0;
-            label5.Text = "Quan li ton kho ";
+            label5.Text = "Quản lí tồn kho";
             // 
             // QuanLi
             // 
@@ -385,7 +394,7 @@
             Controls.Add(panelContent);
             Controls.Add(panelMenu);
             Name = "QuanLi";
-            Text = "QuanLi";
+            Text = "Quản lí cửa hàng";
             Load += QuanLi_Load_1;
             panelMenu.ResumeLayout(false);
             panelMenu.PerformLayout();

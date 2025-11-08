@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 
-public partial class DataSqlContext : DbContext
-{
-    public DataSqlContext()
-    {
+public partial class DataSqlContext : DbContext {
+    public DataSqlContext() {
     }
 
     public DataSqlContext(DbContextOptions<DataSqlContext> options)
-        : base(options)
-    {
+        : base(options) {
     }
 
     public virtual DbSet<ChiTietDonHang> ChiTietDonHangs { get; set; }
@@ -45,12 +40,10 @@ public partial class DataSqlContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-       => optionsBuilder.UseSqlServer("Server=EMBOU;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<ChiTietDonHang>(entity =>
-        {
+     //=> optionsBuilder.UseSqlServer("Server=EMBOU;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
+     => optionsBuilder.UseSqlServer("Server=KenG_Kanowaki\\LEMINHDUCSQL;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        modelBuilder.Entity<ChiTietDonHang>(entity => {
             entity.HasKey(e => new { e.MaDh, e.MaSp }).HasName("PK__ChiTietD__F557D6E09790EFA5");
 
             entity.ToTable("ChiTietDonHang");
@@ -71,8 +64,7 @@ public partial class DataSqlContext : DbContext
                 .HasConstraintName("FK__ChiTietDon__MaSP__45F365D3");
         });
 
-        modelBuilder.Entity<ChiTietPhieuKho>(entity =>
-        {
+        modelBuilder.Entity<ChiTietPhieuKho>(entity => {
             entity.HasKey(e => new { e.MaPhieu, e.MaNl }).HasName("PK__ChiTietP__F412E29346EA070F");
 
             entity.ToTable("ChiTietPhieuKho");
@@ -92,8 +84,7 @@ public partial class DataSqlContext : DbContext
                 .HasConstraintName("FK__ChiTietPh__MaPhi__5812160E");
         });
 
-        modelBuilder.Entity<DinhLuong>(entity =>
-        {
+        modelBuilder.Entity<DinhLuong>(entity => {
             entity.HasKey(e => new { e.MaSp, e.MaNl }).HasName("PK__DinhLuon__F557556F9AEEB440");
 
             entity.ToTable("DinhLuong");
@@ -113,8 +104,7 @@ public partial class DataSqlContext : DbContext
                 .HasConstraintName("FK__DinhLuong__MaSP__4CA06362");
         });
 
-        modelBuilder.Entity<DonHang>(entity =>
-        {
+        modelBuilder.Entity<DonHang>(entity => {
             entity.HasKey(e => e.MaDh).HasName("PK__DonHang__27258661F88B9A27");
 
             entity.ToTable("DonHang");
@@ -145,8 +135,7 @@ public partial class DataSqlContext : DbContext
                 .HasConstraintName("FK__DonHang__MaNV__4222D4EF");
         });
 
-        modelBuilder.Entity<KhachHang>(entity =>
-        {
+        modelBuilder.Entity<KhachHang>(entity => {
             entity.HasKey(e => e.MaKh).HasName("PK__KhachHan__2725CF1EFC73BF21");
 
             entity.ToTable("KhachHang");
@@ -165,8 +154,7 @@ public partial class DataSqlContext : DbContext
                 .HasColumnName("TenKH");
         });
 
-        modelBuilder.Entity<KhuyenMai>(entity =>
-        {
+        modelBuilder.Entity<KhuyenMai>(entity => {
             entity.HasKey(e => e.MaKm).HasName("PK__KhuyenMa__2725CF15520CAB81");
 
             entity.ToTable("KhuyenMai");
@@ -195,8 +183,7 @@ public partial class DataSqlContext : DbContext
                         .HasForeignKey("MaKm")
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("FK__KhuyenMai___MaKM__5FB337D6"),
-                    j =>
-                    {
+                    j => {
                         j.HasKey("MaKm", "MaSp").HasName("PK__KhuyenMa__F5579F94A99FCA89");
                         j.ToTable("KhuyenMai_SanPham");
                         j.IndexerProperty<int>("MaKm").HasColumnName("MaKM");
@@ -204,8 +191,7 @@ public partial class DataSqlContext : DbContext
                     });
         });
 
-        modelBuilder.Entity<NguyenLieu>(entity =>
-        {
+        modelBuilder.Entity<NguyenLieu>(entity => {
             entity.HasKey(e => e.MaNl).HasName("PK__NguyenLi__2725D73CB65E92CE");
 
             entity.ToTable("NguyenLieu");
@@ -223,8 +209,7 @@ public partial class DataSqlContext : DbContext
                 .HasColumnName("TenNL");
         });
 
-        modelBuilder.Entity<NhaCungCap>(entity =>
-        {
+        modelBuilder.Entity<NhaCungCap>(entity => {
             entity.HasKey(e => e.MaNcc).HasName("PK__NhaCungC__3A185DEB8FE137B0");
 
             entity.ToTable("NhaCungCap");
@@ -239,8 +224,7 @@ public partial class DataSqlContext : DbContext
                 .HasColumnName("TenNCC");
         });
 
-        modelBuilder.Entity<NhanVien>(entity =>
-        {
+        modelBuilder.Entity<NhanVien>(entity => {
             entity.HasKey(e => e.MaNv).HasName("PK__NhanVien__2725D70A108ED2F1");
 
             entity.ToTable("NhanVien");
@@ -255,8 +239,7 @@ public partial class DataSqlContext : DbContext
                 .HasColumnName("TenNV");
         });
 
-        modelBuilder.Entity<PhieuKho>(entity =>
-        {
+        modelBuilder.Entity<PhieuKho>(entity => {
             entity.HasKey(e => e.MaPhieu).HasName("PK__PhieuKho__2660BFE0A7262730");
 
             entity.ToTable("PhieuKho");
@@ -278,8 +261,7 @@ public partial class DataSqlContext : DbContext
                 .HasConstraintName("FK__PhieuKho__MaNV__5441852A");
         });
 
-        modelBuilder.Entity<SanPham>(entity =>
-        {
+        modelBuilder.Entity<SanPham>(entity => {
             entity.HasKey(e => e.MaSp).HasName("PK__SanPham__2725081C0D209471");
 
             entity.ToTable("SanPham");
@@ -298,8 +280,7 @@ public partial class DataSqlContext : DbContext
                 .HasDefaultValue("Con ban");
         });
 
-        modelBuilder.Entity<TaiKhoan>(entity =>
-        {
+        modelBuilder.Entity<TaiKhoan>(entity => {
             entity.HasKey(e => e.TenDangNhap).HasName("PK__TaiKhoan__55F68FC194C0D713");
 
             entity.ToTable("TaiKhoan");
@@ -324,8 +305,7 @@ public partial class DataSqlContext : DbContext
                 .HasConstraintName("FK__TaiKhoan__MaVaiT__797309D9");
         });
 
-        modelBuilder.Entity<ThanhToan>(entity =>
-        {
+        modelBuilder.Entity<ThanhToan>(entity => {
             entity.HasKey(e => e.MaTt).HasName("PK__ThanhToa__2725007984D4E1A4");
 
             entity.ToTable("ThanhToan");
@@ -348,8 +328,7 @@ public partial class DataSqlContext : DbContext
                 .HasConstraintName("FK__ThanhToan__MaDH__66603565");
         });
 
-        modelBuilder.Entity<VaiTro>(entity =>
-        {
+        modelBuilder.Entity<VaiTro>(entity => {
             entity.HasKey(e => e.MaVaiTro).HasName("PK__VaiTro__C24C41CF7C8796F0");
 
             entity.ToTable("VaiTro");
