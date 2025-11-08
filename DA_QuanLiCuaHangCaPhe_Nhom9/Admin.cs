@@ -437,108 +437,309 @@ e.Handled = true;
       })
    .FirstOrDefault();
 
-         if (employee != null)
-        {
-      textBox1.Text = employee.MaNv.ToString();
-   textBox2.Text = employee.TenNv ?? "";
-    textBox3.Text = employee.SoDienThoai ?? "";
+     if (employee != null)
+  {
+        // Update TextBoxes in panel1
+     textBox1.Text = employee.MaNv.ToString();
+       textBox2.Text = employee.TenNv;
+         textBox3.Text = string.IsNullOrEmpty(employee.SoDienThoai) ? "Chưa cập nhật" : employee.SoDienThoai;
+           textBox4.Text = employee.ChucVu;
+           textBox6.Text = employee.TenDangNhap;
+    textBox5.Text = employee.VaiTro;
+                
+ //      // Hiển thị mật khẩu (readonly ban đầu)
+ //     textBoxPassword.Text = employee.MatKhau;
+ //            textBoxPassword.ReadOnly = true;
+ //textBoxPassword.UseSystemPasswordChar = true;
 
-   // Replace textBox4 with ComboBox for ChucVu
-    ComboBox cboChucVuEdit = panel1.Controls.OfType<ComboBox>()
-    .FirstOrDefault(c => c.Name == "cboChucVuEdit");
-      
-if (cboChucVuEdit == null)
-    {
-   // Create ComboBox if it doesn't exist
-         cboChucVuEdit = new ComboBox
-         {
-      Name = "cboChucVuEdit",
-       Location = textBox4.Location,
-     Size = textBox4.Size,
-     DropDownStyle = ComboBoxStyle.DropDownList,
-      Font = textBox4.Font,
-       BackColor = Color.FromArgb(255, 255, 204) // Light yellow
-    };
-        cboChucVuEdit.Items.AddRange(new object[]
-{
-    "Nhân viên thu ngân",
-         "Nhân viên pha chế",
-   "Quản lý",
-       "Chủ hàng"
-      });
-           
-  // Hide textBox4 and add ComboBox
-    textBox4.Visible = false;
-    panel1.Controls.Add(cboChucVuEdit);
-     cboChucVuEdit.BringToFront();
- }
- 
-    // Set ComboBox value
-  string currentChucVu = employee.ChucVu ?? "";
-if (cboChucVuEdit.Items.Contains(currentChucVu))
-{
-  cboChucVuEdit.SelectedItem = currentChucVu;
-    }
-    else
-   {
- if (!string.IsNullOrEmpty(currentChucVu))
-     {
-     cboChucVuEdit.Items.Add(currentChucVu);
-        cboChucVuEdit.SelectedItem = currentChucVu;
-    }
-        else
-    {
-  cboChucVuEdit.SelectedIndex = 0;
-     }
-      }
-
-     // Replace textBox5 with ComboBox for VaiTro
-           ComboBox cboVaiTroEdit = panel1.Controls.OfType<ComboBox>()
-   .FirstOrDefault(c => c.Name == "cboVaiTroEdit");
-           
-    if (cboVaiTroEdit == null)
- {
-       // Create ComboBox for VaiTro
-    cboVaiTroEdit = new ComboBox
-     {
-          Name = "cboVaiTroEdit",
-         Location = textBox5.Location,
-      Size = textBox5.Size,
-     DropDownStyle = ComboBoxStyle.DropDownList,
-           Font = textBox5.Font,
-         BackColor = Color.FromArgb(255, 255, 204), // Light yellow
-     Tag = employee.MaVaiTro // Store current MaVaiTro
-     };
-  
-     // Load VaiTro from database
-    var vaiTros = db.VaiTros.OrderBy(v => v.MaVaiTro).ToList();
-       foreach (var vt in vaiTros)
-       {
-         cboVaiTroEdit.Items.Add(new { Text = vt.TenVaiTro, Value = vt.MaVaiTro });
-     }
-  cboVaiTroEdit.DisplayMember = "Text";
-      cboVaiTroEdit.ValueMember = "Value";
-  
-       // Hide textBox5 and add ComboBox
- textBox5.Visible = false;
-    panel1.Controls.Add(cboVaiTroEdit);
- cboVaiTroEdit.BringToFront();
- }
-     else
-    {
-    // Update Tag with current MaVaiTro
-    cboVaiTroEdit.Tag = employee.MaVaiTro;
-  }
-      
-     // Set VaiTro ComboBox value
-            for (int i = 0; i < cboVaiTroEdit.Items.Count; i++)
-   {
-      dynamic item = cboVaiTroEdit.Items[i];
-           if (item.Value == employee.MaVaiTro)
-     {
-   cboVaiTroEdit.SelectedIndex = i;
-  break;
+            // Show panel1
+      panel1.Visible = true;
         }
+    }
+            }
+  catch (Exception ex)
+ {
+       MessageBox.Show(
+$"Lỗi khi hiển thị chi tiết:\n{ex.Message}",
+              "Lỗi",
+              MessageBoxButtons.OK,
+    MessageBoxIcon.Error);
+  }
+        }
+
+        // Button1: Đổi mật khẩu
+    private void button1_Click(object sender, EventArgs e)
+        {
+            try
+      {
+         // Kiểm tra xem có nhân viên nào được chọn không
+      if (string.IsNullOrEmpty(textBox1.Text))
+  {
+ MessageBox.Show(
+       "Vui lòng chọn nhân viên từ danh sách trước!",
+      "Thông báo",
+    MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+          return;
+         }
+
+                int maNv = Convert.ToInt32(textBox1.Text);
+      string tenDangNhap = textBox6.Text;
+
+     // Kiểm tra xem nhân viên có tài khoản không
+          if (tenDangNhap == "Chưa có")
+     {
+       MessageBox.Show(
+          "Nhân viên này chưa có tài khoản!",
+          "Thông báo",
+        MessageBoxButtons.OK,
+      MessageBoxIcon.Warning);
+             return;
+             }
+
+       // Cho phép chỉnh sửa mật khẩu
+   //      textBoxPassword.ReadOnly = false;
+   //        textBoxPassword.UseSystemPasswordChar = false;
+   //textBoxPassword.Focus();
+   //     textBoxPassword.SelectAll();
+
+           // Hiển thị hộp thoại nhập mật khẩu mới
+   using (Form promptForm = new Form())
+  {
+    promptForm.Width = 450;
+             promptForm.Height = 250;
+        promptForm.Text = "Đổi mật khẩu";
+           promptForm.StartPosition = FormStartPosition.CenterParent;
+   promptForm.FormBorderStyle = FormBorderStyle.FixedDialog;
+         promptForm.MaximizeBox = false;
+              promptForm.MinimizeBox = false;
+
+           Label lblInfo = new Label()
+         {
+  Text = $"Đổi mật khẩu cho: {textBox2.Text} ({tenDangNhap})",
+            Left = 20,
+        Top = 20,
+                   Width = 400,
+       Font = new Font("Segoe UI", 10F, FontStyle.Bold)
+  };
+
+         Label lblOldPass = new Label()
+     {
+     Text = "Mật khẩu hiện tại:",
+        Left = 20,
+         Top = 60,
+    Width = 150
+       };
+
+       TextBox txtOldPass = new TextBox()
+       {
+       Left = 180,
+    Top = 57,
+      Width = 230,
+ UseSystemPasswordChar = true
+        };
+
+          Label lblNewPass = new Label()
+              {
+             Text = "Mật khẩu mới:",
+     Left = 20,
+         Top = 95,
+                    Width = 150
+                    };
+
+         TextBox txtNewPass = new TextBox()
+   {
+              Left = 180,
+          Top = 92,
+    Width = 230,
+  UseSystemPasswordChar = true
+   };
+
+       Label lblConfirmPass = new Label()
+   {
+            Text = "Xác nhận mật khẩu:",
+        Left = 20,
+          Top = 130,
+         Width = 150
+  };
+
+           TextBox txtConfirmPass = new TextBox()
+    {
+        Left = 180,
+   Top = 127,
+     Width = 230,
+            UseSystemPasswordChar = true
+              };
+
+         Button btnOK = new Button()
+        {
+ Text = "Lưu",
+    Left = 180,
+   Top = 165,
+          Width = 110,
+       Height = 35,
+           BackColor = Color.FromArgb(46, 125, 50),
+      ForeColor = Color.White,
+ DialogResult = DialogResult.OK
+              };
+
+        Button btnCancel = new Button()
+    {
+         Text = "Hủy",
+           Left = 300,
+     Top = 165,
+              Width = 110,
+               Height = 35,
+               BackColor = Color.FromArgb(211, 47, 47),
+ ForeColor = Color.White,
+           DialogResult = DialogResult.Cancel
+           };
+
+    promptForm.Controls.Add(lblInfo);
+    promptForm.Controls.Add(lblOldPass);
+          promptForm.Controls.Add(txtOldPass);
+        promptForm.Controls.Add(lblNewPass);
+         promptForm.Controls.Add(txtNewPass);
+    promptForm.Controls.Add(lblConfirmPass);
+           promptForm.Controls.Add(txtConfirmPass);
+      promptForm.Controls.Add(btnOK);
+          promptForm.Controls.Add(btnCancel);
+
+    promptForm.AcceptButton = btnOK;
+     promptForm.CancelButton = btnCancel;
+
+     if (promptForm.ShowDialog() == DialogResult.OK)
+       {
+        // Validate input
+   if (string.IsNullOrWhiteSpace(txtOldPass.Text))
+ {
+          MessageBox.Show(
+       "Vui lòng nhập mật khẩu hiện tại!",
+      "Cảnh báo",
+       MessageBoxButtons.OK,
+       MessageBoxIcon.Warning);
+       return;
+   }
+
+               if (string.IsNullOrWhiteSpace(txtNewPass.Text))
+        {
+    MessageBox.Show(
+        "Vui lòng nhập mật khẩu mới!",
+          "Cảnh báo",
+      MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+     return;
+             }
+
+        if (txtNewPass.Text.Length < 3)
+    {
+               MessageBox.Show(
+      "Mật khẩu mới phải có ít nhất 3 ký tự!",
+      "Cảnh báo",
+     MessageBoxButtons.OK,
+     MessageBoxIcon.Warning);
+  return;
+}
+
+            if (txtNewPass.Text != txtConfirmPass.Text)
+        {
+        MessageBox.Show(
+  "Mật khẩu xác nhận không khớp!",
+                "Cảnh báo",
+  MessageBoxButtons.OK,
+     MessageBoxIcon.Warning);
+        return;
+}
+
+           // Update password in database
+        using var db = new DataSqlContext();
+
+  var taiKhoan = db.TaiKhoans
+       .FirstOrDefault(tk => tk.TenDangNhap == tenDangNhap);
+
+   if (taiKhoan == null)
+            {
+          MessageBox.Show(
+        "Không tìm thấy tài khoản!",
+          "Lỗi",
+       MessageBoxButtons.OK,
+  MessageBoxIcon.Error);
+  return;
+   }
+
+      // Verify old password
+           if (taiKhoan.MatKhau != txtOldPass.Text)
+    {
+         MessageBox.Show(
+   "Mật khẩu hiện tại không đúng!",
+        "Lỗi",
+         MessageBoxButtons.OK,
+         MessageBoxIcon.Error);
+       return;
+          }
+
+      // Confirm change
+     var confirmResult = MessageBox.Show(
+ $"Xác nhận đổi mật khẩu?\n\n" +
+ $"Tài khoản: {tenDangNhap}\n" +
+$"Nhân viên: {textBox2.Text}\n\n" +
+    "Mật khẩu mới sẽ được áp dụng ngay lập tức!",
+             "Xác nhận đổi mật khẩu",
+             MessageBoxButtons.YesNo,
+     MessageBoxIcon.Question);
+
+          if (confirmResult != DialogResult.Yes)
+           {
+          return;
+    }
+
+  // Update password
+              string oldPassword = taiKhoan.MatKhau;
+ taiKhoan.MatKhau = txtNewPass.Text;
+            db.SaveChanges();
+
+        MessageBox.Show(
+$"Đổi mật khẩu thành công!\n\n" +
+                $"Tài khoản: {tenDangNhap}\n" +
+   $"Nhân viên: {textBox2.Text}\n" +
+  $"Mật khẩu cũ: {oldPassword}\n" +
+     $"Mật khẩu mới: {txtNewPass.Text}",
+          "Thành công",
+   MessageBoxButtons.OK,
+      MessageBoxIcon.Information);
+
+       // Update textbox to show new password
+     // textBoxPassword.Text = txtNewPass.Text;
+     //    textBoxPassword.ReadOnly = true;
+     //textBoxPassword.UseSystemPasswordChar = true;
+
+          // Refresh employee data
+       LoadEmployeeData();
+  }
+      else
+   {
+       // User cancelled - restore readonly state
+  // textBoxPassword.ReadOnly = true;
+  //textBoxPassword.UseSystemPasswordChar = true;
+           }
+     }
+            }
+      catch (Exception ex)
+            {
+ MessageBox.Show(
+                  $"Lỗi khi đổi mật khẩu:\n{ex.Message}\n\n" +
+      $"Chi tiết: {ex.InnerException?.Message}",
+       "Lỗi",
+   MessageBoxButtons.OK,
+               MessageBoxIcon.Error);
+
+ // Restore readonly state on error
+     //        if (textBoxPassword != null)
+     // {
+     //   textBoxPassword.ReadOnly = true;
+     //textBoxPassword.UseSystemPasswordChar = true;
+      //   }
+            }
       }
 
          textBox6.Text = employee.TenDangNhap;
