@@ -60,6 +60,7 @@
             flpLoaiSP = new FlowLayoutPanel();
             lbl_title3 = new Label();
             panelChucNang = new Panel();
+            btnLuuTam = new Button();
             btnHuyDon = new Button();
             btnThanhToan = new Button();
             tlpMain.SuspendLayout();
@@ -451,7 +452,7 @@
             flpLoaiSP.Location = new Point(0, 38);
             flpLoaiSP.Margin = new Padding(4);
             flpLoaiSP.Name = "flpLoaiSP";
-            flpLoaiSP.Size = new Size(686, 1260);
+            flpLoaiSP.Size = new Size(686, 1158);
             flpLoaiSP.TabIndex = 2;
             // 
             // lbl_title3
@@ -468,14 +469,30 @@
             // 
             // panelChucNang
             // 
+            panelChucNang.Controls.Add(btnLuuTam);
             panelChucNang.Controls.Add(btnHuyDon);
             panelChucNang.Controls.Add(btnThanhToan);
             panelChucNang.Dock = DockStyle.Bottom;
-            panelChucNang.Location = new Point(0, 1298);
+            panelChucNang.Location = new Point(0, 1196);
             panelChucNang.Margin = new Padding(4);
             panelChucNang.Name = "panelChucNang";
-            panelChucNang.Size = new Size(686, 252);
+            panelChucNang.Size = new Size(686, 354);
             panelChucNang.TabIndex = 0;
+            // 
+            // btnLuuTam
+            // 
+            btnLuuTam.BackColor = Color.YellowGreen;
+            btnLuuTam.Dock = DockStyle.Top;
+            btnLuuTam.FlatStyle = FlatStyle.Flat;
+            btnLuuTam.Font = new Font("Times New Roman", 12F);
+            btnLuuTam.Location = new Point(0, 117);
+            btnLuuTam.Margin = new Padding(4);
+            btnLuuTam.Name = "btnLuuTam";
+            btnLuuTam.Size = new Size(686, 117);
+            btnLuuTam.TabIndex = 2;
+            btnLuuTam.Text = "Lưu Tạm";
+            btnLuuTam.UseVisualStyleBackColor = false;
+            btnLuuTam.Click += btnLuuTam_Click;
             // 
             // btnHuyDon
             // 
@@ -484,7 +501,7 @@
             btnHuyDon.FlatAppearance.BorderSize = 0;
             btnHuyDon.FlatStyle = FlatStyle.Flat;
             btnHuyDon.Font = new Font("Times New Roman", 12F);
-            btnHuyDon.Location = new Point(0, 135);
+            btnHuyDon.Location = new Point(0, 237);
             btnHuyDon.Margin = new Padding(4);
             btnHuyDon.Name = "btnHuyDon";
             btnHuyDon.Size = new Size(686, 117);
@@ -577,5 +594,6 @@
         private TableLayoutPanel frame_TimSP;
         private Button btnThem;
         private TableLayoutPanel frame_KhachHang;
+        private Button btnLuuTam;
     }
 }

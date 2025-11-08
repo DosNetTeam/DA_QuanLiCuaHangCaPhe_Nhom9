@@ -226,7 +226,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         private void btnThanhToan_Click(object sender, EventArgs e) {
-
+            #region đang sửa lại
+            /*
             // Kiểm tra xem có hàng trong giỏ chưa
             if (lvDonHang.Items.Count == 0) {
                 MessageBox.Show("Vui lòng thêm sản phẩm vào đơn hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -237,7 +238,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             string tongTienStr = lblTongCong.Text.Replace(" đ", "").Replace(".", "");
             decimal tongTien = decimal.Parse(tongTienStr, CultureInfo.InvariantCulture);
 
+
             ThanhToan frmThanhToan = new ThanhToan(lvDonHang.Items, decimal.Parse(lblTongCong.Text.Replace(" đ", "").Replace(".", ""), CultureInfo.InvariantCulture), _currentMaNV, _currentMaKH);
+
 
             // 4. HIỂN THỊ và LẮNG NGHE TÍN HIỆU TRẢ VỀ
             var result = frmThanhToan.ShowDialog();
@@ -254,6 +257,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
             // Nếu result == DialogResult.Cancel (người dùng bấm "Hủy" hoặc nút X), 
             // thì không làm gì cả, giỏ hàng vẫn còn đó.
+            */
+            #endregion
+
+            ChonDonHangCho cdhc = new ChonDonHangCho();
+            cdhc.ShowDialog();
+
+            TaiSanPham(_currentMaLoai);
 
             #region code cũ lưu đơn hàng trực tiếp trong MainForm (bây giờ chuyển sang form ThanhToan) - code thời tiền sử
             //try
@@ -468,7 +478,97 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
+        private void btnLuuTam_Click(object sender, EventArgs e) {
+            // 1. Kiểm tra giỏ hàng
+            if (lvDonHang.Items.Count == 0) {
+                MessageBox.Show("Vui lòng thêm sản phẩm vào đơn hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
+            // 2. LƯU CSDL (TẠM) VÀ TRỪ KHO
+            // (Code C# cơ bản, không tối ưu)
+            try {
+                using (DataSqlContext db = new DataSqlContext()) {
+                    // Bước 2.1: Tạo đối tượng DonHang
+                    var donHangMoi = new DonHang {
+                        NgayLap = DateTime.Now,
+                        MaNv = _currentMaNV,
+                        TrangThai = "Đang xử Lý", // TRẠNG THÁI QUAN TRỌNG
+                        MaKh = _currentMaKH // Lưu khách hàng
+                    };
+
+                    // Bước 2.2: Tạo danh sách các ChiTietDonHang
+                    // (Bắt buộc phải dùng List<> cho EF Core)
+                    var listChiTiet = new List<ChiTietDonHang>();
+                    decimal tongTien = 0; // Tính tổng tiền ở đây
+
+                    foreach (ListViewItem item in lvDonHang.Items) {
+                        int maSP = (int)item.Tag;
+                        int soLuong = int.Parse(item.SubItems[1].Text);
+                        decimal donGia = decimal.Parse(item.SubItems[2].Text.Replace(".", ""), CultureInfo.InvariantCulture);
+
+                        var chiTiet = new ChiTietDonHang {
+                            MaDhNavigation = donHangMoi,
+                            MaSp = maSP,
+                            SoLuong = soLuong,
+                            DonGia = donGia
+                        };
+                        listChiTiet.Add(chiTiet);
+                        tongTien += (soLuong * donGia); // Cộng tổng tiền
+                    }
+
+                    donHangMoi.TongTien = tongTien; // Gán tổng tiền
+
+                    // Bước 2.3: Báo cho EF Core
+                    db.DonHangs.Add(donHangMoi);
+                    db.ChiTietDonHangs.AddRange(listChiTiet);
+
+                    var thanhToanMoi = new Models.ThanhToan {
+                        MaDhNavigation = donHangMoi, // Gán vào đơn hàng mẹ
+                        HinhThuc = "Chờ thanh toán", // (Hoặc bạn có thể để null)
+                        SoTien = donHangMoi.TongTien,
+                        NgayTt = DateTime.Now,
+                        TrangThai = "Chưa thanh toán" // Trạng thái mặc định
+                    };
+                    db.ThanhToans.Add(thanhToanMoi);
+
+                    // Bước 2.4: Trừ kho (Logic quan trọng)
+                    foreach (var monAn in listChiTiet) {
+                        int maSP = monAn.MaSp;
+                        int soLuongBan = monAn.SoLuong;
+
+                        // Sửa lỗi "Open DataReader"
+                        var congThuc = db.DinhLuongs
+                                         .Where(dl => dl.MaSp == maSP)
+                                         .ToList();
+
+                        if (congThuc.Count > 0) {
+                            foreach (var nguyenLieuCan in congThuc) {
+                                var nguyenLieuTrongKho = db.NguyenLieus
+                                                           .FirstOrDefault(nl => nl.MaNl == nguyenLieuCan.MaNl);
+                                if (nguyenLieuTrongKho != null) {
+                                    decimal luongCanTru = nguyenLieuCan.SoLuongCan * soLuongBan;
+                                    nguyenLieuTrongKho.SoLuongTon -= luongCanTru;
+                                }
+                            }
+                        }
+                    }
+
+                    // Bước 2.5: Lưu CSDL
+                    db.SaveChanges();
+
+                    MessageBox.Show($"Đã LƯU TẠM đơn hàng {donHangMoi.MaDh}.\nKho đã được trừ.", "Thông báo");
+
+                    // Bước 2.6: Làm mới giỏ hàng
+                    lvDonHang.Items.Clear();
+                    CapNhatTongTien();
+                    TaiSanPham(_currentMaLoai); // Tải lại SP (vì kho đã đổi)
+                }
+            }
+            catch (Exception ex) {
+                MessageBox.Show("Lỗi khi lưu tạm đơn hàng: " + ex.InnerException?.Message ?? ex.Message);
+            }
+        }
 
 
 
@@ -659,6 +759,94 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             lblTongCong.Text = tongTien.ToString("N0") + " đ";
         }
 
+        // (Hàm này trả về MaDH mới, hoặc -1 nếu lỗi)
+        private int ThucHienLuuTam() {
+            // 1. Kiểm tra giỏ hàng
+            if (lvDonHang.Items.Count == 0) {
+                MessageBox.Show("Vui lòng thêm sản phẩm vào giỏ hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return -1; // Báo lỗi
+            }
+
+            // 2. Lấy tổng tiền
+            string tongTienStr = lblTongCong.Text.Replace(" đ", "").Replace(".", "");
+            decimal tongTien = decimal.Parse(tongTienStr, CultureInfo.InvariantCulture);
+
+            // 3. LƯU CSDL (Lưu Đơn, Trừ Kho, Tạo ThanhToan "Chưa TT")
+            try {
+                using (DataSqlContext db = new DataSqlContext()) {
+                    // Bước 1: Tạo đối tượng DonHang
+                    var donHangMoi = new DonHang {
+                        NgayLap = DateTime.Now,
+                        MaNv = _currentMaNV,
+                        TrangThai = "Dang xu ly", // Trạng thái chờ
+                        TongTien = tongTien,
+                        MaKh = _currentMaKH // Gán MaKH (có thể null)
+                    };
+
+                    // Bước 2: Tạo danh sách các ChiTietDonHang
+                    var listChiTiet = new List<ChiTietDonHang>();
+                    foreach (ListViewItem item in lvDonHang.Items) {
+                        int maSP = (int)item.Tag;
+                        int soLuong = int.Parse(item.SubItems[1].Text);
+                        decimal donGia = decimal.Parse(item.SubItems[2].Text.Replace(".", ""), CultureInfo.InvariantCulture);
+
+                        var chiTiet = new ChiTietDonHang {
+                            MaDhNavigation = donHangMoi, // Gán vào đơn hàng mẹ
+                            MaSp = maSP,
+                            SoLuong = soLuong,
+                            DonGia = donGia
+                        };
+                        listChiTiet.Add(chiTiet);
+                    }
+
+                    // Bước 3: Tạo ThanhToan (Trạng thái "Chưa thanh toán")
+                    var thanhToanMoi = new Models.ThanhToan {
+                        MaDhNavigation = donHangMoi, // Gán vào đơn hàng mẹ
+                        HinhThuc = "Chua xac dinh",
+                        SoTien = tongTien,
+                        TrangThai = "Chưa thanh toán"
+                    };
+
+                    // Bước 4: Báo cho EF Core biết chúng ta muốn...
+                    db.DonHangs.Add(donHangMoi);
+                    db.ChiTietDonHangs.AddRange(listChiTiet);
+                    db.ThanhToans.Add(thanhToanMoi);
+
+                    // Bước 5: Trừ kho (Code y hệt trong ThanhToan.cs)
+                    foreach (var monAn in listChiTiet) {
+                        int maSP = monAn.MaSp;
+                        int soLuongBan = monAn.SoLuong;
+
+                        // Sửa lỗi "Open DataReader" bằng cách thêm .ToList()
+                        var congThuc = db.DinhLuongs
+                                         .Where(dl => dl.MaSp == maSP)
+                                         .ToList();
+
+                        if (congThuc.Count > 0) {
+                            foreach (var nguyenLieuCan in congThuc) {
+                                var nguyenLieuTrongKho = db.NguyenLieus
+                                                           .FirstOrDefault(nl => nl.MaNl == nguyenLieuCan.MaNl);
+                                if (nguyenLieuTrongKho != null) {
+                                    decimal luongCanTru = nguyenLieuCan.SoLuongCan * soLuongBan;
+                                    nguyenLieuTrongKho.SoLuongTon -= luongCanTru;
+                                }
+                            }
+                        }
+                    }
+
+                    // Bước 6: Thực thi lệnh, lưu vào CSDL
+                    db.SaveChanges(); // <-- LƯU TẤT CẢ THAY ĐỔI
+
+                    // Bước 7: Trả về MaDH mới
+                    return donHangMoi.MaDh;
+                }
+            }
+            catch (Exception ex) {
+                MessageBox.Show("Lỗi khi lưu tạm đơn hàng: " + ex.InnerException?.Message ?? ex.Message);
+                return -1; // Báo lỗi
+            }
+        }
+
         private void txtTimKiemKH_KeyPress(object sender, KeyPressEventArgs e) {
 
             // 'e.KeyChar' là ký tự mà người dùng vừa gõ (ví dụ: 'a', '1', '%')
@@ -683,7 +871,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 e.Handled = true;
             }
         }
+        #endregion
 
     }
-    #endregion
+
+
 }

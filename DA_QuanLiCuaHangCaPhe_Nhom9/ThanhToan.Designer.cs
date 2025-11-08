@@ -43,8 +43,8 @@
             lvChiTietBill = new ListView();
             tenmon = new ColumnHeader();
             Soluong = new ColumnHeader();
-            ThanhTien = new ColumnHeader();
-            columnHeader1 = new ColumnHeader();
+            DonGia = new ColumnHeader();
+            Thanhtien = new ColumnHeader();
             label5 = new Label();
             panelRight = new Panel();
             panelBillPreview = new Panel();
@@ -219,7 +219,7 @@
             // 
             // lvChiTietBill
             // 
-            lvChiTietBill.Columns.AddRange(new ColumnHeader[] { tenmon, Soluong, ThanhTien, columnHeader1 });
+            lvChiTietBill.Columns.AddRange(new ColumnHeader[] { tenmon, Soluong, DonGia, Thanhtien });
             lvChiTietBill.Dock = DockStyle.Fill;
             lvChiTietBill.GridLines = true;
             lvChiTietBill.Location = new Point(0, 61);
@@ -239,10 +239,15 @@
             // 
             Soluong.Text = "SL";
             // 
-            // ThanhTien
+            // DonGia
             // 
-            ThanhTien.Text = "Thành tiền";
-            ThanhTien.Width = 200;
+            DonGia.Text = "Đơn giá";
+            DonGia.Width = 200;
+            // 
+            // Thanhtien
+            // 
+            Thanhtien.Text = "Thành tiền";
+            Thanhtien.Width = 200;
             // 
             // label5
             // 
@@ -334,7 +339,7 @@
         private ListView lvChiTietBill;
         private ColumnHeader tenmon;
         private ColumnHeader Soluong;
-        private ColumnHeader ThanhTien;
+        private ColumnHeader DonGia;
         private GroupBox groupBox2;
         private RadioButton rbTienMat;
         private RadioButton rbQR;
@@ -342,6 +347,6 @@
         private TableLayoutPanel tableLayoutPanel1;
         private PictureBox pbQR_InBill;
         private Panel panelBillPreview;
-        private ColumnHeader columnHeader1;
+        private ColumnHeader Thanhtien;
     }
 }
