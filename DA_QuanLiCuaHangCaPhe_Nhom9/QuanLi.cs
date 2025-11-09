@@ -18,9 +18,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
     public partial class QuanLi : Form
     {
         private string connectionString = ConfigurationManager.ConnectionStrings["CoffeeDB"]?.ConnectionString;
+        private int _currentMaNV = 0;
 
-        public QuanLi()
+        public QuanLi(int maNv = 0)
         {
+            _currentMaNV = maNv;
             InitializeComponent();
 
             // Gắn các sự kiện bổ sung
@@ -374,8 +376,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
             try
             {
+                using var db = new DataSqlContext();
+                var account = db.TaiKhoans; // dummy account for navigation
+
+
                 // Open the ordering MainForm. Pass MaNV = 0 (guest/unknown employee).
-                var orderForm = new MainForm(0);
+                var orderForm = new MainForm(_currentMaNV);
                 orderForm.StartPosition = FormStartPosition.CenterScreen;
                 orderForm.Show();
                 // Make sure the new form is visible on top
@@ -390,6 +396,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                         this.Show();
                         this.BringToFront();
                         this.Activate();
+                        LoadData_NhanVien();
+                        LoadData_HoaDon();
+                                                LoadData_TonKho();
                     }
                     catch { }
                 };

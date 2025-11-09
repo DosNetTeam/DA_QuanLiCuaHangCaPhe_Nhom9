@@ -214,17 +214,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 } else if (account.VaiTro == "Quản lý")
                 {
                     // vai trò quản lý - mở Mainform và chuyển mã nhân viên
-                    QuanLi ql = new QuanLi();
+                    QuanLi ql = new QuanLi(account.MaNv);
                     ql.FormClosed += (s, args) => this.Close();
                     ql.Show();
                 }
                 else if (account.VaiTro == "Nhân viên")
                 {
-                    // vai trò nhân viên   - mở Mainform và chuyển mã nhân viên
-                    //MainForm mainForm = new MainForm(account.MaNv);
-                    //mainForm.FormClosed += (s, args) => this.Close();
+                    //vai trò nhân viên   - mở Mainform và chuyển mã nhân viên
+                    MainForm mainForm = new MainForm(account.MaNv);
+                    mainForm.FormClosed += (s, args) => this.Close();
 
-                    //mainForm.Show();
+                    mainForm.Show();
                 }
                 else {
                     // không có vai trò hợp lệ - hiển thị lỗi - trả về form đăng nhập
