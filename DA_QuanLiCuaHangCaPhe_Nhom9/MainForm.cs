@@ -388,6 +388,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 lvDonHang.Items.Clear();
                 // Cập nhật tổng tiền về 0
                 CapNhatTongTien();
+
+                txtTimKiemKH.Clear();
+                txtTimKiemSP.Clear();
+                lblTenKH.ResetText();
             }
         }
 
@@ -946,8 +950,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             TaiSanPham(_currentMaLoai);
             lvDonHang.SelectedItems.Clear();
         }
-        #endregion
 
+        #endregion
     }
 
 

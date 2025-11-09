@@ -481,7 +481,7 @@
             // 
             // btnLuuTam
             // 
-            btnLuuTam.BackColor = Color.YellowGreen;
+            btnLuuTam.BackColor = Color.LightGoldenrodYellow;
             btnLuuTam.Dock = DockStyle.Top;
             btnLuuTam.FlatStyle = FlatStyle.Flat;
             btnLuuTam.Font = new Font("Times New Roman", 12F);

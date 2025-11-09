@@ -21,11 +21,15 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
             // Thêm các lựa chọn vào ComboBox
             // (Giả sử ComboBox tên là 'cboLoaiKH')
-            cbLoaiKH.Items.Add("Thuong");
-            cbLoaiKH.Items.Add("VIP");
+            // --- SỬA: Xoá trước khi thêm để tránh duplicate nếu hàm Load chạy nhiều lần ---
+            if (cbLoaiKH != null) {
+                cbLoaiKH.Items.Clear();
+                cbLoaiKH.Items.Add("Thuong");
+                cbLoaiKH.Items.Add("VIP");
 
-            // Chọn "Thuong" làm mặc định
-            cbLoaiKH.SelectedIndex = 0;
+                // Chọn "Thuong" làm mặc định
+                cbLoaiKH.SelectedIndex = 0;
+            }
         }
 
         // Hàm này được gọi khi bấm nút "Hủy"        
@@ -53,10 +57,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     TenKh = txtTenKH.Text,
                     SoDienThoai = txtSDT.Text,
 
-                    // (Giả sử TextBox Địa chỉ tên là 'txtDiaChi')
                     DiaChi = txtDiaChi.Text,
 
-                    // (Giả sử ComboBox tên là 'cbLoaiKH')
                     LoaiKh = cbLoaiKH.SelectedItem.ToString()
                 };
 
