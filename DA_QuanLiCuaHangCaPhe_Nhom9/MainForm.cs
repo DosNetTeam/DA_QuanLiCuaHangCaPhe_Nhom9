@@ -1,6 +1,7 @@
 ﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 using System.Data;
 using System.Globalization;
+using System.Windows.Forms;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
     public partial class MainForm : Form {
@@ -21,6 +22,65 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         {
             InitializeComponent();
             _currentMaNV = MaNV;
+
+            // subscribe to notifications
+            NotificationCenter.NotificationRaised += NotificationCenter_NotificationRaised;
+        }
+
+        private void NotificationCenter_NotificationRaised(NotificationCenter.Notification n)
+        {
+            try
+            {
+                // Only show unpaid invoice and low stock in main form
+                if (n.Type == NotificationCenter.NotificationType.UnpaidInvoice || n.Type == NotificationCenter.NotificationType.LowStock)
+                {
+                    ShowToast(n.Message);
+                }
+            }
+            catch { }
+        }
+
+        private void ShowToast(string message)
+        {
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new Action(() => ShowToast(message)));
+                return;
+            }
+
+            Form toast = new Form();
+            toast.FormBorderStyle = FormBorderStyle.None;
+            toast.StartPosition = FormStartPosition.Manual;
+            toast.BackColor = Color.FromArgb(45, 45, 48);
+            toast.Size = new Size(350, 90);
+
+            // position bottom-right of owner form
+            var ownerRect = this.Bounds;
+            var screen = Screen.FromControl(this).WorkingArea;
+            var x = Math.Min(ownerRect.Right + 10, screen.Right - toast.Width - 10);
+            var y = Math.Min(ownerRect.Bottom - toast.Height - 10, screen.Bottom - toast.Height - 10);
+            toast.Location = new Point(x - toast.Width, y);
+
+            Label lbl = new Label();
+            lbl.Text = message;
+            lbl.ForeColor = Color.White;
+            lbl.Dock = DockStyle.Fill;
+            lbl.Padding = new Padding(8);
+
+            toast.Controls.Add(lbl);
+
+            System.Windows.Forms.Timer t = new System.Windows.Forms.Timer();
+            t.Interval = 6000;
+            t.Tick += (s, e) => { t.Stop(); toast.Close(); };
+            t.Start();
+
+            toast.Show(this);
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            base.OnFormClosed(e);
+            NotificationCenter.NotificationRaised -= NotificationCenter_NotificationRaised;
         }
 
         #region Hàm khởi tạo và tải form

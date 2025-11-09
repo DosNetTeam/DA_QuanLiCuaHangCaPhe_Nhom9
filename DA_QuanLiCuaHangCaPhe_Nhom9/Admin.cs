@@ -960,7 +960,7 @@ int maNl = Convert.ToInt32(row.Cells["MaNl"].Value);
    MessageBox.Show(
           $"Đã xóa nguyên liệu '{tenNl}' thành công!",
    "Thành công",
-            MessageBoxButtons.OK,
+    MessageBoxButtons.OK,
  MessageBoxIcon.Information);
 
         // Refresh data and hide panel
@@ -1165,71 +1165,31 @@ LoadEmployeeData();
  }
         }
 
-  private void btnLogout_Click(object sender, EventArgs e)
-  {
-   // Confirm logout
-        var confirmResult = MessageBox.Show(
- "Bạn có chắc muốn đăng xuất?\n\n" +
-     "Hệ thống sẽ quay về trang đăng nhập.",
-    "Xác nhận đăng xuất",
-MessageBoxButtons.YesNo,
-MessageBoxIcon.Question);
+        // Handler for Exit button (added because Designer references it)
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show(
+                "Bạn có chắc muốn thoát?",
+                "Xác nhận",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
 
-if (confirmResult != DialogResult.Yes) return;
-
-  try
-  {
-              // Check if there's an existing Loginform instance
-   var existingLogin = Application.OpenForms.OfType<Loginform>().FirstOrDefault();
-
-        if (existingLogin != null)
-  {
-  existingLogin.Show();
-existingLogin.BringToFront();
-      existingLogin.Controls["txtUser"]?.ResetText();
-  existingLogin.Controls["txtPass"]?.ResetText();
- }
-      else
- {
-    Loginform loginForm = new Loginform();
-         loginForm.StartPosition = FormStartPosition.CenterScreen;
-       loginForm.Show();
-   }
-
-    this.Close();
-       }
-     catch (Exception ex)
-{
-MessageBox.Show(
- $"Lỗi khi đăng xuất:\n{ex.Message}",
-   "Lỗi",
-     MessageBoxButtons.OK,
-       MessageBoxIcon.Error);
- }
+            if (result == DialogResult.Yes)
+            {
+                Application.Exit();
+            }
         }
 
-     private void btnExit_Click(object sender, EventArgs e)
-{
-  DialogResult result = MessageBox.Show(
-       "Bạn có chắc muốn thoát?",
-        "Xác nhận",
-  MessageBoxButtons.YesNo,
-    MessageBoxIcon.Question);
-
-   if (result == DialogResult.Yes)
-      {
-     Application.Exit();
-     }
+        // No-op handlers for designer-bound TextChanged events
+        private void textBox5_TextChanged(object? sender, EventArgs e)
+        {
+            // Intentionally left blank
         }
 
-     private void textBox5_TextChanged(object sender, EventArgs e)
-    {
-// Event handler for textBox5
-     }
+        private void textBox7_TextChanged(object? sender, EventArgs e)
+        {
+            // Intentionally left blank
+        }
 
-        private void textBox7_TextChanged(object sender, EventArgs e)
-{
-        // Event handler for textBox7
-      }
-    }
+  }
 }

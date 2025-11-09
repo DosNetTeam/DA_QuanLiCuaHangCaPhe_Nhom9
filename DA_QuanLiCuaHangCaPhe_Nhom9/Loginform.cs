@@ -39,6 +39,59 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
             // Nút đăng nhập bị vô hiệu hóa ban đầu
             UpdateLoginButtonState();
+
+            // Subscribe to notification events so login form can show admin alerts
+            NotificationCenter.NotificationRaised += OnNotificationRaised;
+        }
+
+        private void OnNotificationRaised(NotificationCenter.Notification note)
+        {
+            // Only show admin-related notifications on login screen (NhanVienInactive)
+            try
+            {
+                if (note.Type == NotificationCenter.NotificationType.NhanVienInactive)
+                {
+                    // Show a small toast-like form at bottom-right
+                    ShowToast(note.Message);
+                }
+            }
+            catch { }
+        }
+
+        private void ShowToast(string message)
+        {
+            // Invoke on UI thread
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new Action(() => ShowToast(message)));
+                return;
+            }
+
+            Form toast = new Form();
+            toast.FormBorderStyle = FormBorderStyle.None;
+            toast.StartPosition = FormStartPosition.Manual;
+            toast.BackColor = Color.FromArgb(45, 45, 48);
+            toast.Size = new Size(300, 80);
+
+            // position bottom-right of screen
+            var screen = Screen.PrimaryScreen.WorkingArea;
+            toast.Location = new Point(screen.Right - toast.Width - 10, screen.Bottom - toast.Height - 10);
+
+            Label lbl = new Label();
+            lbl.Text = message;
+            lbl.ForeColor = Color.White;
+            lbl.Dock = DockStyle.Fill;
+            lbl.Padding = new Padding(8);
+
+            toast.Controls.Add(lbl);
+
+            // Auto close after 6 seconds
+            System.Windows.Forms.Timer t = new System.Windows.Forms.Timer();
+            t.Interval = 6000;
+            t.Tick += (s, e) => { t.Stop(); toast.Close(); };
+            t.Start();
+
+            toast.Show();
         }
 
         private void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
@@ -52,8 +105,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);
-            // Huủy đăng ký sự kiện khi form đóng
+            // Huỷ đăng ký sự kiện khi form đóng
             SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
+            NotificationCenter.NotificationRaised -= OnNotificationRaised;
         }
 
         // --- trình xử lý sự kiện được designer tham chiếu ---

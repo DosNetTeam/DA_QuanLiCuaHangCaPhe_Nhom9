@@ -10,7 +10,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             ApplicationConfiguration.Initialize();
             //Application.Run(new Form1());
 
-            Application.Run(new Loginform());
+            Application.Run(new QuanLi());
         }
     }
 }

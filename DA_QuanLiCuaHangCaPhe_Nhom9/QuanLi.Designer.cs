@@ -30,6 +30,9 @@
         {
             panelMenu = new Panel();
             btnDangXuat = new Button();
+            grpNotify = new GroupBox();
+            txtNotifyMessage = new TextBox();
+            btnSendNotify = new Button();
             lblCoffee = new Label();
             panelContent = new Panel();
             tabControlMain = new TabControl();
@@ -55,6 +58,7 @@
             label6 = new Label();
             label5 = new Label();
             panelMenu.SuspendLayout();
+            grpNotify.SuspendLayout();
             panelContent.SuspendLayout();
             tabControlMain.SuspendLayout();
             tabPageQuanLyNV.SuspendLayout();
@@ -72,6 +76,7 @@
             // 
             panelMenu.BackColor = Color.FromArgb(45, 45, 48);
             panelMenu.Controls.Add(btnDangXuat);
+            panelMenu.Controls.Add(grpNotify);
             panelMenu.Controls.Add(lblCoffee);
             panelMenu.Dock = DockStyle.Left;
             panelMenu.Location = new Point(0, 0);
@@ -89,9 +94,38 @@
             btnDangXuat.Name = "btnDangXuat";
             btnDangXuat.Size = new Size(250, 47);
             btnDangXuat.TabIndex = 6;
-            btnDangXuat.Text = "Đăng xuất";
+            btnDangXuat.Text = "Trang Order";
             btnDangXuat.UseVisualStyleBackColor = false;
             btnDangXuat.Click += btnDangXuat_Click;
+            // 
+            // grpNotify
+            // 
+            grpNotify.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            grpNotify.Controls.Add(txtNotifyMessage);
+            grpNotify.Controls.Add(btnSendNotify);
+            grpNotify.Location = new Point(12, 321);
+            grpNotify.Name = "grpNotify";
+            grpNotify.Size = new Size(220, 64);
+            grpNotify.TabIndex = 5;
+            grpNotify.TabStop = false;
+            grpNotify.Text = "Gửi thông báo";
+            // 
+            // txtNotifyMessage
+            // 
+            txtNotifyMessage.Location = new Point(10, 22);
+            txtNotifyMessage.Name = "txtNotifyMessage";
+            txtNotifyMessage.PlaceholderText = "Nội dung thông báo";
+            txtNotifyMessage.Size = new Size(140, 27);
+            txtNotifyMessage.TabIndex = 0;
+            // 
+            // btnSendNotify
+            // 
+            btnSendNotify.Location = new Point(155, 22);
+            btnSendNotify.Name = "btnSendNotify";
+            btnSendNotify.Size = new Size(55, 27);
+            btnSendNotify.TabIndex = 1;
+            btnSendNotify.Text = "Gửi";
+            btnSendNotify.UseVisualStyleBackColor = true;
             // 
             // lblCoffee
             // 
@@ -101,7 +135,7 @@
             lblCoffee.Location = new Point(24, 93);
             lblCoffee.Name = "lblCoffee";
             lblCoffee.Size = new Size(176, 60);
-            lblCoffee.TabIndex = 1;
+            lblCoffee.TabIndex = 8;
             lblCoffee.Text = "COFFEE";
             // 
             // panelContent
@@ -164,6 +198,7 @@
             dgvPerformance.ReadOnly = true;
             dgvPerformance.RowHeadersVisible = false;
             dgvPerformance.RowHeadersWidth = 51;
+            dgvPerformance.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvPerformance.Size = new Size(516, 255);
             dgvPerformance.TabIndex = 3;
             dgvPerformance.CellContentClick += dgvPerformance_CellContentClick;
@@ -281,7 +316,7 @@
             label4.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label4.Location = new Point(15, 15);
             label4.Name = "label4";
-            label4.Size = new Size(283, 28);
+            label4.Size = new Size(285, 28);
             label4.TabIndex = 0;
             label4.Text = "Danh sách hóa đơn gần nhất";
             // 
@@ -293,7 +328,7 @@
             label3.Location = new Point(3, 3);
             label3.Name = "label3";
             label3.Padding = new Padding(10);
-            label3.Size = new Size(336, 61);
+            label3.Size = new Size(337, 61);
             label3.TabIndex = 0;
             label3.Text = "Hoá đơn và giao dịch";
             // 
@@ -316,10 +351,10 @@
             panel2.Controls.Add(txtTimKiemKho);
             panel2.Controls.Add(label6);
             panel2.Dock = DockStyle.Fill;
-            panel2.Location = new Point(0, 61);
+            panel2.Location = new Point(0, 66);
             panel2.Name = "panel2";
             panel2.Padding = new Padding(15);
-            panel2.Size = new Size(542, 356);
+            panel2.Size = new Size(542, 351);
             panel2.TabIndex = 1;
             // 
             // dgvTonKho
@@ -336,7 +371,7 @@
             dgvTonKho.ReadOnly = true;
             dgvTonKho.RowHeadersVisible = false;
             dgvTonKho.RowHeadersWidth = 51;
-            dgvTonKho.Size = new Size(477, 248);
+            dgvTonKho.Size = new Size(477, 243);
             dgvTonKho.TabIndex = 3;
             // 
             // btnThemMoiKho
@@ -353,6 +388,7 @@
             btnThemMoiKho.TabIndex = 2;
             btnThemMoiKho.Text = "+ Thêm mới";
             btnThemMoiKho.UseVisualStyleBackColor = false;
+            btnThemMoiKho.Visible = false;
             // 
             // txtTimKiemKho
             // 
@@ -381,7 +417,7 @@
             label5.Location = new Point(0, 0);
             label5.Name = "label5";
             label5.Padding = new Padding(10);
-            label5.Size = new Size(264, 61);
+            label5.Size = new Size(288, 66);
             label5.TabIndex = 0;
             label5.Text = "Quản lí tồn kho";
             // 
@@ -398,6 +434,8 @@
             Load += QuanLi_Load_1;
             panelMenu.ResumeLayout(false);
             panelMenu.PerformLayout();
+            grpNotify.ResumeLayout(false);
+            grpNotify.PerformLayout();
             panelContent.ResumeLayout(false);
             tabControlMain.ResumeLayout(false);
             tabPageQuanLyNV.ResumeLayout(false);
@@ -424,18 +462,21 @@
         private Label lblCoffee;
         private Panel panelContent;
         private Button btnDangXuat;
+        private GroupBox grpNotify;
+        private TextBox txtNotifyMessage;
+        private Button btnSendNotify;
         private TabControl tabControlMain;
         private TabPage tabPageQuanLyNV;
         private TabPage tabPageHoaDon;
         private TabPage tabPageTonKho;
         private Label label2;
         private Panel panel1;
-        private Label lblTieuDeHieuSuat;
-        private Button btnLoc;
-        private ComboBox cbThang;
-        private DataGridView dgvPerformance;
         private Panel panelHoaDon;
         private TextBox txtTimKiemHD;
+        private DataGridView dgvPerformance;
+        private Button btnLoc;
+        private ComboBox cbThang;
+        private Label lblTieuDeHieuSuat;
         private Label label4;
         private Label label3;
         private DataGridView dgvHoaDon;
