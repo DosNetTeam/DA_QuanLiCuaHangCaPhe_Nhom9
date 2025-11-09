@@ -123,8 +123,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                         );
                     }
 
-                    // Thêm một điều kiện 'Where' nữa: chỉ lấy sp "Con ban"
-                    var spCanHienThi = query.Where(sp => sp.TrangThai == "Con ban").ToList();
+                    // Thêm một điều kiện 'Where' nữa: chỉ lấy sp "Còn bán"
+                    var spCanHienThi = query.Where(sp => sp.TrangThai == "Còn bán").ToList();
 
                     // Chúng ta cần lấy công thức và nguyên liệu
                     // ra 2 danh sách TẠM
