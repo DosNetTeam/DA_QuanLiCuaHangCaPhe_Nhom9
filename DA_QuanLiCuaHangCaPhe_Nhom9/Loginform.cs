@@ -55,7 +55,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             UpdateLoginButtonState();
         }
 
-        private void button1_Click(object? sender, EventArgs e) {
+        private void btnDangnhap_Click(object? sender, EventArgs e) {
             // nhận giá trị đầu vào từ các trường
             string username = txtUser.Text.Trim();
             string password = txtPass.Text;
@@ -100,8 +100,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
           })
                 .SingleOrDefault();
 
-                if (account.TenDangNhap == null)
-                {
+                if (account.TenDangNhap == null) {
                     MessageBox.Show(
                      "Tên đăng nhập hoặc mật khẩu không đúng!",
                  "Lỗi đăng nhập",
@@ -151,36 +150,47 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 // Lộ trình dựa trên vai trò
                 //this.Hide(); // ẩn form đăng nhập
 
-                if (account.VaiTro == "Chủ cửa hàng" )
-                {
+                if (account.VaiTro == "Chủ cửa hàng") {
                     // Admin/Manager role - mở form Admin
                     Admin adminForm = new Admin();
-                    adminForm.FormClosed += (s, args) => this.Close();
-                    adminForm.Show();
-                } else if (account.VaiTro == "Quản lý")
-                {
+
+                    this.Hide();
+                    adminForm.FormClosed += (s, args) => {
+                        txtPass.Clear();
+                        txtUser.Clear();
+                        UpdateLoginButtonState();
+                        txtUser.Focus();
+                        this.Show();
+                    };
+                        adminForm.Show();
+
+                    //Admin adminform = new Admin();
+                    //var confirmResult = adminform.ShowDialog();
+
+                    //if (confirmResult == DialogResult.Yes) {
+                    //    this.txtUser.Clear();
+                    //    this.txtPass.Clear();
+                    //}
+
+                }
+                else if (account.VaiTro == "Quản lý") {
                     // vai trò quản lý - mở Mainform và chuyển mã nhân viên
                     QuanLi ql = new QuanLi();
                     ql.FormClosed += (s, args) => this.Close();
                     ql.Show();
                 }
-                else if (account.VaiTro == "Nhân viên")
-                {
-                    // vai trò nhân viên   - mở Mainform và chuyển mã nhân viên
-                    //MainForm mainForm = new MainForm(account.MaNv);
-                    //mainForm.FormClosed += (s, args) => this.Close();
+                else if (account.VaiTro == "Nhân viên") {
+                    // vai trò nhân viên   -mở Mainform và chuyển mã nhân viên
+                    MainForm mainForm = new MainForm(account.MaNv);
+                    mainForm.FormClosed += (s, args) => this.Close();
 
-                    //mainForm.Show();
+                    mainForm.Show();
                 }
                 else {
                     // không có vai trò hợp lệ - hiển thị lỗi - trả về form đăng nhập
-                    MessageBox.Show(
-     $"Vai trò '{account.VaiTro}' không được hỗ trợ!\n" +
-              "Vui lòng liên hệ quản trị viên.",
-        "Lỗi vai trò",
-        MessageBoxButtons.OK,
-        MessageBoxIcon.Error
-     );
+                    MessageBox.Show($"Vai trò '{account.VaiTro}' không được hỗ trợ!\n" + "Vui lòng liên hệ quản trị viên.", "Lỗi vai trò",
+ MessageBoxButtons.OK, MessageBoxIcon.Error
+                    );
                     this.Show(); // Hiển thị forrm đăng nhập lại
                 }
             }
@@ -192,6 +202,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                   MessageBoxIcon.Error
            );
             }
+
+
         }
 
         // nút thoát
@@ -212,6 +224,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         private void UpdateLoginButtonState() {
             btnOK.Enabled = !string.IsNullOrWhiteSpace(txtUser.Text) &&
               !string.IsNullOrWhiteSpace(txtPass.Text);
+        }
+
+        private void Loginform_Load(object sender, EventArgs e) {
+
         }
     }
 }

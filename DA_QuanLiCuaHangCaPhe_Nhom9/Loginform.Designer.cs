@@ -26,8 +26,7 @@
         ///  Required method for Designer support - do not modify
         ///  the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             txtPass = new TextBox();
             txtUser = new TextBox();
             btnOK = new Button();
@@ -67,7 +66,7 @@
             btnOK.TabIndex = 12;
             btnOK.Text = "Đăng nhập";
             btnOK.UseVisualStyleBackColor = false;
-            btnOK.Click += button1_Click;
+            btnOK.Click += btnDangnhap_Click;
             // 
             // label3
             // 
@@ -145,6 +144,7 @@
             Margin = new Padding(1);
             Name = "Loginform";
             Text = "Loginform";
+            Load += Loginform_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();

@@ -54,7 +54,7 @@
             label3 = new Label();
             label2 = new Label();
             label1 = new Label();
-            dgvEmployees = new DataGridView();
+            dataGridView1 = new DataGridView();
             tabPage3 = new TabPage();
             dgvInventory = new DataGridView();
             panel2 = new Panel();
@@ -77,7 +77,7 @@
             ((System.ComponentModel.ISupportInitialize)dgvOverview).BeginInit();
             tabPage2.SuspendLayout();
             panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvEmployees).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvInventory).BeginInit();
             panel2.SuspendLayout();
@@ -176,7 +176,7 @@
             // tabPage2
             // 
             tabPage2.Controls.Add(panel1);
-            tabPage2.Controls.Add(dgvEmployees);
+            tabPage2.Controls.Add(dataGridView1);
             tabPage2.Location = new Point(4, 29);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
@@ -371,19 +371,19 @@
             label1.TabIndex = 0;
             label1.Text = "Thông tin nhân viên";
             // 
-            // dgvEmployees
+            // dataGridView1
             // 
-            dgvEmployees.AllowUserToAddRows = false;
-            dgvEmployees.AllowUserToDeleteRows = false;
-            dgvEmployees.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dgvEmployees.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvEmployees.Location = new Point(3, 3);
-            dgvEmployees.Name = "dgvEmployees";
-            dgvEmployees.ReadOnly = true;
-            dgvEmployees.RowHeadersWidth = 51;
-            dgvEmployees.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvEmployees.Size = new Size(786, 167);
-            dgvEmployees.TabIndex = 0;
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Location = new Point(3, 3);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.RowHeadersWidth = 51;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.Size = new Size(786, 167);
+            dataGridView1.TabIndex = 0;
             // 
             // tabPage3
             // 
@@ -598,7 +598,7 @@
             tabPage2.ResumeLayout(false);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvEmployees).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             tabPage3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)dgvInventory).EndInit();
             panel2.ResumeLayout(false);
@@ -619,7 +619,7 @@
         private TabPage tabPage3;
         private TabPage tabPage4;
         private DataGridView dgvOverview;
-        private DataGridView dgvEmployees;
+        private DataGridView dataGridView1;
         private DataGridView dgvInventory;
         private DataGridView dgvRevenue;
         private Panel panel1;
