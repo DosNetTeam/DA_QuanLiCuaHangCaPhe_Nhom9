@@ -1,17 +1,10 @@
-using System;
-using System.Windows.Forms;
-using System.Drawing;
-using Microsoft.Win32;
-using System.Linq;
 using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+using Microsoft.Win32;
 
-namespace DA_QuanLiCuaHangCaPhe_Nhom9
-{
+namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
     [System.ComponentModel.DesignerCategory("Form")]
-    public partial class Loginform : Form
-    {
-        public Loginform()
-        {
+    public partial class Loginform : Form {
+        public Loginform() {
             InitializeComponent();
 
             // Bắt đầu form ở giữa
@@ -94,16 +87,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             toast.Show();
         }
 
-        private void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e)
-        {
-            if (!IsDisposed && !Disposing)
-            {
+        private void SystemEvents_DisplaySettingsChanged(object? sender, EventArgs e) {
+            if (!IsDisposed && !Disposing) {
                 BeginInvoke(new Action(() => CenterToScreen()));
             }
         }
 
-        protected override void OnFormClosed(FormClosedEventArgs e)
-        {
+        protected override void OnFormClosed(FormClosedEventArgs e) {
             base.OnFormClosed(e);
             // Huỷ đăng ký sự kiện khi form đóng
             SystemEvents.DisplaySettingsChanged -= SystemEvents_DisplaySettingsChanged;
@@ -111,25 +101,21 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         }
 
         // --- trình xử lý sự kiện được designer tham chiếu ---
-        private void textBox1_TextChanged(object? sender, EventArgs e)
-        {
+        private void textBox1_TextChanged(object? sender, EventArgs e) {
             UpdateLoginButtonState();
         }
 
-        private void textBox2_TextChanged(object? sender, EventArgs e)
-        {
+        private void textBox2_TextChanged(object? sender, EventArgs e) {
             UpdateLoginButtonState();
         }
 
-        private void button1_Click(object? sender, EventArgs e)
-        {
+        private void button1_Click(object? sender, EventArgs e) {
             // nhận giá trị đầu vào từ các trường
             string username = txtUser.Text.Trim();
             string password = txtPass.Text;
 
             // đầu vào hợp lệ
-            if (string.IsNullOrWhiteSpace(username))
-            {
+            if (string.IsNullOrWhiteSpace(username)) {
                 MessageBox.Show(
       "Vui lòng nhập tên đăng nhập!",
                "Thông báo",
@@ -140,8 +126,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(password))
-            {
+            if (string.IsNullOrWhiteSpace(password)) {
                 MessageBox.Show(
           "Vui lòng nhập mật khẩu!",
             "Thông báo",
@@ -153,15 +138,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             }
 
             // xác minh đăng nhập với cơ sở dữ liệu
-            try
-            {
+            try {
                 using var db = new DataSqlContext();
 
                 // Tìm tài khoản theo tên đăng nhập
                 var account = db.TaiKhoans
           .Where(t => t.TenDangNhap == username)
-          .Select(t => new
-          {
+          .Select(t => new {
               t.TenDangNhap,
               t.MatKhau,
               t.TrangThai,
@@ -185,8 +168,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                 }
 
                 // xác minh mật khẩu  (NOTE: Cập nhật điều này nếu mật khẩu được băm)
-                if (account.MatKhau != password)
-                {
+                if (account.MatKhau != password) {
                     MessageBox.Show(
                       "Tên đăng nhập hoặc mật khẩu không đúng!",
                        "Lỗi đăng nhập",
@@ -199,8 +181,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                 }
 
                 // kiểm tra trạng thái tài khoản
-                if (account.TrangThai.HasValue && account.TrangThai.Value == false)
-                {
+                if (account.TrangThai.HasValue && account.TrangThai.Value == false) {
                     MessageBox.Show(
                    "Tài khoản đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.",
                  "Tài khoản bị khóa",
@@ -224,7 +205,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                 // Lộ trình dựa trên vai trò
                 //this.Hide(); // ẩn form đăng nhập
 
-                if (account.VaiTro == "Admin" )
+                if (account.VaiTro == "Chủ cửa hàng" )
                 {
                     // Admin/Manager role - mở form Admin
                     Admin adminForm = new Admin();
@@ -240,13 +221,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                 else if (account.VaiTro == "Nhân viên")
                 {
                     // vai trò nhân viên   - mở Mainform và chuyển mã nhân viên
-                    MainForm mainForm = new MainForm(account.MaNv);
-                    mainForm.FormClosed += (s, args) => this.Close();
+                    //MainForm mainForm = new MainForm(account.MaNv);
+                    //mainForm.FormClosed += (s, args) => this.Close();
 
-                    mainForm.Show();
+                    //mainForm.Show();
                 }
-                else
-                {
+                else {
                     // không có vai trò hợp lệ - hiển thị lỗi - trả về form đăng nhập
                     MessageBox.Show(
      $"Vai trò '{account.VaiTro}' không được hỗ trợ!\n" +
@@ -258,8 +238,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                     this.Show(); // Hiển thị forrm đăng nhập lại
                 }
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 MessageBox.Show(
                     $"Lỗi kết nối cơ sở dữ liệu:\n{ex.Message}",
               "Lỗi",
@@ -270,8 +249,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         }
 
         // nút thoát
-        private void btnThoat_Click(object? sender, EventArgs e)
-        {
+        private void btnThoat_Click(object? sender, EventArgs e) {
             var result = MessageBox.Show(
        "Bạn có chắc muốn thoát?",
       "Xác nhận",
@@ -279,15 +257,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
              MessageBoxIcon.Question
  );
 
-            if (result == DialogResult.Yes)
-            {
+            if (result == DialogResult.Yes) {
                 Application.Exit();
             }
         }
 
         // phương pháp trợ giúp để giúp kích hoạt/tắt nút đăng nhập
-        private void UpdateLoginButtonState()
-        {
+        private void UpdateLoginButtonState() {
             btnOK.Enabled = !string.IsNullOrWhiteSpace(txtUser.Text) &&
               !string.IsNullOrWhiteSpace(txtPass.Text);
         }
