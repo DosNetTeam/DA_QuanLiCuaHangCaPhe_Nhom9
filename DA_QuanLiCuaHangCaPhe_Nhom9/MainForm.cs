@@ -40,7 +40,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             TaiLoaiSanPham();
             TaiSanPham("TatCa");
 
+            // Ban đầu hiển thị nhưng không cho tương tác (disabled)
             this.btnThem.Enabled = false;
+            this.btnThem.Visible = true;
         }
         #endregion
 
@@ -517,12 +519,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         private void btnThem_Click(object sender, EventArgs e) {
+            // Mở form thêm, truyền SĐT hiện tại
             ThemKhachHangMoi tmk = new ThemKhachHangMoi(txtTimKiemKH.Text.Trim());
             var result = tmk.ShowDialog();
+
             if (result == DialogResult.OK) {
-                // Nếu thêm khách hàng thành công, tự động tìm lại khách hàng
-                btnTimKH.PerformClick(); // Giống như bấm nút Tìm KH
-                this.btnThem.Enabled = false;
+                // Sau khi thêm thành công, tự động tìm lại khách hàng (cập nhật tên + disable nút)
+                SearchKhachHangBySDT(txtTimKiemKH.Text.Trim());
             }
         }
 
@@ -952,7 +955,65 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         #endregion
+
+
+
+        private void txtTimKiemKH_TextChanged(object sender, EventArgs e) {
+            // Khi người dùng tác động lại vào ô nhập SĐT thì tự động tìm khi đủ 10 số.
+            string sdt = txtTimKiemKH.Text.Trim();
+
+            // Nếu trống => Khách vãng lai, tắt nút Thêm
+            if (string.IsNullOrEmpty(sdt)) {
+                lblTenKH.Text = "Khách vãng lai";
+                _currentMaKH = null;
+                btnThem.Enabled = false;
+                return;
+            }
+
+            // Nếu không phải là chữ số hoặc không đủ 10 chữ số => thông báo và tắt nút Thêm
+            if (sdt.Length != 10 || !sdt.All(char.IsDigit)) {
+                lblTenKH.Text = "Nhập đủ 10 số";
+                _currentMaKH = null;
+                btnThem.Enabled = false;
+                return;
+            }
+
+            // Nếu đến đây là đúng 10 chữ số, kiểm tra CSDL
+            SearchKhachHangBySDT(sdt);
+        }
+
+        // Helper để tìm khách hàng theo SĐT và cập nhật UI
+        private void SearchKhachHangBySDT(string sdt) {
+            try {
+                using (DataSqlContext db = new DataSqlContext()) {
+                    var khachHang = db.KhachHangs.FirstOrDefault(kh => kh.SoDienThoai == sdt);
+
+                    if (khachHang != null) {
+                        // TÌM THẤY
+                        lblTenKH.Text = khachHang.TenKh;
+                        _currentMaKH = khachHang.MaKh; // Lưu lại MaKH!
+                        btnThem.Enabled = false; // đã có trong DB -> không cần thêm
+                    }
+                    else {
+                        // KHÔNG TÌM THẤY -> hiển thị thông báo "Không tìm thấy KH"
+                        // và cho phép thêm khách mới
+                        lblTenKH.Text = "Không tìm thấy KH";
+                        _currentMaKH = null;
+
+                        // Cho phép tương tác với nút Thêm (enabled)
+                        btnThem.Enabled = true;
+                    }
+                }
+            }
+            catch (Exception ex) {
+                MessageBox.Show("Lỗi khi tìm khách hàng: " + ex.Message);
+                lblTenKH.Text = "Lỗi khi tìm";
+                _currentMaKH = null;
+                btnThem.Enabled = false;
+            }
+        }
+
+
+
     }
-
-
 }
