@@ -233,14 +233,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     ql.FormClosed += (s, args) => this.Close();
                     ql.Show();
                 }
-<<<<<<< HEAD
+
                 else if (account.VaiTro == "Nhân viên") {
-                    // vai trò nhân viên   -mở Mainform và chuyển mã nhân viên
-=======
-                else if (account.VaiTro == "Nhân viên")
-                {
+                    
                     //vai trò nhân viên   - mở Mainform và chuyển mã nhân viên
->>>>>>> fce32861bef7912303a68ec3558cf519a5ac9d45
+
                     MainForm mainForm = new MainForm(account.MaNv);
                     mainForm.FormClosed += (s, args) => this.Close();
 
