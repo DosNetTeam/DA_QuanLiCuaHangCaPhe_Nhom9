@@ -40,47 +40,46 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
             // Wire notify button directly (controls are in pnlNotify)
             if (btnSendNotify != null)
                 btnSendNotify.Click += btnSendNotify_Click;
-         }
+        }
 
-         private void QuanLi_Load(object sender, EventArgs e)
-         {
-             // Cài đặt các ComboBox lọc
-             SetupFilters();
+        private void QuanLi_Load(object sender, EventArgs e)
+        {
+            // Cài đặt các ComboBox lọc
+            SetupFilters();
 
-             // Tải dữ liệu ban đầu
-             LoadData_NhanVien();
-             LoadData_HoaDon();
-             LoadData_TonKho();
-             LoadNotifications();
+            // Tải dữ liệu ban đầu
+            LoadData_NhanVien();
+            LoadData_HoaDon();
+            LoadData_TonKho();
+            LoadNotifications();
 
-            // Ensure notification group is in panelContent and visible on top
+            // Ensure notification group stays in the left menu and is usable
             try
             {
-                if (grpNotify != null && panelContent != null)
+                if (grpNotify != null)
                 {
-                    grpNotify.Parent = panelContent;
+                    // Keep group in the designer parent (panelMenu) so input and tab order work
                     grpNotify.Visible = true;
                     grpNotify.BringToFront();
-                    btnSendNotify.BringToFront();
-
-                    // Position and keep it at bottom-right
-                    PositionNotifyGroup();
-                    panelContent.SizeChanged += (s, ev) => PositionNotifyGroup();
                 }
                 if (txtNotifyMessage != null)
                 {
                     txtNotifyMessage.Enabled = true;
+                    txtNotifyMessage.ReadOnly = false;
                 }
                 if (btnSendNotify != null)
                 {
                     btnSendNotify.Enabled = true;
+                    // ensure click handler present
+                    btnSendNotify.Click -= btnSendNotify_Click;
+                    btnSendNotify.Click += btnSendNotify_Click;
                 }
             }
             catch { }
-         }
+        }
 
-         private void PositionNotifyGroup()
-         {
+        private void PositionNotifyGroup()
+        {
             try
             {
                 if (grpNotify == null || panelContent == null) return;
@@ -92,7 +91,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                 grpNotify.BringToFront();
             }
             catch { }
-         }
+        }
 
         // Public helper to get notifications as list of strings
         public List<string> GetNotifications()
@@ -398,7 +397,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                         this.Activate();
                         LoadData_NhanVien();
                         LoadData_HoaDon();
-                                                LoadData_TonKho();
+                        LoadData_TonKho();
                     }
                     catch { }
                 };
@@ -560,6 +559,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         #endregion
 
         private void QuanLi_Load_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void grpNotify_Enter(object sender, EventArgs e)
         {
 
         }
