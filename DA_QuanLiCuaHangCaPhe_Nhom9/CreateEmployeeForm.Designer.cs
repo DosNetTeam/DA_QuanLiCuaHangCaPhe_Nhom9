@@ -26,14 +26,10 @@ components.Dispose();
             txtConfirmPassword = new TextBox();
             lblPhoneNumber = new Label();
             txtPhoneNumber = new TextBox();
-            lblChucVu = new Label();
-            cboChucVu = new ComboBox();
-            lblRole = new Label();
-            rbManager = new RadioButton();
             btnSave = new Button();
             btnCancel = new Button();
-            panelRole = new Panel();
-            panelRole.SuspendLayout();
+            cb_Vaitro = new ComboBox();
+            cb_Chucvu = new ComboBox();
             SuspendLayout();
             // 
             // lblTitle
@@ -130,75 +126,14 @@ components.Dispose();
             txtPhoneNumber.Size = new Size(280, 27);
             txtPhoneNumber.TabIndex = 4;
             // 
-            // lblChucVu
-            // 
-            lblChucVu.AutoSize = true;
-            lblChucVu.Location = new Point(30, 305);
-            lblChucVu.Name = "lblChucVu";
-            lblChucVu.Size = new Size(63, 20);
-            lblChucVu.TabIndex = 0;
-            lblChucVu.Text = "Chức vụ:";
-            // 
-            // cboChucVu
-            // 
-            cboChucVu.DropDownStyle = ComboBoxStyle.DropDownList;
-            cboChucVu.FormattingEnabled = true;
-            cboChucVu.Items.AddRange(new object[] { "Nhân viên thu ngân", "Nhân viên pha chế", "Quản lý", "Chủ hàng" });
-            cboChucVu.Location = new Point(180, 302);
-            cboChucVu.Name = "cboChucVu";
-            cboChucVu.Size = new Size(280, 28);
-            cboChucVu.TabIndex = 5;
-            // 
-            // lblRole
-            // 
-            lblRole.AutoSize = true;
-            lblRole.Location = new Point(30, 350);
-            lblRole.Name = "lblRole";
-            lblRole.Size = new Size(57, 20);
-            lblRole.TabIndex = 0;
-            lblRole.Text = "Vai trò:";
-            // 
-            // panelRole
-            // 
-            panelRole.Controls.Add(rbEmployee);
-            panelRole.Controls.Add(rbManager);
-            panelRole.Location = new Point(180, 345);
-            panelRole.Name = "panelRole";
-            panelRole.Size = new Size(280, 35);
-            panelRole.TabIndex = 6;
-            // 
-            // rbEmployee
-            // 
-            rbEmployee.AutoSize = true;
-            rbEmployee.Checked = true;
-            rbEmployee.Location = new Point(3, 5);
-            rbEmployee.Name = "rbEmployee";
-            rbEmployee.Size = new Size(97, 24);
-            rbEmployee.TabIndex = 0;
-            rbEmployee.TabStop = true;
-            rbEmployee.Text = "Nhân viên";
-            rbEmployee.UseVisualStyleBackColor = true;
-            rbEmployee.CheckedChanged += rbEmployee_CheckedChanged;
-            // 
-            // rbManager
-            // 
-            rbManager.AutoSize = true;
-            rbManager.Location = new Point(150, 5);
-            rbManager.Name = "rbManager";
-            rbManager.Size = new Size(81, 24);
-            rbManager.TabIndex = 1;
-            rbManager.Text = "Quản lý";
-            rbManager.UseVisualStyleBackColor = true;
-            rbManager.CheckedChanged += rbManager_CheckedChanged;
-            // 
             // btnSave
             // 
             btnSave.BackColor = Color.FromArgb(46, 125, 50);
             btnSave.ForeColor = Color.White;
-            btnSave.Location = new Point(163, 405);
+            btnSave.Location = new Point(180, 377);
             btnSave.Name = "btnSave";
             btnSave.Size = new Size(130, 40);
-            btnSave.TabIndex = 7;
+            btnSave.TabIndex = 6;
             btnSave.Text = "Lưu";
             btnSave.UseVisualStyleBackColor = false;
             btnSave.Click += btnSave_Click;
@@ -207,25 +142,42 @@ components.Dispose();
             // 
             btnCancel.BackColor = Color.FromArgb(158, 158, 158);
             btnCancel.ForeColor = Color.White;
-            btnCancel.Location = new Point(319, 405);
+            btnCancel.Location = new Point(330, 377);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(130, 40);
-            btnCancel.TabIndex = 8;
+            btnCancel.TabIndex = 7;
             btnCancel.Text = "Hủy";
             btnCancel.UseVisualStyleBackColor = false;
             btnCancel.Click += btnCancel_Click;
+            // 
+            // cb_Vaitro
+            // 
+            cb_Vaitro.FormattingEnabled = true;
+            cb_Vaitro.Location = new Point(180, 290);
+            cb_Vaitro.Name = "cb_Vaitro";
+            cb_Vaitro.Size = new Size(144, 28);
+            cb_Vaitro.TabIndex = 8;
+            cb_Vaitro.Text = "Vai trò";
+            cb_Vaitro.SelectedIndexChanged += cb_Vaitro_SelectedIndexChanged_1;
+            // 
+            // cb_Chucvu
+            // 
+            cb_Chucvu.FormattingEnabled = true;
+            cb_Chucvu.Location = new Point(330, 290);
+            cb_Chucvu.Name = "cb_Chucvu";
+            cb_Chucvu.Size = new Size(130, 28);
+            cb_Chucvu.TabIndex = 9;
+            cb_Chucvu.SelectedIndexChanged += cb_Chucvu_SelectedIndexChanged;
             // 
             // CreateEmployeeForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(500, 465);
+            ClientSize = new Size(500, 420);
+            Controls.Add(cb_Chucvu);
+            Controls.Add(cb_Vaitro);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
-            Controls.Add(panelRole);
-            Controls.Add(lblRole);
-            Controls.Add(cboChucVu);
-            Controls.Add(lblChucVu);
             Controls.Add(txtPhoneNumber);
             Controls.Add(lblPhoneNumber);
             Controls.Add(txtConfirmPassword);
@@ -243,8 +195,7 @@ components.Dispose();
             Name = "CreateEmployeeForm";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Tạo tài khoản";
-            panelRole.ResumeLayout(false);
-            panelRole.PerformLayout();
+            Load += CreateEmployeeForm_Load;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -256,18 +207,13 @@ private Label lblUsername;
         private TextBox txtUsername;
     private Label lblPassword;
         private TextBox txtPassword;
-private Label lblConfirmPassword;
+        private Label lblConfirmPassword;
         private TextBox txtConfirmPassword;
     private Label lblPhoneNumber;
         private TextBox txtPhoneNumber;
-        private Label lblChucVu;
-        private ComboBox cboChucVu;
-        private Label lblRole;
-    private Panel panelRole;
-   private RadioButton rbEmployee;
-private RadioButton rbManager;
         private Button btnSave;
         private Button btnCancel;
-        private ComboBox comboBox1;
+        private ComboBox cb_Vaitro;
+        private ComboBox cb_Chucvu;
     }
 }

@@ -47,24 +47,24 @@ GO
 
 -- Bảng VAI TRÒ
 INSERT INTO VaiTro (TenVaiTro) VALUES
-(N'Quản lý'),        -- MaVaiTro = 1
-(N'Pha chế'),        -- MaVaiTro = 2
-(N'Thu ngân');       -- MaVaiTro = 3
+(N'Chủ cửa hàng'),        -- MaVaiTro = 1
+(N'Quản lý'),        -- MaVaiTro = 2
+(N'Nhân viên');       -- MaVaiTro = 3
 GO
 
 -- Bảng NHÂN VIÊN
 INSERT INTO NhanVien (TenNV, ChucVu, SoDienThoai, NgayVaoLam) VALUES
-(N'Nguyễn Văn An', N'Quản lý', '0901234567', '2023-01-15'), -- MaNV = 1
-(N'Trần Thị Bích', N'Pha chế', '0912345678', '2023-03-20'), -- MaNV = 2
-(N'Lê Minh Cường', N'Thu ngân', '0987654321', '2023-05-10'); -- MaNV = 3
+(N'Lê Văn Định', N'Chủ cửa hàng', '0901234567', '2023-01-15'), -- MaNV = 1
+(N'Lê Minh Đức', N'Quản lý', '0912345678', '2023-03-20'), -- MaNV = 2
+(N'Bùi Phước Hậu', N'Thu ngân', '0987654321', '2023-05-10'); -- MaNV = 3
 GO
 
 -- Bảng TÀI KHOẢN
 
 INSERT INTO TaiKhoan (TenDangNhap, MatKhau, MaNV, MaVaiTro, TrangThai) VALUES
-('admin', '123', 1, 1, 1),
-('dinh.tt', '123', 2, 2, 1),
-('hau.lm', '123', 3, 3, 1);
+('dinh', '123', 1, 1, 1),
+('duc', '123', 2, 2, 1),
+('hau', '123', 3, 3, 1);
 GO
 
 -- Bảng KHÁCH HÀNG
@@ -92,11 +92,11 @@ GO
 
 -- Bảng SẢN PHẨM
 INSERT INTO SanPham (TenSP, LoaiSP, DonGia, DonVi, TrangThai) VALUES
-(N'Cà Phê Đen', N'Cà phê', 20000.00, N'Ly', N'Con ban'),  -- MaSP = 1
-(N'Cà Phê Sữa', N'Cà phê', 25000.00, N'Ly', N'Con ban'),  -- MaSP = 2
-(N'Matcha Latte', N'Trà', 45000.00, N'Ly', N'Con ban'),  -- MaSP = 3
-(N'Bánh Croissant', N'Bánh', 30000.00, N'Cái', N'Con ban'), -- MaSP = 4
-(N'Espresso', N'Cà phê', 35000.00, N'Ly', N'Het hang'); -- MaSP = 5
+(N'Cà Phê Đen', N'Cà phê', 20000.00, N'Ly', N'Còn bán'),  -- MaSP = 1
+(N'Cà Phê Sữa', N'Cà phê', 25000.00, N'Ly', N'Còn bán'),  -- MaSP = 2
+(N'Matcha Latte', N'Trà', 45000.00, N'Ly', N'Còn bán'),  -- MaSP = 3
+(N'Bánh Croissant', N'Bánh', 30000.00, N'Cái', N'Còn bán'), -- MaSP = 4
+(N'Espresso', N'Cà phê', 35000.00, N'Ly', N'Hết hàng'); -- MaSP = 5
 GO
 
 -- Bảng ĐỊNH LƯỢNG (Công thức)
@@ -111,9 +111,9 @@ GO
 
 -- Bảng KHUYẾN MÃI
 INSERT INTO KhuyenMai (TenKM, MoTa, LoaiKM, GiaTri, NgayBatDau, NgayKetThuc, TrangThai) VALUES
-(N'Giảm 10% tổng hóa đơn', N'Áp dụng cho mọi hóa đơn trên 50k', 'HoaDon', 10.00, '2025-10-01', '2025-10-31', N'Dang ap dung'), -- MaKM = 1
-(N'Giảm 20% Matcha', N'Giảm giá 20% cho dòng sản phẩm Matcha', 'SanPham', 20.00, '2025-10-15', '2025-11-15', N'Dang ap dung'), -- MaKM = 2
-(N'Khai trương (Hết hạn)', N'Giảm giá 15%', 'HoaDon', 15.00, '2023-01-01', '2023-01-31', N'Da ket thuc'); -- MaKM = 3
+(N'Giảm 10% tổng hóa đơn', N'Áp dụng cho mọi hóa đơn trên 50k', 'HoaDon', 10.00, '2025-10-01', '2025-10-31', N'Đang áp dụng'), -- MaKM = 1
+(N'Giảm 20% Matcha', N'Giảm giá 20% cho dòng sản phẩm Matcha', 'SanPham', 20.00, '2025-10-15', '2025-11-15', N'Đang áp dụng'), -- MaKM = 2
+(N'Khai trương (Hết hạn)', N'Giảm giá 15%', 'HoaDon', 15.00, '2023-01-01', '2023-01-31', N'Đã kết thúc'); -- MaKM = 3
 GO
 
 -- Bảng LIÊN KẾT KHUYẾN MÃI VÀ SẢN PHẨM
@@ -139,9 +139,9 @@ GO
 
 -- Bảng ĐƠN HÀNG
 INSERT INTO DonHang (NgayLap, MaKH, MaNV, TongTien, TrangThai, MaKM) VALUES
-('2025-10-25 08:30:00', 1, 3, 72000.00, N'Da hoan thanh', 1), -- ĐH 1: KH Hùng, NV Cường, KM 10% (MaDH = 1)
-('2025-10-25 09:15:00', 2, 3, 20000.00, N'Da hoan thanh', NULL),-- ĐH 2: KH Lan, NV Cường, không KM (MaDH = 2)
-('2025-10-26 10:00:00', 3, 3, 36000.00, N'Dang xu ly', NULL); -- ĐH 3: Khách vãng lai, NV Cường, (MaDH = 3)
+('2025-10-25 08:30:00', 1, 3, 72000.00, N'Đã hoàn thành', 1), -- ĐH 1: KH Hùng, NV Cường, KM 10% (MaDH = 1)
+('2025-10-25 09:15:00', 2, 3, 20000.00, N'Đã hoàn thành', NULL),-- ĐH 2: KH Lan, NV Cường, không KM (MaDH = 2)
+('2025-10-26 10:00:00', 3, 3, 36000.00, N'Đang xử lý', NULL); -- ĐH 3: Khách vãng lai, NV Cường, (MaDH = 3)
 GO
 
 -- Bảng CHI TIẾT ĐƠN HÀNG
