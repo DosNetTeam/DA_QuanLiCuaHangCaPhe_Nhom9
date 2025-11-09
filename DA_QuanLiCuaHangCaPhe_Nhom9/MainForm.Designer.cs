@@ -186,10 +186,10 @@
             // 
             lblTenKH.AutoSize = true;
             lblTenKH.Dock = DockStyle.Fill;
-            lblTenKH.Location = new Point(57, 0);
+            lblTenKH.Location = new Point(16, 0);
             lblTenKH.Margin = new Padding(6, 0, 6, 0);
             lblTenKH.Name = "lblTenKH";
-            lblTenKH.Size = new Size(118, 31);
+            lblTenKH.Size = new Size(13, 31);
             lblTenKH.TabIndex = 4;
             lblTenKH.Text = "Khách vãng lai";
             lblTenKH.TextAlign = ContentAlignment.MiddleCenter;
@@ -216,10 +216,10 @@
             // btnThem
             // 
             btnThem.Dock = DockStyle.Fill;
-            btnThem.Location = new Point(690, 6);
+            btnThem.Location = new Point(41, 6);
             btnThem.Margin = new Padding(6);
             btnThem.Name = "btnThem";
-            btnThem.Size = new Size(265, 54);
+            btnThem.Size = new Size(265, 20);
             btnThem.TabIndex = 5;
             btnThem.Text = "Thêm";
             btnThem.UseVisualStyleBackColor = true;
@@ -228,11 +228,11 @@
             // txtTimKiemKH
             // 
             txtTimKiemKH.Dock = DockStyle.Fill;
-            txtTimKiemKH.Location = new Point(57, 6);
+            txtTimKiemKH.Location = new Point(16, 6);
             txtTimKiemKH.Margin = new Padding(6);
             txtTimKiemKH.MaxLength = 10;
             txtTimKiemKH.Name = "txtTimKiemKH";
-            txtTimKiemKH.Size = new Size(118, 27);
+            txtTimKiemKH.Size = new Size(13, 27);
             txtTimKiemKH.TabIndex = 2;
             txtTimKiemKH.TextChanged += txtTimKiemKH_TextChanged;
             txtTimKiemKH.KeyPress += txtTimKiemKH_KeyPress;
@@ -245,7 +245,7 @@
             label5.FlatStyle = FlatStyle.Flat;
             label5.Location = new Point(3, 0);
             label5.Name = "label5";
-            label5.Size = new Size(45, 32);
+            label5.Size = new Size(4, 32);
             label5.TabIndex = 0;
             label5.Text = "Tìm SĐT KH\r\n";
             label5.TextAlign = ContentAlignment.MiddleCenter;
