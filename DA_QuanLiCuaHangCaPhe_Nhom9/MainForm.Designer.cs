@@ -37,10 +37,9 @@
             ThanhTien = new ColumnHeader();
             panel_KH = new Panel();
             frame_KhachHang = new TableLayoutPanel();
-            btnThem = new Button();
             lblTenKH = new Label();
             frame_TimKH = new TableLayoutPanel();
-            btnTimKH = new Button();
+            btnThem = new Button();
             txtTimKiemKH = new TextBox();
             label5 = new Label();
             frame_btnX_btnG = new TableLayoutPanel();
@@ -173,7 +172,6 @@
             frame_KhachHang.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 28.1314163F));
             frame_KhachHang.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 71.86858F));
             frame_KhachHang.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 276F));
-            frame_KhachHang.Controls.Add(btnThem, 2, 0);
             frame_KhachHang.Controls.Add(lblTenKH, 1, 0);
             frame_KhachHang.Dock = DockStyle.Fill;
             frame_KhachHang.Location = new Point(0, 66);
@@ -184,18 +182,6 @@
             frame_KhachHang.RowStyles.Add(new RowStyle(SizeType.Absolute, 64F));
             frame_KhachHang.Size = new Size(961, 63);
             frame_KhachHang.TabIndex = 6;
-            // 
-            // btnThem
-            // 
-            btnThem.Dock = DockStyle.Fill;
-            btnThem.Location = new Point(690, 6);
-            btnThem.Margin = new Padding(6);
-            btnThem.Name = "btnThem";
-            btnThem.Size = new Size(265, 51);
-            btnThem.TabIndex = 5;
-            btnThem.Text = "Thêm";
-            btnThem.UseVisualStyleBackColor = true;
-            btnThem.Click += btnThem_Click;
             // 
             // lblTenKH
             // 
@@ -215,7 +201,7 @@
             frame_TimKH.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 28.1314163F));
             frame_TimKH.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 71.86858F));
             frame_TimKH.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 276F));
-            frame_TimKH.Controls.Add(btnTimKH, 2, 0);
+            frame_TimKH.Controls.Add(btnThem, 2, 0);
             frame_TimKH.Controls.Add(txtTimKiemKH, 1, 0);
             frame_TimKH.Controls.Add(label5, 0, 0);
             frame_TimKH.Dock = DockStyle.Top;
@@ -229,17 +215,17 @@
             frame_TimKH.Size = new Size(961, 66);
             frame_TimKH.TabIndex = 3;
             // 
-            // btnTimKH
+            // btnThem
             // 
-            btnTimKH.Dock = DockStyle.Fill;
-            btnTimKH.Location = new Point(690, 6);
-            btnTimKH.Margin = new Padding(6);
-            btnTimKH.Name = "btnTimKH";
-            btnTimKH.Size = new Size(265, 54);
-            btnTimKH.TabIndex = 1;
-            btnTimKH.Text = "Tìm";
-            btnTimKH.UseVisualStyleBackColor = true;
-            btnTimKH.Click += btnTimKH_Click;
+            btnThem.Dock = DockStyle.Fill;
+            btnThem.Location = new Point(690, 6);
+            btnThem.Margin = new Padding(6);
+            btnThem.Name = "btnThem";
+            btnThem.Size = new Size(265, 54);
+            btnThem.TabIndex = 5;
+            btnThem.Text = "Thêm";
+            btnThem.UseVisualStyleBackColor = true;
+            btnThem.Click += btnThem_Click;
             // 
             // txtTimKiemKH
             // 
@@ -250,6 +236,7 @@
             txtTimKiemKH.Name = "txtTimKiemKH";
             txtTimKiemKH.Size = new Size(466, 47);
             txtTimKiemKH.TabIndex = 2;
+            txtTimKiemKH.TextChanged += txtTimKiemKH_TextChanged;
             txtTimKiemKH.KeyPress += txtTimKiemKH_KeyPress;
             // 
             // label5
@@ -585,7 +572,6 @@
         private Panel panel_C1;
         private TableLayoutPanel frame_TimKH;
         private TextBox txtTimKiemKH;
-        private Button btnTimKH;
         private Label label5;
         private Label lblTenKH;
         private Panel panel_KH;
