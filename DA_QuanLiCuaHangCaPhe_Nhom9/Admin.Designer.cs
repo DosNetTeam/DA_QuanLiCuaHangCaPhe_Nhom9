@@ -38,6 +38,7 @@
             tabPage2 = new TabPage();
             panel1 = new Panel();
             button1 = new Button();
+            textBoxPassword = new TextBox();
             textBox6 = new TextBox();
             textBox5 = new TextBox();
             textBox4 = new TextBox();
@@ -46,6 +47,7 @@
             textBox1 = new TextBox();
             label7 = new Label();
             label6 = new Label();
+            label14 = new Label();
             label5 = new Label();
             label8 = new Label();
             label4 = new Label();
@@ -186,6 +188,7 @@
             // panel1
             // 
             panel1.Controls.Add(button1);
+            panel1.Controls.Add(textBoxPassword);
             panel1.Controls.Add(textBox6);
             panel1.Controls.Add(textBox5);
             panel1.Controls.Add(textBox4);
@@ -194,6 +197,7 @@
             panel1.Controls.Add(textBox1);
             panel1.Controls.Add(label7);
             panel1.Controls.Add(label6);
+            panel1.Controls.Add(label14);
             panel1.Controls.Add(label5);
             panel1.Controls.Add(label8);
             panel1.Controls.Add(label4);
@@ -218,9 +222,18 @@
             button1.UseVisualStyleBackColor = false;
             button1.Click += button1_Click;
             // 
+            // textBoxPassword
+            // 
+            textBoxPassword.Location = new Point(411, 131);
+            textBoxPassword.Name = "textBoxPassword";
+            textBoxPassword.ReadOnly = true;
+            textBoxPassword.Size = new Size(137, 27);
+            textBoxPassword.TabIndex = 7;
+            textBoxPassword.TextChanged += textBox5_TextChanged;
+            // 
             // textBox6
             // 
-            textBox6.Location = new Point(411, 89);
+            textBox6.Location = new Point(413, 89);
             textBox6.Name = "textBox6";
             textBox6.ReadOnly = true;
             textBox6.Size = new Size(137, 27);
@@ -287,6 +300,16 @@
             label6.Size = new Size(61, 21);
             label6.TabIndex = 5;
             label6.Text = "Vai trò:";
+            // 
+            // label14
+            // 
+            label14.AutoSize = true;
+            label14.Font = new Font("Calibri", 10.2F, FontStyle.Bold);
+            label14.Location = new Point(323, 135);
+            label14.Name = "label14";
+            label14.Size = new Size(82, 21);
+            label14.TabIndex = 5;
+            label14.Text = "Mật khẩu:";
             // 
             // label5
             // 
@@ -628,5 +651,7 @@
   private Button button2;
         private Button button3;
         private Button button4;
+        private Label label14;
+        private TextBox textBoxPassword;
     }
 }

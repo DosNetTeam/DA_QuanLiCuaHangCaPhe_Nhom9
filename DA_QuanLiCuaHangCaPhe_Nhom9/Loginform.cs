@@ -151,7 +151,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 // Lộ trình dựa trên vai trò
                 //this.Hide(); // ẩn form đăng nhập
 
-                if (account.VaiTro == "Admin" )
+                if (account.VaiTro == "Chủ cửa hàng" )
                 {
                     // Admin/Manager role - mở form Admin
                     Admin adminForm = new Admin();
