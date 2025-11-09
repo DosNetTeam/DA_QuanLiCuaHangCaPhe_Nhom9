@@ -31,7 +31,6 @@
             btnCreateAccount = new Button();
             btnExit = new Button();
             btnDeleteAccount = new Button();
-            btnLogout = new Button();
             tabControl1 = new TabControl();
             tabPage1 = new TabPage();
             dgvOverview = new DataGridView();
@@ -120,18 +119,6 @@
             btnDeleteAccount.Text = "Xóa tài khoản";
             btnDeleteAccount.UseVisualStyleBackColor = false;
             btnDeleteAccount.Click += btnDeleteAccount_Click;
-            // 
-            // btnLogout
-            // 
-            btnLogout.BackColor = Color.FromArgb(96, 125, 139);
-            btnLogout.ForeColor = Color.White;
-            btnLogout.Location = new Point(12, 385);
-            btnLogout.Name = "btnLogout";
-            btnLogout.Size = new Size(150, 40);
-            btnLogout.TabIndex = 1;
-            btnLogout.Text = "Đăng xuất";
-            btnLogout.UseVisualStyleBackColor = false;
-            btnLogout.Click += btnLogout_Click;
             // 
             // tabControl1
             // 
@@ -581,7 +568,6 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(btnLogout);
             Controls.Add(btnDeleteAccount);
             Controls.Add(btnExit);
             Controls.Add(btnCreateAccount);
@@ -611,7 +597,6 @@
         #endregion
         private Button btnCreateAccount;
         private Button btnDeleteAccount;
-        private Button btnLogout;
         private Button btnExit;
         private TabControl tabControl1;
         private TabPage tabPage1;
