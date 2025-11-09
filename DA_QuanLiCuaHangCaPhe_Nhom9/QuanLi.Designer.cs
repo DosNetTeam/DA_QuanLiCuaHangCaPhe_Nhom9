@@ -118,7 +118,6 @@
             // lblCoffee
             // 
             lblCoffee.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            lblCoffee.AutoSize = true;
             lblCoffee.Font = new Font("Segoe UI", 25.8000011F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblCoffee.ForeColor = Color.FromArgb(192, 64, 0);
             lblCoffee.Location = new Point(35, 188);
@@ -578,7 +577,6 @@
             Text = "Quản lí cửa hàng";
             Load += QuanLi_Load_1;
             panelMenu.ResumeLayout(false);
-            panelMenu.PerformLayout();
             grpNotify.ResumeLayout(false);
             grpNotify.PerformLayout();
             panelContent.ResumeLayout(false);
