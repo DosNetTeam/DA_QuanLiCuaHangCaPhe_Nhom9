@@ -6,7 +6,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
     public partial class MainForm : Form {
 
         // Giả định ID nhân viên đang đăng nhập.
-       private int _currentMaNV = 3;
+        private int _currentMaNV = 3;
 
         // Biến này sẽ lưu Mã Khách Hàng sau khi tìm thấy
         // Dấu ? có nghĩa là "nullable" (có thể rỗng,
@@ -17,8 +17,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // Ban đầu mặc định là "Tất Cả"
         private string _currentMaLoai = "TatCa";
 
-        public MainForm(int MaNV)
-        {
+        public MainForm(int MaNV) {
             InitializeComponent();
             _currentMaNV = MaNV;
         }
