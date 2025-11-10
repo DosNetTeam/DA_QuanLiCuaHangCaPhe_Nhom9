@@ -124,7 +124,7 @@
             btnThoat.TabIndex = 13;
             btnThoat.Text = "Hủy";
             btnThoat.UseVisualStyleBackColor = false;
-            btnThoat.Click += btnThoat_Click;
+            btnThoat.Click += btnHuy_Click;
             // 
             // Loginform
             // 

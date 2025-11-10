@@ -26,8 +26,7 @@
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             btnCreateAccount = new Button();
             btnExit = new Button();
             btnDeleteAccount = new Button();
@@ -71,6 +70,7 @@
             label9 = new Label();
             tabPage4 = new TabPage();
             dgvRevenue = new DataGridView();
+            btnLognout = new Button();
             tabControl1.SuspendLayout();
             tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvOverview).BeginInit();
@@ -563,11 +563,22 @@
             dgvRevenue.Size = new Size(786, 331);
             dgvRevenue.TabIndex = 0;
             // 
+            // btnLognout
+            // 
+            btnLognout.Location = new Point(23, 391);
+            btnLognout.Name = "btnLognout";
+            btnLognout.Size = new Size(130, 29);
+            btnLognout.TabIndex = 5;
+            btnLognout.Text = "Đăng xuất";
+            btnLognout.UseVisualStyleBackColor = true;
+            btnLognout.Click += btnLogout_Click;
+            // 
             // Admin
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnLognout);
             Controls.Add(btnDeleteAccount);
             Controls.Add(btnExit);
             Controls.Add(btnCreateAccount);
@@ -638,5 +649,6 @@
         private Button button4;
         private Label label14;
         private TextBox textBoxPassword;
+        private Button btnLognout;
     }
 }

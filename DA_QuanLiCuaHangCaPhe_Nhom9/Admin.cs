@@ -1212,21 +1212,15 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
               MessageBoxIcon.Error);
             }
         }
-
         private void btnLogout_Click(object sender, EventArgs e) {
-            // Confirm logout
+            // Xác nhận đăng xuất
             var confirmResult = MessageBox.Show(
-             "Bạn có chắc muốn đăng xuất?\n\n" + "Hệ thống sẽ quay về trang đăng nhập.", "Xác nhận đăng xuất",
-    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-                if (confirmResult != DialogResult.Yes)
+             "Bạn có chắc muốn đăng xuất?\n\n" + "Hệ thống sẽ quay về trang đăng nhập.", "Xác nhận đăng xuất", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (confirmResult != DialogResult.Yes)
                 return;
             else {
                 this.Close();
             }
-
-
-
             //        if (confirmResult != DialogResult.Yes)
             //        return;
             //        try{
@@ -1258,12 +1252,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         private void btnExit_Click(object sender, EventArgs e) {
-            DialogResult result = MessageBox.Show(
-                   "Bạn có chắc muốn thoát?",
-                       "Xác nhận",
-                 MessageBoxButtons.YesNo,
-                     MessageBoxIcon.Question);
-
+            DialogResult result = MessageBox.Show( "Bạn có chắc muốn thoát?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes) {
                 Application.Exit();
             }

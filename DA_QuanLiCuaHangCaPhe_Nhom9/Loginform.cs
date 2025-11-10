@@ -7,43 +7,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         public Loginform() {
             InitializeComponent();
 
-            // Bắt đầu form ở giữa
-            StartPosition = FormStartPosition.CenterScreen;
-            CenterToScreen();
-
-            // cài đặt tiêu đề form
-
-            this.Text = "Coffee Shop Login";
-
-            // chấp nhận mật khẩu
-            txtPass.UseSystemPasswordChar = true;
-
-            // cài đặt tab order
-            txtUser.TabIndex = 0;
-            txtPass.TabIndex = 1;
-            btnOK.TabIndex = 2;
-            btnThoat.TabIndex = 3;
-
-            // Được Enter để đăng nhập
-            this.AcceptButton = btnOK;
-
-            // Giữ ở giữa nếu cài đặt hiển thị thay đổi (độ phân giải/tỷ lệ)
-            SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
-
-            // Nút đăng nhập bị vô hiệu hóa ban đầu
-            UpdateLoginButtonState();
-
-            // Subscribe to notification events so login form can show admin alerts
-            NotificationCenter.NotificationRaised += OnNotificationRaised;
         }
 
-        private void OnNotificationRaised(NotificationCenter.Notification note)
-        {
+        private void OnNotificationRaised(NotificationCenter.Notification note) {
             // Only show admin-related notifications on login screen (NhanVienInactive)
-            try
-            {
-                if (note.Type == NotificationCenter.NotificationType.NhanVienInactive)
-                {
+            try {
+                if (note.Type == NotificationCenter.NotificationType.NhanVienInactive) {
                     // Show a small toast-like form at bottom-right
                     ShowToast(note.Message);
                 }
@@ -51,11 +20,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             catch { }
         }
 
-        private void ShowToast(string message)
-        {
+        private void ShowToast(string message) {
             // Invoke on UI thread
-            if (this.InvokeRequired)
-            {
+            if (this.InvokeRequired) {
                 this.BeginInvoke(new Action(() => ShowToast(message)));
                 return;
             }
@@ -181,97 +148,70 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 // kiểm tra trạng thái tài khoản
                 if (account.TrangThai.HasValue && account.TrangThai.Value == false) {
-                    MessageBox.Show(
-                   "Tài khoản đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.",
-                 "Tài khoản bị khóa",
-               MessageBoxButtons.OK,
-          MessageBoxIcon.Warning
-                  );
+                    MessageBox.Show("Tài khoản đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.", "Tài khoản bị khóa", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 // Authentication successful - hiển thị tin nhắn xin chào
 
-                MessageBox.Show(
-                 $"Đăng nhập thành công!\n" +
-                 $"Xin chào: {account.NhanVien}\n" +
-             $"Vai trò: {account.VaiTro}",
-                "Thành công",
-            MessageBoxButtons.OK,
-               MessageBoxIcon.Information
-         );
-
+                MessageBox.Show($"Đăng nhập thành công!\n" + $"Xin chào: {account.NhanVien}\n" + $"Vai trò: {account.VaiTro}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 // Lộ trình dựa trên vai trò
                 this.Hide(); // ẩn form đăng nhập
-
                 if (account.VaiTro == "Chủ cửa hàng") {
                     // Admin/Manager role - mở form Admin
                     Admin adminForm = new Admin();
-
                     this.Hide();
                     adminForm.FormClosed += (s, args) => {
-                        txtPass.Clear();
                         txtUser.Clear();
+                        txtPass.Clear();
+                        
                         UpdateLoginButtonState();
-                        txtUser.Focus();
+
                         this.Show();
+                        txtUser.Focus(); // Focus vào txtUser
                     };
-                        adminForm.Show();
-
-                    //Admin adminform = new Admin();
-                    //var confirmResult = adminform.ShowDialog();
-
-                    //if (confirmResult == DialogResult.Yes) {
-                    //    this.txtUser.Clear();
-                    //    this.txtPass.Clear();
-                    //}
-
+                    adminForm.Show();
+                   
                 }
                 else if (account.VaiTro == "Quản lý") {
                     // vai trò quản lý - mở Mainform và chuyển mã nhân viên
                     QuanLi ql = new QuanLi(account.MaNv);
-                    ql.FormClosed += (s, args) => this.Close();
+                    ql.FormClosed += (s, args) => {
+                        txtUser.Clear();
+                        txtPass.Clear();
+                        UpdateLoginButtonState();
+                        this.Show();        
+                        txtUser.Focus(); // Focus vào txtUser
+                    };
                     ql.Show();
                 }
 
                 else if (account.VaiTro == "Nhân viên") {
-                    
                     //vai trò nhân viên   - mở Mainform và chuyển mã nhân viên
-
                     MainForm mainForm = new MainForm(account.MaNv);
-                    mainForm.FormClosed += (s, args) => this.Close();
-
+                    mainForm.FormClosed += (s, args) => {
+                        txtUser.Clear();
+                        txtPass.Clear();
+                        UpdateLoginButtonState();
+                        this.Show();
+                        txtUser.Focus(); // Focus vào txtUser
+                    };
                     mainForm.Show();
                 }
                 else {
                     // không có vai trò hợp lệ - hiển thị lỗi - trả về form đăng nhập
-                    MessageBox.Show($"Vai trò '{account.VaiTro}' không được hỗ trợ!\n" + "Vui lòng liên hệ quản trị viên.", "Lỗi vai trò",
- MessageBoxButtons.OK, MessageBoxIcon.Error
-                    );
+                    MessageBox.Show($"Vai trò '{account.VaiTro}' không được hỗ trợ!\n" + "Vui lòng liên hệ quản trị viên.", "Lỗi vai trò", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this.Show(); // Hiển thị forrm đăng nhập lại
+                    txtUser.Focus(); // Focus vào txtUser
                 }
             }
             catch (Exception ex) {
-                MessageBox.Show(
-                    $"Lỗi kết nối cơ sở dữ liệu:\n{ex.Message}",
-              "Lỗi",
-                 MessageBoxButtons.OK,
-                  MessageBoxIcon.Error
-           );
+                MessageBox.Show($"Lỗi kết nối cơ sở dữ liệu:\n{ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-
         }
-
-        // nút thoát
-        private void btnThoat_Click(object? sender, EventArgs e) {
-            var result = MessageBox.Show(
-       "Bạn có chắc muốn thoát?",
-      "Xác nhận",
-        MessageBoxButtons.YesNo,
-             MessageBoxIcon.Question
- );
-
+        // nút hủy
+        private void btnHuy_Click(object? sender, EventArgs e) {
+            var result = MessageBox.Show("Bạn có chắc muốn thoát?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes) {
                 Application.Exit();
             }
@@ -279,12 +219,39 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         // phương pháp trợ giúp để giúp kích hoạt/tắt nút đăng nhập
         private void UpdateLoginButtonState() {
-            btnOK.Enabled = !string.IsNullOrWhiteSpace(txtUser.Text) &&
-              !string.IsNullOrWhiteSpace(txtPass.Text);
+            btnOK.Enabled = !string.IsNullOrWhiteSpace(txtUser.Text) && !string.IsNullOrWhiteSpace(txtPass.Text);
         }
 
         private void Loginform_Load(object sender, EventArgs e) {
 
+            // Bắt đầu form ở giữa
+            StartPosition = FormStartPosition.CenterScreen;
+            CenterToScreen();
+
+            // cài đặt tiêu đề form
+
+            this.Text = "Coffee Shop Login";
+
+            // chấp nhận mật khẩu
+            txtPass.UseSystemPasswordChar = true;
+
+            // cài đặt tab order
+            txtUser.TabIndex = 0;
+            txtPass.TabIndex = 1;
+            btnOK.TabIndex = 2;
+            btnThoat.TabIndex = 3;
+
+            // Được Enter để đăng nhập
+            this.AcceptButton = btnOK;
+
+            // Giữ ở giữa nếu cài đặt hiển thị thay đổi (độ phân giải/tỷ lệ)
+            SystemEvents.DisplaySettingsChanged += SystemEvents_DisplaySettingsChanged;
+
+            // Nút đăng nhập bị vô hiệu hóa ban đầu
+            UpdateLoginButtonState();
+
+            // Subscribe to notification events so login form can show admin alerts
+            NotificationCenter.NotificationRaised += OnNotificationRaised;
         }
     }
 }
