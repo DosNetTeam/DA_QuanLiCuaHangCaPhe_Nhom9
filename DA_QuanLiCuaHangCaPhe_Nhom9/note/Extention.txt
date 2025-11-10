@@ -1,0 +1,9 @@
+﻿Mở Tool -> Quản lý gói NuGet cho giải pháp -> Duyệt -> Tìm kiếm và cài đặt các gói sau:
+
+Microsoft.Data.SqlClient
+Microsoft.EntityFrameworkCore.SqlServer
+Microsoft.EntityFrameworkCore.Tools
+Microsoft.Extensions.Configuration.Json
+Microsoft.Extensions.Hosting
+Microsoft.VisualBasic
+System.Data.SqlClient

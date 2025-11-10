@@ -58,6 +58,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
 
         private void ThanhToan_Load(object sender, EventArgs e) {
+            #region code cũ
             /*
              if (this.DialogResult == DialogResult.Cancel) {
                  return;
@@ -89,7 +90,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
              //    pbQR.Visible = false;
              //}
             */
-
+            #endregion
 
             try {
                 // Mở CSDL để tải thông tin đơn hàng chờ
@@ -243,7 +244,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 AddLabelToBill(tenMon, currentY, 9, FontStyle.Regular, 40);     // Cột Tên
                 AddLabelToBill(soLuong, currentY, 9, FontStyle.Regular, 250);   // Cột SL 
                 AddLabelToBill(donGia, currentY, 9, FontStyle.Regular, 320);    // Cột Giá
-                AddLabelToBill(thanhTien, currentY, 9, FontStyle.Regular,450); // Cột Tổng 
+                AddLabelToBill(thanhTien, currentY, 9, FontStyle.Regular, 450); // Cột Tổng 
 
                 currentY += 30;
             }
@@ -289,6 +290,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 try {
                     // Tải 1 ảnh QR mẫu từ VietQR (cần internet)
                     pbQR_InBill.ImageLocation = $"https://api.vietqr.io/image/970436-0909090909-snt03N5.jpg?accountName=TEST&amount={_tongTien}";
+                    //pbQR_InBill.Image = Properties.Resources.QR_Code_Sample;
                 }
                 catch (Exception) {
                     MessageBox.Show("Lỗi khi tải mã QR. Vui lòng kiểm tra kết nối internet.");
