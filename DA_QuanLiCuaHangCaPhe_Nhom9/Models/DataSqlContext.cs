@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 
@@ -39,11 +40,30 @@ public partial class DataSqlContext : DbContext {
     public virtual DbSet<VaiTro> VaiTros { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-     // => optionsBuilder.UseSqlServer("Server=EMBOU;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
-     //=> optionsBuilder.UseSqlServer("Server=KenG_Kanowaki\\LEMINHDUCSQL;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
-    => optionsBuilder.UseSqlServer("Server=LAPTOP-2Q4VT418\\SQLEXPRESS;Database=DA_QuanLiBanCaPhe;Trusted_Connection=True;TrustServerCertificate=True");
+        // => optionsBuilder.UseSqlServer("Server=EMBOU;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
+        // => optionsBuilder.UseSqlServer("Server=KenG_Kanowaki\\LEMINHDUCSQL;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
+        // => optionsBuilder.UseSqlServer("Server=LAPTOP-2Q4VT418\\SQLEXPRESS;Database=DA_QuanLiBanCaPhe;Trusted_Connection=True;TrustServerCertificate=True");
+        {
+        if (!optionsBuilder.IsConfigured) {
+            // 1. Xây dựng đối tượng Configuration
 
-   
+            var configBuilder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) // Lấy thư mục chạy (bin/Debug)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true); // Đọc file json
+
+            var configuration = configBuilder.Build();
+
+            // 2. Lấy chuỗi kết nối từ file json
+            //    ("MyDatabase" là tên bạn đặt trong file json)
+            string connString = configuration.GetConnectionString("MyDatabase");
+
+            // 3. Sử dụng chuỗi kết nối đó
+            optionsBuilder.UseSqlServer(connString);
+        }
+    }
+
+
+
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.Entity<ChiTietDonHang>(entity => {
             entity.HasKey(e => new { e.MaDh, e.MaSp }).HasName("PK__ChiTietD__F557D6E09790EFA5");

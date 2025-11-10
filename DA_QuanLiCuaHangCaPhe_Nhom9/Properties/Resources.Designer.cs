@@ -83,6 +83,16 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap QR_Code_Sample {
+            get {
+                object obj = ResourceManager.GetObject("QR_Code_Sample", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap z5970590724455_45626bbdc2f237d62fb7e6b9aa12d8fd {
             get {
                 object obj = ResourceManager.GetObject("z5970590724455_45626bbdc2f237d62fb7e6b9aa12d8fd", resourceCulture);
