@@ -1,131 +1,140 @@
-# DA_QuanLiCuaHangCaPhe_Nhom9
+# README - Phân tích Chức năng Form (POS)
 
-Detailed README — Point-of-Sale (POS) WinForms demo for a coffee shop.  
-Language: C# 13 | Target framework: .NET 9
+Tài liệu này phân tích chi tiết luồng nghiệp vụ và logic code của các form chính trong hệ thống POS (Point of sale - Bán hàng) của dự án `DA_QuanLiCuaHangCaPhe_Nhom9`.
 
----
+## 📌 Tổng quan Luồng Bán hàng (Workflow)
 
-## Project summary
-This repository implements a simple coffee-shop POS with:
-- Product catalog and categories
-- Inventory tracked by raw ingredients (Nguyên liệu)
-- Order creation, "save temporary" (Đang xử lý) and checkout flow
-- Payment records with support for cash and QR (visual QR preview)
-- EF Core DbContext: `DataSqlContext`
-- Sample data script: `DulieuMau_data_dosnet.sql`
+Luồng bán hàng cốt lõi được xử lý bởi 3 form chính, phối hợp với nhau để quản lý đơn hàng từ khi tạo đến khi hoàn tất:
 
-The UI is WinForms (Windows) with forms:
-- `MainForm` — product browsing, cart (ListView), save-temporary, quick checkout.
-- `ThanhToan` — finalize payment for an existing order (constructor requires `MaDh`).
-- `ChonDonHangCho` — select a saved (pending) order to pay or cancel.
-- `ThemKhachHangMoi` — add new customer.
+1.  **`MainForm`**: Nhân viên tạo giỏ hàng.
+2.  **`ThucHienLuuTam()` (Hàm nội bộ của MainForm)**: Khi bấm "Lưu tạm" hoặc "Thanh toán", hệ thống sẽ lưu đơn hàng vào CSDL, **trừ kho nguyên liệu**, và tạo một phiếu thanh toán "Chưa thanh toán".
+3.  **`ChonDonHangCho`**: (Tùy chọn) Nếu nhân viên muốn thanh toán một đơn cũ, form này sẽ hiện ra.
+4.  **`ThanhToan`**: Form này nhận `MaDH` (Mã đơn hàng) đã được lưu, hiển thị chi tiết, và cập nhật trạng thái đơn hàng thành "Đã thanh toán" sau khi thu tiền.
 
 ---
 
-## Prerequisites
-- Windows with Visual Studio 2026 (or later) with .NET 9 workload installed.
-- SQL Server instance (LocalDB or full SQL Server) to host the sample database.
-- (Optional) SQL Server Management Studio (SSMS) to run the sample SQL script.
+## ☕ Form Bán Hàng: `MainForm.cs`
+
+Đây là màn hình POS chính, nơi nhân viên thực hiện hầu hết các thao tác.
+
+### Mục đích
+
+Cung cấp giao diện trực quan để nhân viên tạo đơn hàng mới, quản lý giỏ hàng, áp dụng khuyến mãi, và gửi đơn hàng đi thanh toán (hoặc lưu tạm).
+
+### Logic nghiệp vụ chính
+
+* **Tải sản phẩm động:** Khi form được tải, `MainForm_Load` gọi `TaiLoaiSanPham` và `TaiSanPham`. Các nút sản phẩm (`Button`) được tạo tự động và gán đối tượng `SanPham` vào `Tag` của nút.
+* **Kiểm tra tồn kho (Pre-check):** Hàm `TaiSanPham` gọi `KiemTraDuNguyenLieu` để đổi màu nút sản phẩm (Cam/Xám) nếu nguyên liệu sắp hết hoặc đã hết.
+* **Kiểm tra tồn kho (Khi thêm):** Khi thêm món (`ThemSanPhamVaoDonHang`), code gọi `KiemTraSoLuongTonThucTe` để đảm bảo kho đủ nguyên liệu cho số lượng yêu cầu.
+* **Logic Khuyến mãi:** Hàm `CapNhatTongTien` là trái tim của việc tính tiền.
+    1.  Nó lặp qua giỏ hàng (`lvDonHang`).
+    2.  Tính `tongTien` (tổng giá gốc).
+    3.  Gọi `GetGiaBan` (truy vấn CSDL) để tính giảm giá trên từng sản phẩm (`tongTienGiamGia`).
+    4.  Truy vấn CSDL để tìm KM 'HoaDon' và tính `tongGiamGiaHoaDon`.
+    5.  Cập nhật 3 `Label` hiển thị: `lblTienTruocGiam` (giá gốc), `lblGiamGia` (tổng giảm), `lblTongCong` (giá cuối).
+* **Hàm Lưu trữ (`ThucHienLuuTam`)**: Đây là hàm quan trọng nhất. Khi được gọi (bởi nút "Lưu Tạm" hoặc "Thanh Toán"), nó sẽ:
+    1.  Tạo `DonHang` (trạng thái "Đang xử lý") và lưu `TongTien` (là **giá cuối cùng** đã giảm).
+    2.  Tạo `ChiTietDonHang` và lưu **giá gốc** vào (`DonGia = donGia`).
+    3.  Tạo `ThanhToan` (trạng thái "Chưa thanh toán").
+    4.  **Trừ kho nguyên liệu** (`nguyenLieuTrongKho.SoLuongTon -= luongCanTru`).
+    5.  Gọi `db.SaveChanges()` và trả về `MaDH` mới.
 
 ---
 
-## Quick setup (development)
-1. Clone repo and open solution in Visual Studio 2026.
-2. Restore NuGet packages: __Tools > NuGet Package Manager > Package Manager Console__ (or Visual Studio will restore automatically).
-3. Configure database:
-   - Option A (recommended): Run `DulieuMau_data_dosnet.sql` on your SQL Server to create sample data.
-   - Option B: If you use EF Core migrations, ensure migrations are applied (`Update-Database` or `dotnet ef database update`).
-4. Set connection string:
-   - If connection is defined inside `DataSqlContext.OnConfiguring`, edit `DataSqlContext.cs`.
-   - If the solution uses `appsettings.json`, update the connection there.
-5. In Solution Explorer, right-click the WinForms project → __Set as StartUp Project__.
-6. Build and run: __Build > Build Solution__, then __Debug > Start Debugging__.
+## 🔑 Form Đăng nhập: `Loginform.cs`
+
+Đây là cửa ngõ đầu tiên của ứng dụng.
+
+### Mục đích
+
+Xác thực người dùng dựa trên CSDL và điều hướng họ đến form chính xác dựa trên vai trò (`VaiTro`).
+
+### Logic nghiệp vụ chính
+
+* **Xác thực:** `btnDangnhap_Click` truy vấn bảng `TaiKhoan`.
+* **Kiểm tra Trạng thái:** Kiểm tra `account.TrangThai == false` (tài khoản bị khóa).
+* **Điều hướng (Routing):** Dựa trên `account.VaiTro`, code sẽ mở form tương ứng:
+    * **"Chủ cửa hàng"** -> mở `Admin`
+    * **"Quản lý"** -> mở `QuanLi` (và truyền `account.MaNv`)
+    * **"Nhân viên"** -> mở `MainForm` (và truyền `account.MaNv`)
+* **Quản lý phiên (Session):** Form `Loginform` sẽ `Hide()` (ẩn đi) và đăng ký sự kiện `FormClosed` của form mới. Khi form `Admin`/`QuanLi`/`MainForm` đóng lại, form `Loginform` sẽ `Show()` (hiện lại).
+* **Nhận thông báo:** Form này cũng đăng ký `NotificationCenter.NotificationRaised` để nhận thông báo từ admin.
 
 ---
 
-## Database / Sample data
-- The file `DulieuMau_data_dosnet.sql` contains drop/truncate + seed data for roles, employees, raw materials, products, formulas (`DinhLuong`), orders and payments.
-- Run it against your SQL Server database to get sample records (helps exercise "Đơn chờ", low-stock, promotions, etc).
+## 🧾 Form Chức năng: `ThanhToan.cs`
+
+Đây là form xác nhận thanh toán cuối cùng.
+
+### Mục đích
+
+Hoàn tất một đơn hàng **đã được lưu** trong CSDL (bởi `MainForm`). Form này *không* tạo đơn hàng mới, không trừ kho.
+
+### Logic nghiệp vụ chính
+
+* **Constructor (Hàm khởi tạo):** Bắt buộc phải nhận 3 tham số: `maDonHangChon` (Mã ĐH), `tongGoc`, và `soTienGiam`.
+* **`ThanhToan_Load`:** Tải `_donHangCanThanhToan` và `_thanhToanCanCapNhat` (với trạng thái "Chưa thanh toán") từ CSDL.
+* **Hiển thị:**
+    * `groupBox1` (khu vực tính tiền) hiển thị **giá cuối cùng** (`_tongTien`) để thu ngân nhập tiền.
+    * `HienThiBillPreview` (hóa đơn xem trước) sử dụng `_tongTienGoc_passed` và `_soTienGiam_passed` để hiển thị chi tiết giảm giá.
+* **`btn_inhoadon_Click` (Hoàn tất):** Đây là logic "chốt sổ". Nó chỉ cập nhật 2 dòng trong CSDL: `_donHangCanThanhToan.TrangThai = "Đã thanh toán"` và `_thanhToanCanCapNhat.TrangThai = "Đã thanh toán"`. Sau đó, nó trả về `DialogResult.OK`.
 
 ---
 
-## Key workflows
+## 🕒 Form Chức năng: `ChonDonHangCho.cs`
 
-### Add product to order (MainForm)
-- Click a product button to add it to the cart (`lvDonHang`).
-- The code checks inventory by reading `DinhLuongs` and `NguyenLieus`.
-- If item already exists in cart, quantity increments (after checking stock).
+Form này cho phép nhân viên quản lý các đơn hàng đã được "Lưu Tạm".
 
-### Save temporary order
-- When user saves temporarily, `MainForm.ThucHienLuuTam()`:
-  - Creates `DonHang` with status `"Đang xử lý"`.
-  - Creates related `ChiTietDonHang` entries.
-  - Creates a `ThanhToan` row with `TrangThai = "Chưa thanh toán"`.
-  - Deducts ingredient quantities from inventory and saves changes.
+### Mục đích
 
-### Checkout / Payment
-- Open `ChonDonHangCho` to pick a pending order or proceed directly if cart had items.
-- `ThanhToan` receives an order id (`MaDh`) in its constructor — it loads:
-  - `DonHang` by `MaDh`
-  - The pending `ThanhToan` (`TrangThai == "Chưa thanh toán"`)
-  - `ChiTietDonHang` items and product names
-- On confirm:
-  - Updates `DonHang.TrangThai = "Đã thanh toán"` and `ThanhToan.TrangThai = "Đã thanh toán"`.
-  - Sets `ThanhToan.HinhThuc` (cash or QR) and calls `db.SaveChanges()`.
+Hiển thị danh sách các đơn hàng "Đang xử lý" để nhân viên có thể chọn (1) Hủy đơn hoặc (2) Thanh toán.
 
-Important: Do NOT attempt to construct `ThanhToan` with the old ListView overload. Use the integer order id.
+### Logic nghiệp vụ chính
+
+* **Tải danh sách:** Hàm `TaiDanhSachDonHangCho` truy vấn CSDL, lấy tất cả `DonHang` có `TrangThai == "Đang xử lý"` và hiển thị lên `lvDonHangCho`.
+* **`btnChonThanhToan_Click` (Chọn thanh toán):**
+    1.  Lấy `maDHCanThanhToan` từ `Tag` của dòng được chọn.
+    2.  **Tự tính toán lại:** Nó truy vấn `ChiTietDonHang` (đang lưu giá gốc) để lấy `tongGoc`.
+    3.  Lấy `thanhTienCuoi` (giá cuối) từ `DonHang.TongTien`.
+    4.  Tính `soTienGiam = tongGoc - thanhTienCuoi`.
+    5.  Mở form `ThanhToan` và truyền 3 giá trị này đi.
+* **`btnHuyDonCho_Click` (Hủy đơn):** Đây là logic "Hoàn kho" (Stock Rollback).
+    1.  Hàm này bắt đầu một `transaction` (giao dịch an toàn).
+    2.  Nó lặp qua `chiTiet` (chi tiết đơn hàng) và `congThuc` (công thức).
+    3.  Thực hiện phép tính **`nguyenLieuTrongKho.SoLuongTon += luongCanCong;`** để CỘNG TRẢ lại nguyên liệu về kho.
+    4.  Cập nhật trạng thái `DonHang` và `ThanhToan` thành "Đã huỷ".
+    5.  Gọi `db.SaveChanges()` và `transaction.Commit()`.
 
 ---
 
-## Project structure (important files)
-- `MainForm.cs` — main UI, product loading, cart logic, save-temporary and checkout triggers.
-- `ThanhToan.cs` — loads order for payment, renders bill preview, updates payment status.
-- `ChonDonHangCho.cs` — list & selection of pending orders; supports cancel with stock rollback.
-- `ThemKhachHangMoi.cs` — add customer flow.
-- `DataSqlContext.cs` — EF Core DbContext (contains connection details / OnConfiguring).
-- `DulieuMau_data_dosnet.sql` — sample DB seed script.
+## 🧑‍💼 Form Chức năng: `ThemKhachHangMoi.cs`
+
+Một form phụ đơn giản để nhập liệu.
+
+### Mục đích
+
+Cung cấp giao diện cho phép nhân viên thêm nhanh một khách hàng mới vào CSDL khi khách hàng đó không tìm thấy qua SĐT.
+
+### Logic nghiệp vụ chính
+
+* Form này được gọi bởi nút "Thêm" trên `MainForm`.
+* Nó nhận `sdt` (số điện thoại) từ `MainForm` và tự động điền vào `txtSDT` (đồng thời vô hiệu hóa nó).
+* `btnSave_Click` kiểm tra `txtTenKH` không được rỗng, sau đó tạo đối tượng `KhachHang` mới và gọi `db.SaveChanges()`.
+* Trả về `DialogResult.OK` để `MainForm` biết và tự động tìm kiếm lại khách hàng mới đó.
 
 ---
 
-## Common issues & troubleshooting
-- Connection errors — verify the connection string and that SQL Server accepts connections. If using LocalDB, ensure LocalDB instance is installed.
-- EF "Open DataReader" errors — code has been hardened by using `.ToList()` before iterating on related queries. Ensure you do not enumerate multiple EF queries with an open reader in the same context without materializing them.
-- `ThanhToan` not finding pending payment:
-  - Ensure `ThanhToan` row for the chosen order exists with `TrangThai = "Chưa thanh toán"`.
-  - If the order was saved incorrectly, check `DonHang.TongTien` and related `ChiTietDonHang`.
-- If customer search/button states do not update: `MainForm` uses a helper `SearchKhachHangBySDT`. Ensure text input is digits-only and length checks (10 digits) are respected.
+## 🔔 Lớp Tĩnh: `NotificationCenter.cs`
 
----
+Đây là một lớp hệ thống (không phải Form) hoạt động ngầm.
 
-## Testing tips
-- Use `DulieuMau_data_dosnet.sql` to seed predictable test data.
-- Test full lifecycle:
-  1. Add items to cart → Save Temporary → Check `DonHang` & `ThanhToan` rows.
-  2. Open `ChonDonHangCho`, select pending order → Open `ThanhToan` → Complete payment → Confirm statuses changed.
-  3. Cancel an order via `ChonDonHangCho` and verify inventory is restored.
+### Mục đích
 
----
+Tạo ra một hệ thống "Phát thanh" (Observer Pattern) cho phép các phần khác nhau của ứng dụng giao tiếp với nhau mà không cần biết về sự tồn tại của nhau.
 
-## Development & maintenance
-- Use EF Core migrations for schema changes. In Visual Studio use __Tools > NuGet Package Manager > Package Manager Console__ or CLI `dotnet ef`.
-- Keep UI logic separated from data access where practical; `DataSqlContext` is used directly from forms in this demo (acceptable for small app).
-- Add more defensive checks for nulls and invalid DB state when moving to production.
+### Logic nghiệp vụ chính
 
----
-
-## Contributing
-- Fork, update code, test locally, open a PR.
-- Provide a clear description of behavior change and test steps.
-
----
-
-## License & contacts
-- No license file included — add `LICENSE` if you intend to publish.
-- For questions about architecture or data models, inspect `DataSqlContext.cs` and EF entity classes under `Models`.
-
----
-
-If you want, I can:
-- Generate a ready-to-add `README.md` file (I can write it to the repo if you permit).
-- Add a sample `appsettings.json` template and a short guide to update `DataSqlContext`.
-- Produce a developer checklist for testing common scenarios (payment, cancel, low-stock notifications).
+* **Đăng ký (Subscribe):** Các Form (như `Loginform`, `MainForm`, `QuanLi`) đăng ký vào sự kiện `NotificationCenter.NotificationRaised`.
+* **Phát (Raise):** Một form khác (như `QuanLi.cs`) có thể gửi thông báo bằng cách gọi `NotificationCenter.Raise(n)`.
+* **Nhận (Receive):** Tất cả các form đã đăng ký sẽ ngay lập tức nhận được thông báo và tự động chạy hàm `ShowToast` (hiển thị thông báo).
+* **Tự động quét (Polling):** Lớp này cũng có các hàm (`PollAndPush`, `GetAllNotifications`) để tự quét CSDL tìm các cảnh báo nghiệp vụ (như tồn kho thấp, hóa đơn quá hạn).
