@@ -266,12 +266,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             AddLabelToBill("Tiền trước giảm:", currentY, 10, FontStyle.Regular, 40);
             // Dùng biến _tongTienGoc_passed mà chúng ta đã truyền qua
             AddLabelToBill(_tongTienGoc_passed.ToString("N0") + " đ", currentY, 14, FontStyle.Regular, 290);
-            currentY += 35;
+            currentY += 55;
 
             AddLabelToBill("Giảm giá:", currentY, 10, FontStyle.Regular, 40);
             // Dùng biến _soTienGiam_passed mà chúng ta đã truyền qua
             AddLabelToBill("(-" + _soTienGiam_passed.ToString("N0") + " đ)", currentY, 14, FontStyle.Regular, 290);
-            currentY += 35;
+            currentY += 55;
 
             AddLabelToBill("Thành tiền:", currentY, 12, FontStyle.Bold, 40);
             // Dùng biến _tongTien (là giá cuối) đã được tải từ CSDL
