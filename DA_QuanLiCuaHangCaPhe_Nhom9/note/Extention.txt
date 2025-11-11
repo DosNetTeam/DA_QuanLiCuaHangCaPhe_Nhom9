@@ -7,3 +7,36 @@ Microsoft.Extensions.Configuration.Json
 Microsoft.Extensions.Hosting
 Microsoft.VisualBasic
 System.Data.SqlClient
+
+#khi có sự thay đổi về các talbe trong sql server thì chạy lệnh này trong Package Manager Console để cập nhật lại model
+click tool -> Package Manager Console -> chạy lệnh sau:
+Scaffold-DbContext "Server=tên_máy;Database=tên_cơ_sở_dữ_liệu;Trusted_Connection=True;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force
+
+-OutputDir Models: Báo cho EF Core đặt các file C# vào thư mục Models.
+
+-Force: Đây là phần quan trọng. Nó có nghĩa là "Tôi biết các file đã tồn tại. Hãy ghi đè (overwrite) lên chúng."
+
+phòng trường hợp lỡ tayy :
+
+ protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        // => optionsBuilder.UseSqlServer("Server=EMBOU;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
+        // => optionsBuilder.UseSqlServer("Server=KenG_Kanowaki\\LEMINHDUCSQL;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
+        // => optionsBuilder.UseSqlServer("Server=LAPTOP-2Q4VT418\\SQLEXPRESS;Database=DA_QuanLiBanCaPhe;Trusted_Connection=True;TrustServerCertificate=True");
+        {
+        if (!optionsBuilder.IsConfigured) {
+            // 1. Xây dựng đối tượng Configuration
+
+            var configBuilder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) // Lấy thư mục chạy (bin/Debug)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true); // Đọc file json
+
+            var configuration = configBuilder.Build();
+
+            // 2. Lấy chuỗi kết nối từ file json
+            //    ("MyDatabase" là tên bạn đặt trong file json)
+            string connString = configuration.GetConnectionString("MyDatabase");
+
+            // 3. Sử dụng chuỗi kết nối đó
+            optionsBuilder.UseSqlServer(connString);
+        }
+    }
