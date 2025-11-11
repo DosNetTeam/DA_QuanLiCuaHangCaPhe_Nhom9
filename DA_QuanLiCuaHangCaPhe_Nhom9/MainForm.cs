@@ -1,7 +1,7 @@
 ﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 using System.Globalization;
-using System.Windows.Forms;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
     public partial class MainForm : Form {
@@ -18,6 +18,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // Ban đầu mặc định là "Tất Cả"
         private string _currentMaLoai = "TatCa";
 
+        // Biến lưu tổng gốc và số tiền giảm (dùng cho thanh toán)
+        private decimal tongGoc = 0;
+        private decimal soTienGiam = 0;
+
         public MainForm(int MaNV) {
             InitializeComponent();
             _currentMaNV = MaNV;
@@ -26,23 +30,18 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             NotificationCenter.NotificationRaised += NotificationCenter_NotificationRaised;
         }
 
-        private void NotificationCenter_NotificationRaised(NotificationCenter.Notification n)
-        {
-            try
-            {
+        private void NotificationCenter_NotificationRaised(NotificationCenter.Notification n) {
+            try {
                 // Only show unpaid invoice and low stock in main form
-                if (n.Type == NotificationCenter.NotificationType.UnpaidInvoice || n.Type == NotificationCenter.NotificationType.LowStock)
-                {
+                if (n.Type == NotificationCenter.NotificationType.UnpaidInvoice || n.Type == NotificationCenter.NotificationType.LowStock) {
                     ShowToast(n.Message);
                 }
             }
             catch { }
         }
 
-        private void ShowToast(string message)
-        {
-            if (this.InvokeRequired)
-            {
+        private void ShowToast(string message) {
+            if (this.InvokeRequired) {
                 this.BeginInvoke(new Action(() => ShowToast(message)));
                 return;
             }
@@ -76,8 +75,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             toast.Show(this);
         }
 
-        protected override void OnFormClosed(FormClosedEventArgs e)
-        {
+        protected override void OnFormClosed(FormClosedEventArgs e) {
             base.OnFormClosed(e);
             NotificationCenter.NotificationRaised -= NotificationCenter_NotificationRaised;
         }
@@ -257,6 +255,59 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
+        private decimal GetGiaBan(int maSP, decimal giaGoc) {
+            try {
+                // 1. Mở kết nối CSDL
+                using (DataSqlContext db = new DataSqlContext()) {
+                    // 2. Tìm đúng sản phẩm và YÊU CẦU EF TẢI KÈM
+                    //    danh sách Khuyến mãi của nó (dùng .Include)
+                    var sanPham = db.SanPhams
+                                  .Include(sp => sp.MaKms) // Tải kèm danh sách KM
+                                  .FirstOrDefault(sp => sp.MaSp == maSP); // Tìm SP theo ID
+
+                    // Nếu không tìm thấy SP (ví dụ lỗi)
+                    if (sanPham == null) {
+                        return giaGoc; // Trả về giá gốc
+                    }
+
+                    // 3. Lấy ngày hôm nay (vì CSDL dùng DateOnly)
+                    DateOnly now = DateOnly.FromDateTime(DateTime.Now);
+
+                    KhuyenMai bestPromotion = null; // Biến lưu KM 'SanPham' tốt nhất
+
+                    // 4. Lặp qua danh sách KM của sản phẩm đó
+                    //    (sanPham.MaKms là danh sách KM mà .Include đã tải)
+                    foreach (var km in sanPham.MaKms) // 
+                    {
+                        // 5. Kiểm tra xem KM này có hợp lệ không
+                        if (km.LoaiKm == "SanPham" &&
+                            km.TrangThai == "Đang áp dụng" &&
+                            km.NgayBatDau <= now &&
+                            km.NgayKetThuc >= now) {
+                            // 6. So sánh tìm cái tốt nhất (giảm nhiều nhất)
+                            if (bestPromotion == null || km.GiaTri > bestPromotion.GiaTri) {
+                                bestPromotion = km;
+                            }
+                        }
+                    }
+
+                    // 7. Tính giá cuối cùng
+                    if (bestPromotion != null) {
+                        // Nếu tìm thấy KM, tính giá đã giảm
+                        decimal phanTramGiam = bestPromotion.GiaTri / 100;
+                        return giaGoc - (giaGoc * phanTramGiam);
+                    }
+
+                    // Không có KM nào hợp lệ, trả về giá gốc
+                    return giaGoc;
+                }
+            }
+            catch (Exception ex) {
+                MessageBox.Show("Lỗi khi lấy giá khuyến mãi: " + ex.Message);
+                return giaGoc; // Nếu lỗi, trả về giá gốc
+            }
+        }
+
         #endregion
 
         #region Các hàm xử lý sự kiện (Event Handlers)
@@ -339,7 +390,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 // 2. Kiểm tra xem Lưu Tạm có thành công không
                 if (maDonHangVuaTao > 0) {
                     // 3. Mở thẳng form Thanh Toán
-                    ThanhToan frmThanhToan = new ThanhToan(maDonHangVuaTao);
+                    ThanhToan frmThanhToan = new ThanhToan(maDonHangVuaTao, tongGoc, soTienGiam);
                     var result = frmThanhToan.ShowDialog();
 
                     // 4. Reset MainForm nếu thanh toán OK
@@ -360,7 +411,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     int maDonHangChon = cdhc.MaDonHangDaChon;
 
                     // Mở form ThanhToan
-                    ThanhToan thanhtoan = new ThanhToan(maDonHangChon);
+                    ThanhToan thanhtoan = new ThanhToan(maDonHangChon, tongGoc, soTienGiam);
                     var resultThanhToan = thanhtoan.ShowDialog();
 
                     // Nếu thanh toán thành công, tải lại DS sản phẩm
@@ -865,9 +916,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // Hàm này tính lại tổng tiền từ đầu
         private void CapNhatTongTien() {
             decimal tongTien = 0;
+            decimal tongTienGiamGia = 0;
 
             // Lặp qua TẤT CẢ các dòng trong giỏ hàng
             foreach (ListViewItem item in lvDonHang.Items) {
+
+                // Lấy thông tin từ giỏ hàng (đang là giá gốc)
+                int maSP = (int)item.Tag;
+                int soLuong = int.Parse(item.SubItems[1].Text);
+
+                string donGiaGocStr = item.SubItems[2].Text.Replace(".", "");
+                decimal donGiaGoc = decimal.Parse(donGiaGocStr, CultureInfo.CurrentCulture);
+
+
                 // Lấy giá trị của cột Thành Tiền (cột 3)
                 // Phải .Replace(".", "") để xóa dấu phẩy hàng nghìn
                 // ví dụ: "20.000" -> "20000"
@@ -878,11 +939,68 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 // Cộng dồn vào tổng tiền
                 tongTien = tongTien + thanhTien;
+
+                // 1b. Tính chiết khấu 'SanPham' cho món này
+                //     Hàm GetGiaBan() sẽ trả về giá đã giảm (ví dụ: 36,000)
+                decimal donGiaMoi = GetGiaBan(maSP, donGiaGoc);
+
+                decimal discountPerItem = donGiaGoc - donGiaMoi; // (ví dụ: 45,000 - 36,000 = 9,000)
+
+                // Cộng dồn tổng giảm giá SP (ví dụ: 9,000 * 2 ly = 18,000)
+                tongTienGiamGia += (discountPerItem * soLuong);
             }
 
-            // Hiển thị tổng tiền lên Label (thêm "N0" để nó tự format
-            // thành "20.000 đ")
-            lblTongCong.Text = tongTien.ToString("N0") + " đ";
+            // 2. Tìm khuyến mãi 'HoaDon' (Code này giữ nguyên)
+            KhuyenMai kmHoaDon = null;
+            try {
+                using (DataSqlContext db = new DataSqlContext()) {
+                    // Lấy ngày hiện tại
+                    DateOnly now = DateOnly.FromDateTime(DateTime.Now);
+
+                    // Lấy tất cả KM từ CSDL
+                    var allKM = db.KhuyenMais.ToList();
+
+                    // Tìm KM phù hợp
+                    foreach (KhuyenMai km in allKM) {
+                        if (km.LoaiKm == "HoaDon" &&
+                            km.TrangThai == "Đang áp dụng" &&
+                            km.NgayBatDau <= now &&
+                            km.NgayKetThuc >= now) {
+                            if (kmHoaDon == null || km.GiaTri > kmHoaDon.GiaTri) {
+                                kmHoaDon = km;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) {
+                MessageBox.Show("Lỗi khi lấy KM hóa đơn: " + ex.Message);
+            }
+
+            // 3. Tính toán giảm giá 'HoaDon'
+            // KM 'HoaDon' được tính trên số tiền SAU KHI đã giảm KM 'SanPham'
+            decimal baseForHoaDon = tongTien - tongTienGiamGia;
+            decimal tongGiamGiaHoaDon = 0;
+
+            // Áp dụng khuyến mãi 'Hóa Đơn' nếu có
+            if (kmHoaDon != null) {
+                decimal phanTramGiam = kmHoaDon.GiaTri / 100;
+                tongGiamGiaHoaDon = baseForHoaDon * phanTramGiam;
+            }
+
+            // 4. Tính toán tổng cuối cùng
+            // Tổng giảm giá = giảm trên SP + giảm trên Hóa Đơn
+            decimal tongTienGiaHD = tongTienGiamGia + tongGiamGiaHoaDon;
+            decimal finalTotal = tongTien - tongTienGiaHD; // Thành tiền
+
+
+            // 5. Cập nhật UI
+            lblTienTruocGiam.Text = tongTien.ToString("N0") + " đ";
+            lblGiamGia.Text = (-tongTienGiaHD).ToString("N0") + " đ";
+            lblTongCong.Text = finalTotal.ToString("N0") + " đ";
+
+            soTienGiam = tongTienGiaHD;
+            tongGoc = tongTien;
         }
 
         private void txtTimKiemKH_KeyPress(object sender, KeyPressEventArgs e) {

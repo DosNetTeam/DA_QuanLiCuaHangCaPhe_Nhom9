@@ -14,6 +14,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         private int _maDonHangChon; // Sẽ nhận từ ChonDonHangCho
         private DonHang _donHangCanThanhToan; // Đơn hàng đang xử lý
         private Models.ThanhToan _thanhToanCanCapNhat; // Thanh toán đang chờ
+        private decimal _tienThua; // Tiền thừa (nếu có)
+
+        // Dùng để lưu lại tổng tiền gốc và số tiền giảm (nếu có)
+        private decimal _tongTienGoc_passed;
+        private decimal _soTienGiam_passed;
+
 
         #region khởi tạo form 
         #region tu sửa lại code
@@ -51,9 +57,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         */
         #endregion
 
-        public ThanhToan(int maDonHangChon) {
+        public ThanhToan(int maDonHangChon, decimal tongGoc, decimal soTienGiam) {
             InitializeComponent();
             _maDonHangChon = maDonHangChon;
+
+            _tongTienGoc_passed = tongGoc;
+            _soTienGiam_passed = soTienGiam;
         }
 
 
@@ -252,11 +261,21 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             // --- 5. VẼ PHẦN TỔNG TIỀN (FOOTER) ---
             currentY += 15;
             AddLabelToBill("-----------------------------------", currentY, 9);
-            currentY += 25;
+            currentY += 55;
 
-            // SỬA: Căn chỉnh lại vị trí X
-            AddLabelToBill("Tổng cộng:", currentY, 10, FontStyle.Bold, 40);
-            AddLabelToBill(_tongTien.ToString("N0") + " đ", currentY, 12, FontStyle.Bold, 290);
+            AddLabelToBill("Tiền trước giảm:", currentY, 10, FontStyle.Regular, 40);
+            // Dùng biến _tongTienGoc_passed mà chúng ta đã truyền qua
+            AddLabelToBill(_tongTienGoc_passed.ToString("N0") + " đ", currentY, 14, FontStyle.Regular, 290);
+            currentY += 35;
+
+            AddLabelToBill("Giảm giá:", currentY, 10, FontStyle.Regular, 40);
+            // Dùng biến _soTienGiam_passed mà chúng ta đã truyền qua
+            AddLabelToBill("(-" + _soTienGiam_passed.ToString("N0") + " đ)", currentY, 14, FontStyle.Regular, 290);
+            currentY += 35;
+
+            AddLabelToBill("Thành tiền:", currentY, 12, FontStyle.Bold, 40);
+            // Dùng biến _tongTien (là giá cuối) đã được tải từ CSDL
+            AddLabelToBill(_tongTien.ToString("N0") + " đ", currentY, 14, FontStyle.Bold, 290);
             currentY += 55;
 
             AddLabelToBill("Xin cảm ơn quý khách!", currentY, 9, FontStyle.Italic);
@@ -322,7 +341,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             try {
                 // Lệnh "gọi" database
                 using (DataSqlContext db = new DataSqlContext()) {
-
+                    #region code cũ
                     /* 
                      // Bước 2.1: Tạo đối tượng DonHang
                      var donHangMoi = new DonHang {
@@ -391,6 +410,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                          }
                      }
                      */
+                    #endregion
 
                     // Bước 2.1: Gán DonHang và ThanhToan vào DbContext
                     // (Báo cho EF Core biết chúng ta sắp sửa 2 đối tượng này)
@@ -430,6 +450,5 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         private void pbQR_InBill_Click(object sender, EventArgs e) {
 
         }
-
     }
 }

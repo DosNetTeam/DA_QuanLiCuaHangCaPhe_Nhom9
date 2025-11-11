@@ -4,8 +4,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
     public partial class ChonDonHangCho : Form {
 
         public int MaDonHangDaChon { get; private set; }
+
         public ChonDonHangCho() {
             InitializeComponent();
+
         }
 
         private void ChonDonHangCho_Load(object sender, EventArgs e) {
@@ -29,11 +31,35 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
             // --- BƯỚC 2: GÁN GIÁ TRỊ CHO BIẾN PUBLIC ---           
             this.MaDonHangDaChon = maDHCanThanhToan;
+            // (Lấy lại logic tính tongGoc và soTienGiam từ MainForm)
+            decimal tongGoc = 0;
+            decimal soTienGiam = 0;
+            decimal thanhTienCuoi = 0;
+
+            try {
+                using (DataSqlContext db = new DataSqlContext()) {
+                    // 4.1. Tính tổng gốc từ ChiTietDonHang (vì nó lưu giá gốc)
+                    tongGoc = db.ChiTietDonHangs
+                                .Where(c => c.MaDh == maDHCanThanhToan)
+                                .Sum(c => c.DonGia * c.SoLuong);
+
+                    // 4.2. Lấy thành tiền cuối từ DonHang
+                    var donHang = db.DonHangs.Find(maDHCanThanhToan);
+                    thanhTienCuoi = donHang?.TongTien ?? tongGoc;
+
+                    // 4.3. Tính ra số tiền giảm
+                    soTienGiam = tongGoc - thanhTienCuoi;
+                }
+            }
+            catch (Exception ex) {
+                MessageBox.Show("Lỗi khi tải lại chi tiết đơn hàng: " + ex.Message);
+                // (Nếu lỗi, cứ mở với giá trị 0)
+            }
 
             // --- BƯỚC 3: SỬA LỖI CS7036 (Constructor) ---
             // (Mở form ThanhToan mới và truyền *chỉ* MaDH vào,
             // vì form ThanhToan (Bước 4) sẽ tự tải dữ liệu)
-            ThanhToan frmThanhToan = new ThanhToan(maDHCanThanhToan);
+            ThanhToan frmThanhToan = new ThanhToan(maDHCanThanhToan, tongGoc, soTienGiam);
             var result = frmThanhToan.ShowDialog();
 
             // 4. KIỂM TRA KẾT QUẢ
