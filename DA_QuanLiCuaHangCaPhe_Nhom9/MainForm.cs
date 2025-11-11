@@ -188,7 +188,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     // Chúng ta cần lấy công thức và nguyên liệu
                     // ra 2 danh sách TẠM
                     var allDinhLuong = db.DinhLuongs.ToList();
-                    var allNguyenLieu = db.NguyenLieus.ToList();
+
+                    var allNguyenLieu = db.NguyenLieus.Where(nl => nl.TrangThai == "Đang kinh doanh").ToList();
 
                     // Tạo các nút sản phẩm
                     foreach (var sp in spCanHienThi) {
@@ -814,7 +815,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 foreach (var nguyenLieuCan in congThuc) {
                     // 3. Lấy NL trong kho
                     var nguyenLieuTrongKho = db.NguyenLieus
-                                               .FirstOrDefault(nl => nl.MaNl == nguyenLieuCan.MaNl);
+                                               .FirstOrDefault(nl => nl.MaNl == nguyenLieuCan.MaNl && nl.TrangThai == "Đang kinh doanh");
 
                     if (nguyenLieuTrongKho == null) {
                         MessageBox.Show($"Lỗi CSDL: Không tìm thấy nguyên liệu '{nguyenLieuCan.MaNl}'");

@@ -12,6 +12,9 @@ System.Data.SqlClient
 click tool -> Package Manager Console -> chạy lệnh sau:
 Scaffold-DbContext "Server=tên_máy;Database=tên_cơ_sở_dữ_liệu;Trusted_Connection=True;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force
 
+
+Scaffold-DbContext "Server=KenG_Kanowaki\\LEMINHDUCSQL;Database=DATA_SQL;User Id=sa;Password=071204;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force
+
 -OutputDir Models: Báo cho EF Core đặt các file C# vào thư mục Models.
 
 -Force: Đây là phần quan trọng. Nó có nghĩa là "Tôi biết các file đã tồn tại. Hãy ghi đè (overwrite) lên chúng."

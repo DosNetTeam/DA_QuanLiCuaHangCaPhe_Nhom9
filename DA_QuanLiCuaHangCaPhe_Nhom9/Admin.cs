@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
     public partial class Admin : Form {
@@ -261,60 +253,60 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 var inventory = db.NguyenLieus
             .Select(nl => new {
-       nl.MaNl,
-         nl.TenNl,
-        nl.DonViTinh,
-       SoLuongTon = Math.Round(nl.SoLuongTon ?? 0, 2),
- NguongCanhBao = Math.Round(nl.NguongCanhBao ?? 0, 2),
-        // Determine status based on stock level vs threshold
-            TinhTrang = nl.SoLuongTon == null || nl.SoLuongTon == 0 ? "Hết hàng" :
+                nl.MaNl,
+                nl.TenNl,
+                nl.DonViTinh,
+                SoLuongTon = Math.Round(nl.SoLuongTon ?? 0, 2),
+                NguongCanhBao = Math.Round(nl.NguongCanhBao ?? 0, 2),
+                // Determine status based on stock level vs threshold
+                TinhTrang = nl.SoLuongTon == null || nl.SoLuongTon == 0 ? "Hết hàng" :
   nl.SoLuongTon <= nl.NguongCanhBao ? "Thiếu thốn" : "Dồi dào"
-       })
+            })
               .OrderBy(nl => nl.SoLuongTon)
       .ToList();
 
-       dgvInventory.DataSource = inventory;
+                dgvInventory.DataSource = inventory;
 
-             // Format columns
-     StyleDataGridView(dgvInventory);
-       dgvInventory.Columns["MaNl"].HeaderText = "Mã NL";
-      dgvInventory.Columns["TenNl"].HeaderText = "Tên nguyên liệu";
-      dgvInventory.Columns["DonViTinh"].HeaderText = "Đơn vị";
-  dgvInventory.Columns["SoLuongTon"].HeaderText = "Số lượng tồn";
-     dgvInventory.Columns["NguongCanhBao"].HeaderText = "Ngưỡng cảnh báo";
+                // Format columns
+                StyleDataGridView(dgvInventory);
+                dgvInventory.Columns["MaNl"].HeaderText = "Mã NL";
+                dgvInventory.Columns["TenNl"].HeaderText = "Tên nguyên liệu";
+                dgvInventory.Columns["DonViTinh"].HeaderText = "Đơn vị";
+                dgvInventory.Columns["SoLuongTon"].HeaderText = "Số lượng tồn";
+                dgvInventory.Columns["NguongCanhBao"].HeaderText = "Ngưỡng cảnh báo";
                 dgvInventory.Columns["TinhTrang"].HeaderText = "Tình trạng";
 
-      // Apply conditional formatting based on status
-      foreach (DataGridViewRow row in dgvInventory.Rows) {
-   if (row.Cells["TinhTrang"].Value != null) {
- string tinhTrang = row.Cells["TinhTrang"].Value.ToString() ?? "";
-    
-              switch (tinhTrang) {
-     case "Dồi dào":
-          // Green - Sufficient stock
-          row.DefaultCellStyle.BackColor = Color.FromArgb(223, 240, 216);
-      row.DefaultCellStyle.ForeColor = Color.FromArgb(60, 118, 61);
-                 break;
-     case "Thiếu thốn":
-   // Orange/Yellow - Low stock (at or below threshold)
-     row.DefaultCellStyle.BackColor = Color.FromArgb(252, 248, 227);
-   row.DefaultCellStyle.ForeColor = Color.FromArgb(138, 109, 59);
-  break;
-  case "Hết hàng":
-          // Red - Out of stock
-          row.DefaultCellStyle.BackColor = Color.FromArgb(242, 222, 222);
-                 row.DefaultCellStyle.ForeColor = Color.FromArgb(169, 68, 66);
-                 break;
-         }
-        }
-         }
- }
-   catch (Exception ex) {
-              MessageBox.Show(
-  $"Lỗi khi tải dữ liệu kho:\n{ex.Message}",
-          "Lỗi",
-       MessageBoxButtons.OK,
-           MessageBoxIcon.Error);
+                // Apply conditional formatting based on status
+                foreach (DataGridViewRow row in dgvInventory.Rows) {
+                    if (row.Cells["TinhTrang"].Value != null) {
+                        string tinhTrang = row.Cells["TinhTrang"].Value.ToString() ?? "";
+
+                        switch (tinhTrang) {
+                            case "Dồi dào":
+                                // Green - Sufficient stock
+                                row.DefaultCellStyle.BackColor = Color.FromArgb(223, 240, 216);
+                                row.DefaultCellStyle.ForeColor = Color.FromArgb(60, 118, 61);
+                                break;
+                            case "Thiếu thốn":
+                                // Orange/Yellow - Low stock (at or below threshold)
+                                row.DefaultCellStyle.BackColor = Color.FromArgb(252, 248, 227);
+                                row.DefaultCellStyle.ForeColor = Color.FromArgb(138, 109, 59);
+                                break;
+                            case "Hết hàng":
+                                // Red - Out of stock
+                                row.DefaultCellStyle.BackColor = Color.FromArgb(242, 222, 222);
+                                row.DefaultCellStyle.ForeColor = Color.FromArgb(169, 68, 66);
+                                break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) {
+                MessageBox.Show(
+    $"Lỗi khi tải dữ liệu kho:\n{ex.Message}",
+            "Lỗi",
+         MessageBoxButtons.OK,
+             MessageBoxIcon.Error);
             }
         }
 
@@ -793,12 +785,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     int maNl = (int)button2.Tag;
                     string tenNl = textBox8.Text;
 
-                    // Confirm update
+                    // (Lưu ý: textBox10 (soLuongMoi) bây giờ là "Số lượng nhập thêm")
                     var confirmResult = MessageBox.Show(
-                   $"Xác nhận cập nhật số lượng?\n\n" +
-                 $"Nguyên liệu: {tenNl}\n" +
-               $"Số lượng mới: {soLuongMoi} {textBox7.Text}",
-                "Xác nhận cập nhật",
+                   $@"Xác nhận NHẬP KHO?
+
+Nguyên liệu: {tenNl}
+Số lượng NHẬP THÊM: {soLuongMoi} {textBox7.Text}",
+                "Xác nhận nhập kho",
                       MessageBoxButtons.YesNo,
                MessageBoxIcon.Question);
 
@@ -818,18 +811,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                     // Update số lượng tồn
                     decimal soLuongCu = ingredient.SoLuongTon ?? 0;
-                    ingredient.SoLuongTon = soLuongMoi;
+                    ingredient.SoLuongTon += soLuongMoi; // DÙNG PHÉP CỘNG +=
 
                     db.SaveChanges();
 
                     MessageBox.Show(
-               $"Cập nhật số lượng thành công!\n\n" +
-                      $"Nguyên liệu: {tenNl}\n" +
-                $"Số lượng cũ: {soLuongCu} {textBox7.Text}\n" +
-                     $"Số lượng mới: {soLuongMoi} {textBox7.Text}",
-                     "Thành công",
-                   MessageBoxButtons.OK,
-                   MessageBoxIcon.Information);
+            $"Nhập kho thành công!\n\n" +
+                   $"Nguyên liệu: {tenNl}\n" +
+             $"Số lượng cũ: {soLuongCu} {textBox7.Text}\n" +
+             $"Số lượng nhập thêm: {soLuongMoi} {textBox7.Text}\n" +
+             $"Số lượng mới (tổng): {ingredient.SoLuongTon} {textBox7.Text}",
+                  "Thành công",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
                 }
                 else {
                     // ============ CHẾ ĐỘ ADD NEW (KHÔNG CÓ TAG) ============
@@ -910,10 +904,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         private void button3_Click(object sender, EventArgs e) {
-            // Check if an ingredient is selected in DataGridView
+            // Check if an ingredient is selected
             if (dgvInventory.SelectedRows.Count == 0) {
                 MessageBox.Show(
-                 "Vui lòng chọn nguyên liệu cần xóa từ danh sách!",
+                 "Vui lòng chọn nguyên liệu cần ngừng kinh doanh!",
                       "Thông báo",
                 MessageBoxButtons.OK,
                    MessageBoxIcon.Warning);
@@ -927,17 +921,18 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 int maNl = Convert.ToInt32(row.Cells["MaNl"].Value);
                 string tenNl = row.Cells["TenNl"].Value?.ToString() ?? "N/A";
 
-                // Confirm deletion
+                // Confirm "soft delete"
                 var confirmResult = MessageBox.Show(
-                          $"Bạn có chắc muốn xóa nguyên liệu này?\n\n" +
-                       $"Mã: {maNl}\n" +
-                $"Tên: {tenNl}\n\n" +
-                   "⚠️ CẢNH BÁO: Hành động này sẽ:\n" +
-                     "- Xóa thông tin nguyên liệu\n" +
-                        "- Xóa định lượng liên quan\n" +
-                        "- Có thể ảnh hưởng đến công thức món\n\n" +
-                   "Dữ liệu sau khi xóa KHÔNG THỂ KHÔI PHỤC!",
-                      "⚠️ Xác nhận xóa",
+         $@"Bạn có chắc muốn NGỪNG KINH DOANH nguyên liệu này?
+
+Mã: {maNl}
+Tên: {tenNl}
+
+Hành động này sẽ:
+- Ẩn nguyên liệu khỏi kho và các form bán hàng.
+- KHÔNG xóa lịch sử nhập kho.
+- KHÔNG xóa các công thức cũ.",
+                      "Xác nhận Ngừng kinh doanh",
                     MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
 
@@ -945,11 +940,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 using var db = new DataSqlContext();
 
-                // Find ingredient with related data
-                var ingredient = db.NguyenLieus
-          .Include(nl => nl.DinhLuongs) // Include recipes
-              .Include(nl => nl.ChiTietPhieuKhos) // Include warehouse receipts
-              .FirstOrDefault(nl => nl.MaNl == maNl);
+                var ingredient = db.NguyenLieus.Find(maNl);
 
                 if (ingredient == null) {
                     MessageBox.Show(
@@ -960,58 +951,24 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     return;
                 }
 
-                // Check if ingredient is used in recipes
-                if (ingredient.DinhLuongs.Any()) {
-                    var warningResult = MessageBox.Show(
-                     $"⚠️ Nguyên liệu này đang được dùng trong {ingredient.DinhLuongs.Count} công thức!\n\n" +
-                     "Xóa nguyên liệu sẽ ảnh hưởng đến:\n" +
-             "- Công thức món ăn\n" +
-              "- Tính toán chi phí\n\n" +
-                "Bạn vẫn muốn tiếp tục?",
-                      "⚠️⚠️ Cảnh báo nghiêm trọng",
-                  MessageBoxButtons.YesNo,
-                  MessageBoxIcon.Stop);
+                // --- PHẦN LOGIC ĐÃ SỬA ---
+                // 1. Cập nhật trạng thái (thay vì xóa)
+                ingredient.TrangThai = "Ngừng kinh doanh";
 
-                    if (warningResult != DialogResult.Yes) return;
+                // KHÔNG XÓA DinhLuong (công thức)
+                // KHÔNG XÓA ChiTietPhieuKho (lịch sử nhập)
+                // KHÔNG RESET IDENTITY
+                // --- KẾT THÚC SỬA LOGIC ---
 
-                    // Delete related recipes first
-                    db.DinhLuongs.RemoveRange(ingredient.DinhLuongs);
-                }
-
-                // Delete related warehouse receipt details
-                if (ingredient.ChiTietPhieuKhos.Any()) {
-                    db.ChiTietPhieuKhos.RemoveRange(ingredient.ChiTietPhieuKhos);
-                }
-
-                // Get max ingredient ID before deletion
-                int? maxMaNlBeforeDelete = db.NguyenLieus.Max(nl => (int?)nl.MaNl);
-                bool isMaxId = (maNl == maxMaNlBeforeDelete);
-
-                // Delete ingredient
-                db.NguyenLieus.Remove(ingredient);
                 db.SaveChanges();
 
-                // Reset IDENTITY if we deleted the ingredient with max ID
-                if (isMaxId) {
-                    int? newMaxMaNl = db.NguyenLieus.Max(nl => (int?)nl.MaNl);
-
-                    if (newMaxMaNl.HasValue) {
-                        // Reset IDENTITY to the current max ID
-                        db.Database.ExecuteSqlRaw($"DBCC CHECKIDENT ('NguyenLieu', RESEED, {newMaxMaNl.Value})");
-                    }
-                    else {
-                        // No ingredients left, reset to 0
-                        db.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('NguyenLieu', RESEED, 0)");
-                    }
-                }
-
                 MessageBox.Show(
-                       $"Đã xóa nguyên liệu '{tenNl}' thành công!",
+                       $"Đã ngừng kinh doanh nguyên liệu '{tenNl}'!",
                 "Thành công",
                          MessageBoxButtons.OK,
               MessageBoxIcon.Information);
 
-                // Refresh data and hide panel
+                // Refresh data
                 LoadInventoryData();
                 ClearInventoryForm();
                 panel2.Visible = false;
@@ -1107,52 +1064,43 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             // Check if an employee is selected
             if (dataGridView1.SelectedRows.Count == 0) {
                 MessageBox.Show(
- "Vui lòng chọn nhân viên cần xóa!",
-            "Thông báo",
-          MessageBoxButtons.OK,
-     MessageBoxIcon.Warning);
+                 "Vui lòng chọn nhân viên cần vô hiệu hóa!",
+                    "Thông báo",
+                  MessageBoxButtons.OK,
+             MessageBoxIcon.Warning);
                 return;
             }
 
             try {
                 var row = dataGridView1.SelectedRows[0];
-
-                if (row.Cells["MaNv"].Value == null) {
-                    MessageBox.Show(
-                     "Không thể xác định nhân viên được chọn!",
-              "Lỗi",
-                 MessageBoxButtons.OK,
-                   MessageBoxIcon.Error);
-                    return;
-                }
+                if (row.Cells["MaNv"].Value == null) return;
 
                 int maNv = Convert.ToInt32(row.Cells["MaNv"].Value);
                 string tenNv = row.Cells["TenNv"].Value?.ToString() ?? "N/A";
 
-                // Confirm deletion
+                // Confirm "soft delete"
                 var confirmResult = MessageBox.Show(
-         $"Bạn có chắc muốn xóa nhân viên này?\n\n" +
-                    $"Mã NV: {maNv}\n" +
-         $"Họ tên: {tenNv}\n\n" +
-          "⚠️ CẢNH BÁO: Hành động này sẽ xóa:\n" +
-                "- Thông tin nhân viên\n" +
-                    "- Tài khoản đăng nhập\n" +
-               "- Tất cả dữ liệu liên quan\n\n" +
-            "Dữ liệu sau khi xóa KHÔNG THỂ KHÔI PHỤC!",
-           "⚠️ Xác nhận xóa",
-         MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning);
+         $@"Bạn có chắc muốn VÔ HIỆU HÓA nhân viên này?
+
+Mã NV: {maNv}
+Họ tên: {tenNv}
+
+Hành động này sẽ:
+- Cập nhật trạng thái nhân viên thành 'Đã nghỉ việc'.
+- Khóa tài khoản đăng nhập (nếu có).
+- KHÔNG xóa đơn hàng cũ của họ.",
+                   "Xác nhận Vô hiệu hóa",
+                 MessageBoxButtons.YesNo,
+                            MessageBoxIcon.Warning);
 
                 if (confirmResult != DialogResult.Yes) return;
 
                 using var db = new DataSqlContext();
 
-                // Find employee
+                // Find employee and their account
                 var nhanVien = db.NhanViens
-                .Include(nv => nv.TaiKhoan)
-                  .Include(nv => nv.DonHangs)
-                    .Include(nv => nv.PhieuKhos)
-                        .FirstOrDefault(nv => nv.MaNv == maNv);
+                    .Include(nv => nv.TaiKhoan)
+                    .FirstOrDefault(nv => nv.MaNv == maNv);
 
                 if (nhanVien == null) {
                     MessageBox.Show(
@@ -1163,36 +1111,22 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     return;
                 }
 
-                // Get max employee ID before deletion
-                int? maxMaNvBeforeDelete = db.NhanViens.Max(nv => (int?)nv.MaNv);
-                bool isMaxId = (maNv == maxMaNvBeforeDelete);
+                // --- PHẦN LOGIC ĐÃ SỬA ---
+                // 1. Cập nhật trạng thái nhân viên
+                nhanVien.TrangThai = "Đã nghỉ việc";
 
-                // Delete TaiKhoan first (if exists)
+                // 2. Khóa tài khoản (thay vì xóa)
                 if (nhanVien.TaiKhoan != null) {
-                    db.TaiKhoans.Remove(nhanVien.TaiKhoan);
+                    nhanVien.TaiKhoan.TrangThai = false; // false = Bị khóa
                 }
+                // KHÔNG XÓA BẤT CỨ DÒNG NÀO
+                // KHÔNG RESET IDENTITY
+                // --- KẾT THÚC SỬA LOGIC ---
 
-                // Delete NhanVien
-                db.NhanViens.Remove(nhanVien);
                 db.SaveChanges();
 
-                // Reset IDENTITY if we deleted the employee with max ID
-                if (isMaxId) {
-                    int? newMaxMaNv = db.NhanViens.Max(nv => (int?)nv.MaNv);
-
-                    if (newMaxMaNv.HasValue) {
-                        // Reset IDENTITY to the current max ID
-                        db.Database.ExecuteSqlRaw($"DBCC CHECKIDENT ('NhanVien', RESEED, {newMaxMaNv.Value})");
-                    }
-                    else {
-                        // No employees left, reset to 0
-                        db.Database.ExecuteSqlRaw("DBCC CHECKIDENT ('NhanVien', RESEED, 0)");
-                    }
-                }
-
                 MessageBox.Show(
-                    $"Đã xóa nhân viên '{tenNv}' thành công!\n" +
-                    (isMaxId ? "Mã nhân viên đã được reset để tái sử dụng." : ""),
+                    $"Đã vô hiệu hóa nhân viên '{tenNv}' thành công!",
                     "Thành công",
                     MessageBoxButtons.OK,
                MessageBoxIcon.Information);
@@ -1205,13 +1139,15 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
             catch (Exception ex) {
                 MessageBox.Show(
-                    $"Lỗi khi xóa nhân viên:\n{ex.Message}\n\n" +
+                    $"Lỗi khi vô hiệu hóa nhân viên:\n{ex.Message}\n\n" +
               $"Chi tiết: {ex.InnerException?.Message}",
                     "Lỗi",
                MessageBoxButtons.OK,
               MessageBoxIcon.Error);
             }
         }
+
+
         private void btnLogout_Click(object sender, EventArgs e) {
             // Xác nhận đăng xuất
             var confirmResult = MessageBox.Show(
@@ -1252,7 +1188,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         private void btnExit_Click(object sender, EventArgs e) {
-            DialogResult result = MessageBox.Show( "Bạn có chắc muốn thoát?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show("Bạn có chắc muốn thoát?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes) {
                 Application.Exit();
             }

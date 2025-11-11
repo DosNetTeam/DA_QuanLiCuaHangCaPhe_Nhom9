@@ -40,10 +40,10 @@ public partial class DataSqlContext : DbContext {
     public virtual DbSet<VaiTro> VaiTros { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        // => optionsBuilder.UseSqlServer("Server=EMBOU;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
-        // => optionsBuilder.UseSqlServer("Server=KenG_Kanowaki\\LEMINHDUCSQL;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
-        // => optionsBuilder.UseSqlServer("Server=LAPTOP-2Q4VT418\\SQLEXPRESS;Database=DA_QuanLiBanCaPhe;Trusted_Connection=True;TrustServerCertificate=True");
-        {
+       // => optionsBuilder.UseSqlServer("Server=EMBOU;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
+       // => optionsBuilder.UseSqlServer("Server=KenG_Kanowaki\\LEMINHDUCSQL;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
+       // => optionsBuilder.UseSqlServer("Server=LAPTOP-2Q4VT418\\SQLEXPRESS;Database=DA_QuanLiBanCaPhe;Trusted_Connection=True;TrustServerCertificate=True");
+       {
         if (!optionsBuilder.IsConfigured) {
             // 1. Xây dựng đối tượng Configuration
 
@@ -61,9 +61,6 @@ public partial class DataSqlContext : DbContext {
             optionsBuilder.UseSqlServer(connString);
         }
     }
-
-
-
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.Entity<ChiTietDonHang>(entity => {
             entity.HasKey(e => new { e.MaDh, e.MaSp }).HasName("PK__ChiTietD__F557D6E09790EFA5");
@@ -229,6 +226,9 @@ public partial class DataSqlContext : DbContext {
             entity.Property(e => e.TenNl)
                 .HasMaxLength(100)
                 .HasColumnName("TenNL");
+            entity.Property(e => e.TrangThai)
+                .HasMaxLength(50)
+                .HasDefaultValue("Ðang kinh doanh");
         });
 
         modelBuilder.Entity<NhaCungCap>(entity => {
@@ -259,6 +259,9 @@ public partial class DataSqlContext : DbContext {
             entity.Property(e => e.TenNv)
                 .HasMaxLength(100)
                 .HasColumnName("TenNV");
+            entity.Property(e => e.TrangThai)
+                .HasMaxLength(50)
+                .HasDefaultValue("Ðang làm vi?c");
         });
 
         modelBuilder.Entity<PhieuKho>(entity => {
