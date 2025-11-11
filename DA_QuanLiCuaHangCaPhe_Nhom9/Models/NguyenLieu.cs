@@ -15,6 +15,8 @@ public partial class NguyenLieu
 
     public decimal? NguongCanhBao { get; set; }
 
+    public string TrangThai { get; set; } = null!;
+
     public virtual ICollection<ChiTietPhieuKho> ChiTietPhieuKhos { get; set; } = new List<ChiTietPhieuKho>();
 
     public virtual ICollection<DinhLuong> DinhLuongs { get; set; } = new List<DinhLuong>();

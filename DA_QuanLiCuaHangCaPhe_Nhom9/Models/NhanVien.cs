@@ -15,6 +15,8 @@ public partial class NhanVien
 
     public DateOnly NgayVaoLam { get; set; }
 
+    public string TrangThai { get; set; } = null!;
+
     public virtual ICollection<DonHang> DonHangs { get; set; } = new List<DonHang>();
 
     public virtual ICollection<PhieuKho> PhieuKhos { get; set; } = new List<PhieuKho>();
