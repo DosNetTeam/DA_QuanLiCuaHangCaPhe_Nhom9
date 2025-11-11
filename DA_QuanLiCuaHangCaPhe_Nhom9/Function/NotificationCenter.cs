@@ -1,21 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 
-namespace DA_QuanLiCuaHangCaPhe_Nhom9
-{
-    public static class NotificationCenter
-    {
-        public enum NotificationType
-        {
+namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function {
+    public static class NotificationCenter {
+        public enum NotificationType {
             NhanVienInactive,
             UnpaidInvoice,
             LowStock
         }
 
-        public class Notification
-        {
+        public class Notification {
             public NotificationType Type { get; set; }
             public string Message { get; set; } = string.Empty;
             public object? Data { get; set; }
@@ -24,18 +17,14 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
         public static event Action<Notification>? NotificationRaised;
 
         // Allow external callers to raise notifications safely
-        public static void Raise(Notification notification)
-        {
+        public static void Raise(Notification notification) {
             NotificationRaised?.Invoke(notification);
         }
 
         // Poll database, create notifications and raise events
-        public static void PollAndPush()
-        {
-            try
-            {
-                using (var db = new DataSqlContext())
-                {
+        public static void PollAndPush() {
+            try {
+                using (var db = new DataSqlContext()) {
                     // 1) Employees inactive (no orders in last 30 days)
                     var since = DateTime.Now.AddDays(-30);
                     var inactive = db.NhanViens
@@ -44,8 +33,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                         .Take(5)
                         .ToList();
 
-                    foreach (var name in inactive)
-                    {
+                    foreach (var name in inactive) {
                         var n = new Notification { Type = NotificationType.NhanVienInactive, Message = $"Nhân viên lâu không ho?t ??ng: {name}" };
                         Raise(n);
                     }
@@ -57,8 +45,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                         .Take(10)
                         .ToList();
 
-                    foreach (var u in unpaid)
-                    {
+                    foreach (var u in unpaid) {
                         var msg = $"Hóa ??n ch?a thanh toán: #{u.MaDh} - {u.NgayLap?.ToString("dd/MM/yy")}";
                         var n = new Notification { Type = NotificationType.UnpaidInvoice, Message = msg, Data = u.MaDh };
                         Raise(n);
@@ -71,28 +58,23 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                         .Take(10)
                         .ToList();
 
-                    foreach (var nl in low)
-                    {
+                    foreach (var nl in low) {
                         var msg = $"Hàng trong kho còn ít: {nl.TenNl} ({nl.SoLuongTon ?? 0})";
                         var n = new Notification { Type = NotificationType.LowStock, Message = msg, Data = nl.MaNl };
                         Raise(n);
                     }
                 }
             }
-            catch
-            {
+            catch {
                 // swallow errors to avoid crashing callers
             }
         }
 
         // Return all current notifications (for manual display)
-        public static List<Notification> GetAllNotifications()
-        {
+        public static List<Notification> GetAllNotifications() {
             var list = new List<Notification>();
-            try
-            {
-                using (var db = new DataSqlContext())
-                {
+            try {
+                using (var db = new DataSqlContext()) {
                     var since = DateTime.Now.AddDays(-30);
                     var inactive = db.NhanViens
                         .Where(nv => !db.DonHangs.Any(dh => dh.MaNv == nv.MaNv && dh.NgayLap >= since))
@@ -119,8 +101,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
                     list.AddRange(low.Select(nl => new Notification { Type = NotificationType.LowStock, Message = $"Hàng trong kho còn ít: {nl.TenNl} ({nl.SoLuongTon ?? 0})", Data = nl.MaNl }));
                 }
             }
-            catch
-            {
+            catch {
             }
 
             if (list.Count == 0)

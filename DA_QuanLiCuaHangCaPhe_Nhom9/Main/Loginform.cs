@@ -1,3 +1,4 @@
+using DA_QuanLiCuaHangCaPhe_Nhom9.Function;
 using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 using Microsoft.Win32;
 
