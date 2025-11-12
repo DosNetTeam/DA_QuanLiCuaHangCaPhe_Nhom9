@@ -158,11 +158,18 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 MessageBox.Show($"Đăng nhập thành công!\n" + $"Xin chào: {account.NhanVien}\n" + $"Vai trò: {account.VaiTro}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 // Lộ trình dựa trên vai trò
-                this.Hide(); // ẩn form đăng nhập
+                //this.Hide(); // ẩn form đăng nhập
+
+                txtUser.Clear();
+                txtPass.Clear();
+                this.txtUser.Focus ();
+
                 if (account.VaiTro == "Chủ cửa hàng") {
                     // Admin/Manager role - mở form Admin
                     Admin adminForm = new Admin();
-                    this.Hide();
+                   // this.Hide();
+
+
                     adminForm.FormClosed += (s, args) => {
                         txtUser.Clear();
                         txtPass.Clear();

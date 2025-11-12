@@ -330,8 +330,8 @@
             // panelHoaDon
             // 
             panelHoaDon.BackColor = Color.White;
-            panelHoaDon.Controls.Add(panel4);
             panelHoaDon.Controls.Add(dgvHoaDon);
+            panelHoaDon.Controls.Add(panel4);
             panelHoaDon.Controls.Add(groupBox1);
             panelHoaDon.Controls.Add(cbTrangThaiHD);
             panelHoaDon.Dock = DockStyle.Fill;
@@ -377,11 +377,11 @@
             dgvHoaDon.BackgroundColor = SystemColors.Control;
             dgvHoaDon.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvHoaDon.Dock = DockStyle.Fill;
-            dgvHoaDon.Location = new Point(7, 7);
+            dgvHoaDon.Location = new Point(7, 72);
             dgvHoaDon.Name = "dgvHoaDon";
             dgvHoaDon.ReadOnly = true;
             dgvHoaDon.RowHeadersWidth = 51;
-            dgvHoaDon.Size = new Size(519, 283);
+            dgvHoaDon.Size = new Size(519, 218);
             dgvHoaDon.TabIndex = 3;
             // 
             // groupBox1

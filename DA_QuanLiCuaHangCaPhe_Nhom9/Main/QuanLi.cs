@@ -25,15 +25,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9
 
             // Gắn sự kiện cho tab Sản Phẩm
             txtTimKiemSP.TextChanged += txtTimKiemSP_TextChanged;
-            btnThemSP.Click += btnThemSP_Click;
-            btnSuaSP.Click += btnSuaSP_Click;
+           
             dgvSanPham.CellFormatting += dgvSanPham_CellFormatting;
 
             // Gắn sự kiện cho tab Khuyến mãi (MỚI)
             txtTimKiemKM.TextChanged += txtTimKiemKM_TextChanged;
             cbLocTrangThaiKM.SelectedIndexChanged += cbLocTrangThaiKM_SelectedIndexChanged;
-            btnThemKM.Click += btnThemKM_Click;
-            btnSuaKM.Click += btnSuaKM_Click;
+           
             dgvKhuyenMai.CellFormatting += dgvKhuyenMai_CellFormatting;
 
             // Gắn CellFormatting để tô màu các cột trạng thái / hiệu suất
