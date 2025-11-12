@@ -5,6 +5,7 @@ using System.Data;
 using System.Globalization;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
+
     public partial class MainForm : Form {
 
         // Giả định ID nhân viên đang đăng nhập.
@@ -85,7 +86,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             // subscribe to notifications
             NotificationCenter.NotificationRaised += NotificationCenter_NotificationRaised;
         }
-
 
         private void MainForm_Load(object sender, EventArgs e) {
             // Cấu hình ListView

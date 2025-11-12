@@ -3,7 +3,8 @@ using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 using Microsoft.Win32;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
-    [System.ComponentModel.DesignerCategory("Form")]
+    //[System.ComponentModel.DesignerCategory("Form")]
+
     public partial class Loginform : Form {
         public Loginform() {
             InitializeComponent();
@@ -165,14 +166,14 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     adminForm.FormClosed += (s, args) => {
                         txtUser.Clear();
                         txtPass.Clear();
-                        
+
                         UpdateLoginButtonState();
 
                         this.Show();
                         txtUser.Focus(); // Focus vào txtUser
                     };
                     adminForm.Show();
-                   
+
                 }
                 else if (account.VaiTro == "Quản lý") {
                     // vai trò quản lý - mở Mainform và chuyển mã nhân viên
@@ -181,7 +182,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                         txtUser.Clear();
                         txtPass.Clear();
                         UpdateLoginButtonState();
-                        this.Show();        
+                        this.Show();
                         txtUser.Focus(); // Focus vào txtUser
                     };
                     ql.Show();
