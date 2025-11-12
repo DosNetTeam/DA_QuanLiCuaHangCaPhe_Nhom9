@@ -14,7 +14,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         private int _maDonHangChon; // Sẽ nhận từ ChonDonHangCho
         private DonHang _donHangCanThanhToan; // Đơn hàng đang xử lý
         private Models.ThanhToan _thanhToanCanCapNhat; // Thanh toán đang chờ
-        private decimal _tienThua; // Tiền thừa (nếu có)
+
 
         // Dùng để lưu lại tổng tiền gốc và số tiền giảm (nếu có)
         private decimal _tongTienGoc_passed;
@@ -291,6 +291,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
         #endregion
 
+        #region XỬ LÝ SỰ KIỆN
         private void txtKhachDua_TextChanged(object sender, EventArgs e) {
             decimal khachDua = 0;
             // Xóa dấu chấm (ngăn cách hàng nghìn) trước khi parse
@@ -447,6 +448,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
+        #endregion
         private void pbQR_InBill_Click(object sender, EventArgs e) {
 
         }
