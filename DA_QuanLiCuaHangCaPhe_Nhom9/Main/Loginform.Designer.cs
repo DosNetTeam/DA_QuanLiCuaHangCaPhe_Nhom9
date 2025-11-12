@@ -35,6 +35,8 @@
             label1 = new Label();
             pictureBox1 = new PictureBox();
             btnThoat = new Button();
+            linkLabel1 = new LinkLabel();
+            label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
@@ -59,7 +61,7 @@
             // btnOK
             // 
             btnOK.BackColor = Color.Lime;
-            btnOK.Location = new Point(62, 260);
+            btnOK.Location = new Point(60, 271);
             btnOK.Margin = new Padding(1);
             btnOK.Name = "btnOK";
             btnOK.Size = new Size(106, 28);
@@ -96,7 +98,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 163);
-            label1.Location = new Point(170, 19);
+            label1.Location = new Point(174, 9);
             label1.Margin = new Padding(1, 0, 1, 0);
             label1.Name = "label1";
             label1.Size = new Size(194, 46);
@@ -117,7 +119,7 @@
             // btnThoat
             // 
             btnThoat.BackColor = Color.Red;
-            btnThoat.Location = new Point(195, 260);
+            btnThoat.Location = new Point(195, 269);
             btnThoat.Margin = new Padding(1);
             btnThoat.Name = "btnThoat";
             btnThoat.Size = new Size(88, 28);
@@ -126,12 +128,37 @@
             btnThoat.UseVisualStyleBackColor = false;
             btnThoat.Click += btnHuy_Click;
             // 
+            // linkLabel1
+            // 
+            linkLabel1.AutoSize = true;
+            linkLabel1.Font = new Font("Segoe UI", 9F, FontStyle.Italic, GraphicsUnit.Point, 163);
+            linkLabel1.LinkColor = Color.Black;
+            linkLabel1.Location = new Point(174, 239);
+            linkLabel1.Name = "linkLabel1";
+            linkLabel1.Size = new Size(108, 20);
+            linkLabel1.TabIndex = 16;
+            linkLabel1.TabStop = true;
+            linkLabel1.Text = "Quên mật khẩu";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 163);
+            label4.ForeColor = SystemColors.ActiveCaptionText;
+            label4.Location = new Point(60, 55);
+            label4.Name = "label4";
+            label4.Size = new Size(221, 82);
+            label4.TabIndex = 17;
+            label4.Text = "COFFEE SHOP \r\n  MANEGER";
+            // 
             // Loginform
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.NavajoWhite;
             ClientSize = new Size(547, 309);
+            Controls.Add(label4);
+            Controls.Add(linkLabel1);
             Controls.Add(pictureBox1);
             Controls.Add(txtPass);
             Controls.Add(txtUser);
@@ -160,5 +187,7 @@
         private Label label1;
         private PictureBox pictureBox1;
         private Button btnThoat;
+        private LinkLabel linkLabel1;
+        private Label label4;
     }
 }

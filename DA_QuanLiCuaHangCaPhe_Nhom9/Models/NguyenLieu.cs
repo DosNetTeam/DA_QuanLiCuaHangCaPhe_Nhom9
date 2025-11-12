@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 
@@ -15,7 +16,9 @@ public partial class NguyenLieu
 
     public decimal? NguongCanhBao { get; set; }
 
-    public string TrangThai { get; set; } = null!;
+    // ========== ĐÁNH DẤU [NotMapped] ĐỂ EF CORE BỎ QUA CỘT NÀY ==========
+    [NotMapped]
+    public string TrangThai { get; set; } = "Đang hoạt động";
 
     public virtual ICollection<ChiTietPhieuKho> ChiTietPhieuKhos { get; set; } = new List<ChiTietPhieuKho>();
 

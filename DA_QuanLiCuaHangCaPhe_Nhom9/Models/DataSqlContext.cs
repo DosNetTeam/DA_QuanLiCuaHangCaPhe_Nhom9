@@ -226,9 +226,6 @@ public partial class DataSqlContext : DbContext {
             entity.Property(e => e.TenNl)
                 .HasMaxLength(100)
                 .HasColumnName("TenNL");
-            entity.Property(e => e.TrangThai)
-                .HasMaxLength(50)
-                .HasDefaultValue("Ðang kinh doanh");
         });
 
         modelBuilder.Entity<NhaCungCap>(entity => {
@@ -261,7 +258,7 @@ public partial class DataSqlContext : DbContext {
                 .HasColumnName("TenNV");
             entity.Property(e => e.TrangThai)
                 .HasMaxLength(50)
-                .HasDefaultValue("Ðang làm vi?c");
+                .HasDefaultValue("Đang làm việc");
         });
 
         modelBuilder.Entity<PhieuKho>(entity => {
