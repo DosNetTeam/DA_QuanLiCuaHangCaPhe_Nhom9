@@ -11,9 +11,7 @@ public partial class NguyenLieu {
 
     public decimal? NguongCanhBao { get; set; }
 
-    // ========== ĐÁNH DẤU [NotMapped] ĐỂ EF CORE BỎ QUA CỘT NÀY ==========
-    [NotMapped]
-    public string TrangThai { get; set; } = "Đang hoạt động";
+    public string TrangThai { get; set; } = null;
 
     public virtual ICollection<ChiTietPhieuKho> ChiTietPhieuKhos { get; set; } = new List<ChiTietPhieuKho>();
 
