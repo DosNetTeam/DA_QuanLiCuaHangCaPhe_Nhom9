@@ -57,10 +57,12 @@
             dgvkho = new DataGridView();
             gbthongtinnguyenlieu = new GroupBox();
             txtten = new TextBox();
+            textBox2 = new TextBox();
             txtdonvi = new TextBox();
             txtsoluong = new TextBox();
             txtma = new TextBox();
             lblsoluong = new Label();
+            label1 = new Label();
             lblten = new Label();
             lblma = new Label();
             lbldonvi = new Label();
@@ -70,6 +72,7 @@
             tabPageSanPham = new TabPage();
             dgvSanPham = new DataGridView();
             gbsanpham = new GroupBox();
+            textBox1 = new TextBox();
             btnthem = new Button();
             txtdon_vi = new TextBox();
             txtloai = new TextBox();
@@ -91,6 +94,7 @@
             tabthongtinkhuyenmai = new TabPage();
             dgvkhuyenmai = new DataGridView();
             gbkhuyenmai = new GroupBox();
+            txtgtkm = new TextBox();
             dtpngayketthuc = new DateTimePicker();
             dtpngaybatdau = new DateTimePicker();
             cmbloaikm = new ComboBox();
@@ -102,6 +106,7 @@
             lblngaybatdau = new Label();
             lblgiatri = new Label();
             lblloaikm = new Label();
+            label2 = new Label();
             lbltrangthaikm = new Label();
             lblmota = new Label();
             lbltenkm = new Label();
@@ -135,7 +140,7 @@
             // 
             btnCreateAccount.BackColor = Color.FromArgb(46, 125, 50);
             btnCreateAccount.ForeColor = Color.White;
-            btnCreateAccount.Location = new Point(10, 26);
+            btnCreateAccount.Location = new Point(10, 3);
             btnCreateAccount.Name = "btnCreateAccount";
             btnCreateAccount.Size = new Size(150, 40);
             btnCreateAccount.TabIndex = 2;
@@ -147,7 +152,7 @@
             // 
             btnExit.BackColor = Color.FromArgb(211, 47, 47);
             btnExit.ForeColor = Color.White;
-            btnExit.Location = new Point(330, 26);
+            btnExit.Location = new Point(327, 3);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(120, 40);
             btnExit.TabIndex = 3;
@@ -159,7 +164,7 @@
             // 
             btnDeleteAccount.BackColor = Color.FromArgb(244, 67, 54);
             btnDeleteAccount.ForeColor = Color.White;
-            btnDeleteAccount.Location = new Point(166, 26);
+            btnDeleteAccount.Location = new Point(166, 3);
             btnDeleteAccount.Name = "btnDeleteAccount";
             btnDeleteAccount.Size = new Size(150, 40);
             btnDeleteAccount.TabIndex = 4;
@@ -206,7 +211,7 @@
             tongquandulieu.ReadOnly = true;
             tongquandulieu.RowHeadersWidth = 51;
             tongquandulieu.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            tongquandulieu.Size = new Size(892, 342);
+            tongquandulieu.Size = new Size(892, 365);
             tongquandulieu.TabIndex = 0;
             // 
             // pnChucnang
@@ -214,9 +219,9 @@
             pnChucnang.Controls.Add(panel2);
             pnChucnang.Controls.Add(btnLognout);
             pnChucnang.Dock = DockStyle.Bottom;
-            pnChucnang.Location = new Point(3, 345);
+            pnChucnang.Location = new Point(3, 368);
             pnChucnang.Name = "pnChucnang";
-            pnChucnang.Size = new Size(892, 69);
+            pnChucnang.Size = new Size(892, 46);
             pnChucnang.TabIndex = 5;
             // 
             // panel2
@@ -227,7 +232,7 @@
             panel2.Dock = DockStyle.Right;
             panel2.Location = new Point(440, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(452, 69);
+            panel2.Size = new Size(452, 46);
             panel2.TabIndex = 7;
             // 
             // btnLognout
@@ -237,7 +242,7 @@
             btnLognout.ForeColor = Color.White;
             btnLognout.Location = new Point(0, 0);
             btnLognout.Name = "btnLognout";
-            btnLognout.Size = new Size(135, 69);
+            btnLognout.Size = new Size(135, 46);
             btnLognout.TabIndex = 5;
             btnLognout.Text = "Đăng xuất";
             btnLognout.UseVisualStyleBackColor = false;
@@ -274,9 +279,9 @@
             panel1.Controls.Add(lblsdt);
             panel1.Controls.Add(lblthongtinnhanvien);
             panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(3, 253);
+            panel1.Location = new Point(3, 239);
             panel1.Name = "panel1";
-            panel1.Size = new Size(892, 161);
+            panel1.Size = new Size(892, 175);
             panel1.TabIndex = 1;
             // 
             // btndoimatkhau
@@ -421,11 +426,12 @@
             // 
             lblthongtinnhanvien.AutoSize = true;
             lblthongtinnhanvien.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            lblthongtinnhanvien.Location = new Point(250, 10);
+            lblthongtinnhanvien.Location = new Point(318, 16);
             lblthongtinnhanvien.Name = "lblthongtinnhanvien";
             lblthongtinnhanvien.Size = new Size(203, 28);
             lblthongtinnhanvien.TabIndex = 0;
             lblthongtinnhanvien.Text = "Thông tin nhân viên";
+            lblthongtinnhanvien.Click += lblthongtinnhanvien_Click;
             // 
             // dtgvquanlynhanvien
             // 
@@ -438,7 +444,7 @@
             dtgvquanlynhanvien.ReadOnly = true;
             dtgvquanlynhanvien.RowHeadersWidth = 51;
             dtgvquanlynhanvien.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dtgvquanlynhanvien.Size = new Size(892, 167);
+            dtgvquanlynhanvien.Size = new Size(892, 230);
             dtgvquanlynhanvien.TabIndex = 0;
             // 
             // quanlykho
@@ -487,17 +493,19 @@
             dgvkho.ReadOnly = true;
             dgvkho.RowHeadersWidth = 51;
             dgvkho.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvkho.Size = new Size(878, 238);
+            dgvkho.Size = new Size(878, 257);
             dgvkho.TabIndex = 0;
             dgvkho.CellContentClick += dgvInventory_CellContentClick;
             // 
             // gbthongtinnguyenlieu
             // 
             gbthongtinnguyenlieu.Controls.Add(txtten);
+            gbthongtinnguyenlieu.Controls.Add(textBox2);
             gbthongtinnguyenlieu.Controls.Add(txtdonvi);
             gbthongtinnguyenlieu.Controls.Add(txtsoluong);
             gbthongtinnguyenlieu.Controls.Add(txtma);
             gbthongtinnguyenlieu.Controls.Add(lblsoluong);
+            gbthongtinnguyenlieu.Controls.Add(label1);
             gbthongtinnguyenlieu.Controls.Add(lblten);
             gbthongtinnguyenlieu.Controls.Add(lblma);
             gbthongtinnguyenlieu.Controls.Add(lbldonvi);
@@ -505,9 +513,9 @@
             gbthongtinnguyenlieu.Controls.Add(lblxoa);
             gbthongtinnguyenlieu.Controls.Add(lblcapnhat);
             gbthongtinnguyenlieu.Dock = DockStyle.Bottom;
-            gbthongtinnguyenlieu.Location = new Point(3, 241);
+            gbthongtinnguyenlieu.Location = new Point(3, 260);
             gbthongtinnguyenlieu.Name = "gbthongtinnguyenlieu";
-            gbthongtinnguyenlieu.Size = new Size(878, 134);
+            gbthongtinnguyenlieu.Size = new Size(878, 115);
             gbthongtinnguyenlieu.TabIndex = 3;
             gbthongtinnguyenlieu.TabStop = false;
             gbthongtinnguyenlieu.Text = "Thông Tin Nguyên Liệu";
@@ -520,11 +528,18 @@
             txtten.Size = new Size(276, 27);
             txtten.TabIndex = 1;
             // 
+            // textBox2
+            // 
+            textBox2.Location = new Point(731, 23);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(144, 27);
+            textBox2.TabIndex = 1;
+            // 
             // txtdonvi
             // 
             txtdonvi.Location = new Point(327, 74);
             txtdonvi.Name = "txtdonvi";
-            txtdonvi.Size = new Size(182, 27);
+            txtdonvi.Size = new Size(80, 27);
             txtdonvi.TabIndex = 1;
             // 
             // txtsoluong
@@ -550,6 +565,16 @@
             lblsoluong.Size = new Size(87, 23);
             lblsoluong.TabIndex = 0;
             lblsoluong.Text = "Số Lượng:";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 163);
+            label1.Location = new Point(629, 27);
+            label1.Name = "label1";
+            label1.Size = new Size(93, 23);
+            label1.TabIndex = 0;
+            label1.Text = "Tình trạng:";
             // 
             // lblten
             // 
@@ -585,9 +610,9 @@
             // 
             lblthem.BackColor = Color.Cyan;
             lblthem.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 163);
-            lblthem.Location = new Point(716, 101);
+            lblthem.Location = new Point(666, 83);
             lblthem.Name = "lblthem";
-            lblthem.Size = new Size(71, 29);
+            lblthem.Size = new Size(101, 29);
             lblthem.TabIndex = 2;
             lblthem.Text = "Thêm";
             lblthem.UseVisualStyleBackColor = false;
@@ -597,9 +622,9 @@
             // 
             lblxoa.BackColor = Color.Red;
             lblxoa.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 163);
-            lblxoa.Location = new Point(805, 101);
+            lblxoa.Location = new Point(788, 83);
             lblxoa.Name = "lblxoa";
-            lblxoa.Size = new Size(65, 29);
+            lblxoa.Size = new Size(84, 29);
             lblxoa.TabIndex = 2;
             lblxoa.Text = "Xóa";
             lblxoa.UseVisualStyleBackColor = false;
@@ -609,7 +634,7 @@
             // 
             lblcapnhat.BackColor = Color.Cyan;
             lblcapnhat.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold, GraphicsUnit.Point, 163);
-            lblcapnhat.Location = new Point(611, 101);
+            lblcapnhat.Location = new Point(561, 83);
             lblcapnhat.Name = "lblcapnhat";
             lblcapnhat.Size = new Size(89, 29);
             lblcapnhat.TabIndex = 2;
@@ -641,11 +666,12 @@
             dgvSanPham.ReadOnly = true;
             dgvSanPham.RowHeadersWidth = 51;
             dgvSanPham.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvSanPham.Size = new Size(878, 203);
+            dgvSanPham.Size = new Size(878, 222);
             dgvSanPham.TabIndex = 5;
             // 
             // gbsanpham
             // 
+            gbsanpham.Controls.Add(textBox1);
             gbsanpham.Controls.Add(btnthem);
             gbsanpham.Controls.Add(txtdon_vi);
             gbsanpham.Controls.Add(txtloai);
@@ -663,21 +689,28 @@
             gbsanpham.Controls.Add(btnsua);
             gbsanpham.Controls.Add(btnxoa);
             gbsanpham.Dock = DockStyle.Bottom;
-            gbsanpham.Location = new Point(3, 238);
+            gbsanpham.Location = new Point(3, 231);
             gbsanpham.Name = "gbsanpham";
-            gbsanpham.Size = new Size(878, 137);
+            gbsanpham.Size = new Size(878, 144);
             gbsanpham.TabIndex = 4;
             gbsanpham.TabStop = false;
             gbsanpham.Text = "Thông Tin Sản Phẩm";
             gbsanpham.Visible = false;
             // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(747, 35);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(125, 27);
+            textBox1.TabIndex = 5;
+            // 
             // btnthem
             // 
             btnthem.BackColor = Color.Cyan;
             btnthem.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
-            btnthem.Location = new Point(673, 102);
+            btnthem.Location = new Point(610, 102);
             btnthem.Name = "btnthem";
-            btnthem.Size = new Size(66, 29);
+            btnthem.Size = new Size(101, 36);
             btnthem.TabIndex = 3;
             btnthem.Text = "Thêm";
             btnthem.UseVisualStyleBackColor = false;
@@ -799,9 +832,9 @@
             // 
             btnsua.BackColor = Color.Cyan;
             btnsua.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
-            btnsua.Location = new Point(748, 102);
+            btnsua.Location = new Point(717, 101);
             btnsua.Name = "btnsua";
-            btnsua.Size = new Size(60, 30);
+            btnsua.Size = new Size(91, 36);
             btnsua.TabIndex = 4;
             btnsua.Text = "Sửa";
             btnsua.UseVisualStyleBackColor = false;
@@ -811,9 +844,9 @@
             // 
             btnxoa.BackColor = Color.Red;
             btnxoa.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
-            btnxoa.Location = new Point(814, 102);
+            btnxoa.Location = new Point(814, 101);
             btnxoa.Name = "btnxoa";
-            btnxoa.Size = new Size(58, 30);
+            btnxoa.Size = new Size(58, 36);
             btnxoa.TabIndex = 4;
             btnxoa.Text = "Xóa";
             btnxoa.UseVisualStyleBackColor = false;
@@ -874,6 +907,7 @@
             // 
             // gbkhuyenmai
             // 
+            gbkhuyenmai.Controls.Add(txtgtkm);
             gbkhuyenmai.Controls.Add(dtpngayketthuc);
             gbkhuyenmai.Controls.Add(dtpngaybatdau);
             gbkhuyenmai.Controls.Add(cmbloaikm);
@@ -885,6 +919,7 @@
             gbkhuyenmai.Controls.Add(lblngaybatdau);
             gbkhuyenmai.Controls.Add(lblgiatri);
             gbkhuyenmai.Controls.Add(lblloaikm);
+            gbkhuyenmai.Controls.Add(label2);
             gbkhuyenmai.Controls.Add(lbltrangthaikm);
             gbkhuyenmai.Controls.Add(lblmota);
             gbkhuyenmai.Controls.Add(lbltenkm);
@@ -899,6 +934,14 @@
             gbkhuyenmai.TabStop = false;
             gbkhuyenmai.Text = "Thông Tin Khuyến Mãi";
             gbkhuyenmai.Visible = false;
+            // 
+            // txtgtkm
+            // 
+            txtgtkm.Location = new Point(580, 30);
+            txtgtkm.Name = "txtgtkm";
+            txtgtkm.Size = new Size(85, 27);
+            txtgtkm.TabIndex = 12;
+            txtgtkm.TextChanged += txtgtkm_TextChanged;
             // 
             // dtpngayketthuc
             // 
@@ -958,7 +1001,7 @@
             txttenkm.Location = new Point(114, 30);
             txttenkm.Name = "txttenkm";
             txttenkm.PlaceholderText = "Nhập tên khuyến mãi";
-            txttenkm.Size = new Size(576, 27);
+            txttenkm.Size = new Size(335, 27);
             txttenkm.TabIndex = 1;
             // 
             // lblngayketthuc
@@ -1001,6 +1044,17 @@
             lblloaikm.TabIndex = 0;
             lblloaikm.Text = "Loại KM:";
             // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+            label2.Location = new Point(459, 33);
+            label2.Name = "label2";
+            label2.Size = new Size(115, 20);
+            label2.TabIndex = 0;
+            label2.Text = "Giá trị áp dụng:";
+            label2.Click += label2_Click;
+            // 
             // lbltrangthaikm
             // 
             lbltrangthaikm.AutoSize = true;
@@ -1035,34 +1089,37 @@
             // 
             btnthemkm.BackColor = Color.FromArgb(46, 125, 50);
             btnthemkm.ForeColor = Color.White;
-            btnthemkm.Location = new Point(455, 140);
+            btnthemkm.Location = new Point(642, 139);
             btnthemkm.Name = "btnthemkm";
             btnthemkm.Size = new Size(75, 30);
             btnthemkm.TabIndex = 9;
             btnthemkm.Text = "Thêm";
             btnthemkm.UseVisualStyleBackColor = false;
+            btnthemkm.Click += btnthemkm_Click_1;
             // 
             // btnsuakm
             // 
             btnsuakm.BackColor = Color.FromArgb(33, 150, 243);
             btnsuakm.ForeColor = Color.White;
-            btnsuakm.Location = new Point(540, 140);
+            btnsuakm.Location = new Point(727, 139);
             btnsuakm.Name = "btnsuakm";
             btnsuakm.Size = new Size(75, 30);
             btnsuakm.TabIndex = 10;
             btnsuakm.Text = "Sửa";
             btnsuakm.UseVisualStyleBackColor = false;
+            btnsuakm.Click += btnsuakm_Click_1;
             // 
             // btnxoakm
             // 
             btnxoakm.BackColor = Color.FromArgb(244, 67, 54);
             btnxoakm.ForeColor = Color.White;
-            btnxoakm.Location = new Point(625, 140);
+            btnxoakm.Location = new Point(812, 139);
             btnxoakm.Name = "btnxoakm";
             btnxoakm.Size = new Size(75, 30);
             btnxoakm.TabIndex = 11;
             btnxoakm.Text = "Xóa";
             btnxoakm.UseVisualStyleBackColor = false;
+            btnxoakm.Click += btnxoakm_Click_1;
             // 
             // Admin
             // 
@@ -1189,5 +1246,10 @@
         private Button btnxoakm;
         private Panel pnChucnang;
         private Panel panel2;
+        private TextBox textBox1;
+        private TextBox textBox2;
+        private Label label1;
+        private Label label2;
+        private TextBox txtgtkm;
     }
 }

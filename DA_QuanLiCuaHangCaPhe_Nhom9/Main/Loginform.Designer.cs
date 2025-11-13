@@ -97,7 +97,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 19.8000011F, FontStyle.Bold, GraphicsUnit.Point, 163);
-            label1.Location = new Point(174, 9);
+            label1.Location = new Point(177, 22);
             label1.Margin = new Padding(1, 0, 1, 0);
             label1.Name = "label1";
             label1.Size = new Size(194, 46);
@@ -130,13 +130,14 @@
             // label4
             // 
             label4.AutoSize = true;
+            label4.BorderStyle = BorderStyle.Fixed3D;
             label4.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 163);
             label4.ForeColor = SystemColors.ActiveCaptionText;
-            label4.Location = new Point(48, 82);
+            label4.Location = new Point(42, 105);
             label4.Name = "label4";
-            label4.Size = new Size(221, 82);
+            label4.Size = new Size(223, 43);
             label4.TabIndex = 17;
-            label4.Text = "COFFEE SHOP \r\n  MANEGER";
+            label4.Text = "COFFEE SHOP ";
             // 
             // Loginform
             // 
