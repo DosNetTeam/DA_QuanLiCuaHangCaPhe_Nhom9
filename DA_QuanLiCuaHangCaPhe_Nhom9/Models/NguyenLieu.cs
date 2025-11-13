@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 
-namespace DA_QuanLiCuaHangCaPhe_Nhom9.Models;
-
-public partial class NguyenLieu
-{
+public partial class NguyenLieu {
     public int MaNl { get; set; }
 
     public string TenNl { get; set; } = null!;
