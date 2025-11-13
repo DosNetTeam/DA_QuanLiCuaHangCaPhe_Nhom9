@@ -156,7 +156,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 // Authentication successful - hiển thị tin nhắn xin chào
 
-                MessageBox.Show($"Đăng nhập thành công!\n" + $"Xin chào: {account.NhanVien}\n" + $"Vai trò: {account.VaiTro}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //MessageBox.Show($"Đăng nhập thành công!\n" + $"Xin chào: {account.NhanVien}\n" + $"Vai trò: {account.VaiTro}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 // Lộ trình dựa trên vai trò
                 //this.Hide(); // ẩn form đăng nhập
 
