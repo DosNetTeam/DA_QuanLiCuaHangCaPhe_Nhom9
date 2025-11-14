@@ -1,4 +1,5 @@
 ﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+// Thêm global:: để tránh lỗi
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
     /// <summary>
@@ -37,18 +38,15 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
                     var tatCaSanPham = db.SanPhams.ToList();
                     var cacLoaiSPTam = new List<string>();
 
-                    // Thay thế cho .Select(sp => sp.LoaiSp) và .Where(loai => loai != null && loai != "")
                     foreach (var sp in tatCaSanPham) {
                         if (sp.LoaiSp != null && sp.LoaiSp != "") {
                             cacLoaiSPTam.Add(sp.LoaiSp);
                         }
                     }
 
-                    // Thay thế cho .Distinct()
                     var ketQua = new List<string>();
                     foreach (var loai in cacLoaiSPTam) {
-                        if (!ketQua.Contains(loai)) // Nếu chưa có trong danh sách kết quả
-                        {
+                        if (!ketQua.Contains(loai)) {
                             ketQua.Add(loai);
                         }
                     }
@@ -69,19 +67,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
                 using (DataSqlContext db = new DataSqlContext()) {
                     var tatCaSanPham_raw = db.SanPhams.ToList();
                     var tatCaNguyenLieu_raw = db.NguyenLieus.ToList();
-                    var allDinhLuong = db.DinhLuongs.ToList(); // (Gốc không có filter)
+                    var allDinhLuong = db.DinhLuongs.ToList();
 
                     var tatCaSanPham_filter = new List<SanPham>();
                     var allNguyenLieu_filter = new List<NguyenLieu>();
 
-                    // Thay thế .Where(sp => sp.TrangThai == "Còn bán")
                     foreach (var sp in tatCaSanPham_raw) {
                         if (sp.TrangThai == "Còn bán") {
                             tatCaSanPham_filter.Add(sp);
                         }
                     }
 
-                    // Thay thế .Where(nl => nl.TrangThai == "Đang kinh doanh")
                     foreach (var nl in tatCaNguyenLieu_raw) {
                         if (nl.TrangThai == "Đang kinh doanh") {
                             allNguyenLieu_filter.Add(nl);
@@ -113,10 +109,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
                 using (DataSqlContext db = new DataSqlContext()) {
                     var tatCaKhachHang = db.KhachHangs.ToList();
 
-                    // Thay thế .FirstOrDefault(kh => kh.SoDienThoai == sdt)
                     foreach (var kh in tatCaKhachHang) {
                         if (kh.SoDienThoai == sdt) {
-                            return kh; // Tìm thấy, trả về ngay
+                            return kh;
                         }
                     }
                     return null; // Không tìm thấy
@@ -134,7 +129,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
         public KhuyenMai LayKhuyenMaiHoaDon() {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
-                    // Đây là logic foreach gốc của bạn từ CapNhatTongTien
                     DateOnly now = DateOnly.FromDateTime(DateTime.Now);
                     var allKM = db.KhuyenMais.ToList();
                     KhuyenMai kmHoaDon = null;
@@ -164,84 +158,111 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
         /// <returns>MaDH mới, hoặc -1 nếu lỗi</returns>
         public int LuuDonHangTam(List<ChiTietGioHang> gioHang, decimal tongTien, int maNV, int? maKH) {
             try {
-                // Dùng 1 context cho tất cả thao tác, y như code gốc
                 using (DataSqlContext db = new DataSqlContext()) {
-                    // Bước 1: Tạo DonHang
-                    var donHangMoi = new DonHang {
-                        NgayLap = DateTime.Now,
-                        MaNv = maNV,
-                        TrangThai = "Đang xử lý",
-                        TongTien = tongTien,
-                        MaKh = maKH
-                    };
+                    using (var transaction = db.Database.BeginTransaction()) {
+                        try {
+                            // Bước 1: Tạo DonHang
+                            var donHangMoi = new DonHang {
+                                NgayLap = DateTime.Now,
+                                MaNv = maNV,
+                                TrangThai = "Đang xử lý",
+                                TongTien = tongTien,
+                                MaKh = maKH
+                            };
 
-                    // Bước 2: Tạo List ChiTietDonHang (dùng navigation y như gốc)
-                    var listChiTiet = new List<ChiTietDonHang>();
-                    foreach (var item in gioHang) {
-                        var chiTiet = new ChiTietDonHang {
-                            MaDhNavigation = donHangMoi, // Gán navigation
-                            MaSp = item.MaSP,
-                            SoLuong = item.SoLuong,
-                            DonGia = item.DonGia
-                        };
-                        listChiTiet.Add(chiTiet);
-                    }
-
-                    // Bước 3: Tạo ThanhToan (dùng navigation y như gốc)
-                    var thanhToanMoi = new Models.ThanhToan {
-                        MaDhNavigation = donHangMoi, // Gán navigation
-                        HinhThuc = null,
-                        SoTien = tongTien,
-                        TrangThai = "Chưa thanh toán"
-                    };
-
-                    // Bước 4: Add vào DbContext
-                    db.DonHangs.Add(donHangMoi);
-                    db.ChiTietDonHangs.AddRange(listChiTiet);
-                    db.ThanhToans.Add(thanhToanMoi);
-
-                    // Bước 5: Trừ kho (viết lại bằng foreach)
-                    foreach (var monAn in listChiTiet) {
-                        // Lấy công thức (thay .Where)
-                        var congThuc_raw = db.DinhLuongs.ToList();
-                        var congThuc_filter = new List<DinhLuong>();
-                        foreach (var dl in congThuc_raw) {
-                            if (dl.MaSp == monAn.MaSp) {
-                                congThuc_filter.Add(dl);
+                            // Bước 2: Tạo List ChiTietDonHang
+                            var listChiTiet = new List<ChiTietDonHang>();
+                            foreach (var item in gioHang) {
+                                var chiTiet = new ChiTietDonHang {
+                                    MaDhNavigation = donHangMoi, // Gán navigation
+                                    MaSp = item.MaSP,
+                                    SoLuong = item.SoLuong,
+                                    DonGia = item.DonGia
+                                };
+                                listChiTiet.Add(chiTiet);
                             }
-                        }
 
-                        if (congThuc_filter.Count > 0) {
-                            foreach (var nguyenLieuCan in congThuc_filter) {
-                                // Lấy NL trong kho (thay .FirstOrDefault)
-                                var nguyenLieuKho_raw = db.NguyenLieus.ToList();
-                                NguyenLieu nguyenLieuTrongKho = null;
-                                foreach (var nl in nguyenLieuKho_raw) {
-                                    if (nl.MaNl == nguyenLieuCan.MaNl) {
-                                        nguyenLieuTrongKho = nl;
-                                        break; // Tìm thấy
+                            // Bước 3: Tạo ThanhToan
+                            var thanhToanMoi = new Models.ThanhToan {
+                                MaDhNavigation = donHangMoi, // Gán navigation
+                                HinhThuc = null,
+                                SoTien = tongTien,
+                                TrangThai = "Chưa thanh toán"
+                            };
+
+                            // Bước 4: Add vào DbContext
+                            db.DonHangs.Add(donHangMoi);
+                            db.ChiTietDonHangs.AddRange(listChiTiet);
+                            db.ThanhToans.Add(thanhToanMoi);
+
+                            // Bước 5: Trừ kho (viết lại bằng foreach)
+                            var allCongThuc = db.DinhLuongs.ToList();
+                            var allNguyenLieu = db.NguyenLieus.ToList(); // Tải 1 lần
+
+                            foreach (var monAn in listChiTiet) {
+                                var congThuc_filter = new List<DinhLuong>();
+                                foreach (var dl in allCongThuc) {
+                                    if (dl.MaSp == monAn.MaSp) {
+                                        congThuc_filter.Add(dl);
                                     }
                                 }
 
-                                if (nguyenLieuTrongKho != null) {
-                                    decimal luongCanTru = nguyenLieuCan.SoLuongCan * monAn.SoLuong;
-                                    nguyenLieuTrongKho.SoLuongTon -= luongCanTru;
-                                    db.Update(nguyenLieuTrongKho);
+                                if (congThuc_filter.Count > 0) {
+                                    foreach (var nguyenLieuCan in congThuc_filter) {
+                                        NguyenLieu nguyenLieuTrongKho = null;
+                                        foreach (var nl in allNguyenLieu) // Tìm trong list đã tải
+                                        {
+                                            if (nl.MaNl == nguyenLieuCan.MaNl) {
+                                                nguyenLieuTrongKho = nl;
+                                                break;
+                                            }
+                                        }
+
+                                        if (nguyenLieuTrongKho != null) {
+                                            decimal luongCanTru = nguyenLieuCan.SoLuongCan * monAn.SoLuong;
+                                            nguyenLieuTrongKho.SoLuongTon -= luongCanTru;
+                                            db.Update(nguyenLieuTrongKho); // Đánh dấu đã sửa
+                                        }
+                                    }
                                 }
                             }
+
+                            // Bước 6: Lưu CSDL
+                            db.SaveChanges();
+                            transaction.Commit(); // Hoàn tất giao dịch
+
+                            // Bước 7: Trả về MaDH mới
+                            return donHangMoi.MaDh;
+                        }
+                        catch (Exception ex_inner) {
+                            Console.WriteLine("Lỗi trong transaction LuuDonHangTam: " + ex_inner.Message);
+                            transaction.Rollback(); // Hoàn tác
+                            return -1;
                         }
                     }
-
-                    // Bước 6: Lưu CSDL (chỉ 1 lần ở cuối, y như gốc)
-                    db.SaveChanges();
-
-                    // Bước 7: Trả về MaDH mới
-                    return donHangMoi.MaDh;
                 }
             }
             catch (Exception ex) {
                 Console.WriteLine("Lỗi khi lưu tạm đơn hàng: " + ex.InnerException?.Message ?? ex.Message);
                 return -1; // Báo lỗi
+            }
+        }
+
+        /// <summary>
+        /// Thêm một khách hàng mới vào CSDL.
+        /// Trả về true nếu thành công, false nếu thất bại.
+        /// </summary>
+        public bool ThemKhachHangMoi(KhachHang khachHangMoi) {
+            try {
+                using (DataSqlContext db = new DataSqlContext()) {
+                    db.KhachHangs.Add(khachHangMoi);
+                    db.SaveChanges(); // Lưu vào CSDL
+                    return true;
+                }
+            }
+            catch (Exception ex) {
+                Console.WriteLine("Lỗi khi lưu khách hàng: " + ex.InnerException?.Message ?? ex.Message);
+                return false;
             }
         }
     }
