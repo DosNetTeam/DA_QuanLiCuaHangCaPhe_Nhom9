@@ -1,17 +1,23 @@
 ﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Function;
-using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
-using System.Configuration;
-using System.Data;
-using System.Globalization;
+// Thêm namespace của KhoTruyVan
+using DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi;
+using global::System.Configuration;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
     public partial class QuanLi : Form {
+        // Vẫn giữ chuỗi kết nối (mặc dù hiện tại không dùng)
         private string connectionString = ConfigurationManager.ConnectionStrings["CoffeeDB"]?.ConnectionString;
         private int _currentMaNV = 0;
+
+        // Khai báo Kho Truy Vấn
+        private readonly KhoTruyVanQuanLi _khoTruyVan;
 
         public QuanLi(int maNv = 0) {
             _currentMaNV = maNv;
             InitializeComponent();
+
+            // Khởi tạo Kho Truy Vấn
+            _khoTruyVan = new KhoTruyVanQuanLi();
 
             // Gắn các sự kiện bổ sung
             this.Load += QuanLi_Load;
@@ -25,38 +31,34 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
             dgvSanPham.CellFormatting += dgvSanPham_CellFormatting;
 
-            // Gắn sự kiện cho tab Khuyến mãi (MỚI)
+            // Gắn sự kiện cho tab Khuyến mãi
             txtTimKiemKM.TextChanged += txtTimKiemKM_TextChanged;
             cbLocTrangThaiKM.SelectedIndexChanged += cbLocTrangThaiKM_SelectedIndexChanged;
 
             dgvKhuyenMai.CellFormatting += dgvKhuyenMai_CellFormatting;
 
-            // Gắn CellFormatting để tô màu các cột trạng thái / hiệu suất
+            // Gắn CellFormatting
             dgvPerformance.CellFormatting += dgvPerformance_CellFormatting;
             dgvHoaDon.CellFormatting += dgvHoaDon_CellFormatting;
             dgvTonKho.CellFormatting += dgvTonKho_CellFormatting;
 
-            // Wire notify button directly (controls are in pnlNotify)
+            // Wire notify button directly
             if (btnSendNotify != null)
                 btnSendNotify.Click += btnSendNotify_Click;
         }
 
         private void QuanLi_Load(object sender, EventArgs e) {
-            // Cài đặt các ComboBox lọc
             SetupFilters();
-
-            // Tải dữ liệu ban đầu
             LoadData_NhanVien();
             LoadData_HoaDon();
             LoadData_TonKho();
             LoadData_SanPham();
-            LoadData_KhuyenMai(); // <-- THÊM MỚI
+            LoadData_KhuyenMai();
             LoadNotifications();
 
-            // Ensure notification group stays in the left menu and is usable
+            // (Code setup UI giữ nguyên)
             try {
                 if (grpNotify != null) {
-                    // Keep group in the designer parent (panelMenu) so input and tab order work
                     grpNotify.Visible = true;
                     grpNotify.BringToFront();
                 }
@@ -66,7 +68,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 }
                 if (btnSendNotify != null) {
                     btnSendNotify.Enabled = true;
-                    // ensure click handler present
                     btnSendNotify.Click -= btnSendNotify_Click;
                     btnSendNotify.Click += btnSendNotify_Click;
                 }
@@ -75,6 +76,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         private void PositionNotifyGroup() {
+            // (Code này giữ nguyên)
             try {
                 if (grpNotify == null || panelContent == null) return;
                 int margin = 15;
@@ -87,60 +89,26 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             catch { }
         }
 
-        // Public helper to get notifications as list of strings
+        // *** ĐÃ TÁCH CSDL ***
         public List<string> GetNotifications() {
-            var list = new List<string>();
             try {
-                using (DataSqlContext db = new DataSqlContext()) {
-                    // 1) Employees inactive (no orders in last 30 days)
-                    var since = DateTime.Now.AddDays(-30);
-                    var inactive = db.NhanViens
-                        .Where(nv => !db.DonHangs.Any(dh => dh.MaNv == nv.MaNv && dh.NgayLap >= since))
-                        .Select(nv => nv.TenNv)
-                        .Take(5)
-                        .ToList();
-
-                    foreach (var name in inactive)
-                        list.Add($"Nhân viên lâu không hoạt động: {name}");
-
-                    // 2) Unpaid invoices (older than 1 day and ThanhToan status 'Chưa thanh toán')
-                    var unpaid = db.ThanhToans
-                        .Where(tt => tt.TrangThai == "Chưa thanh toán" && tt.MaDhNavigation.NgayLap <= DateTime.Now.AddDays(-1))
-                        .Select(tt => new { tt.MaDh, tt.MaDhNavigation.NgayLap })
-                        .Take(5)
-                        .ToList();
-
-                    foreach (var u in unpaid)
-                        list.Add($"Hóa đơn chưa thanh toán: #{u.MaDh} - {u.NgayLap?.ToString("dd/MM/yy")}");
-
-                    // 3) Low stock items (SoLuongTon <= NguongCanhBao)
-                    var low = db.NguyenLieus
-                        .Where(nl => nl.SoLuongTon <= (nl.NguongCanhBao ?? 0))
-                        .Select(nl => new { nl.TenNl, nl.SoLuongTon })
-                        .Take(10)
-                        .ToList();
-
-                    foreach (var nl in low)
-                        list.Add($"Hàng trong kho còn ít: {nl.TenNl} ({nl.SoLuongTon ?? 0})");
-                }
+                // Chỉ gọi hàm từ KhoTruyVan
+                return _khoTruyVan.TaiThongBao();
             }
             catch (Exception ex) {
+                var list = new List<string>();
                 list.Add("Lỗi khi tải thông báo: " + ex.Message);
+                return list;
             }
-
-            if (list.Count == 0)
-                list.Add("Không có thông báo mới.");
-
-            return list;
         }
 
+        // *** ĐÃ TÁCH CSDL ***
         private void LoadNotifications() {
             try {
+                // Chỉ gọi hàm GetNotifications đã được refactor
                 var notes = GetNotifications();
-                // lbNotifications was removed from the UI; keep a no-op placeholder
-                // Optionally we could display the latest note in grpNotify.Tag for debugging
                 if (grpNotify != null && notes != null && notes.Count > 0) {
-                    grpNotify.Tag = notes; // store notes for possible later use
+                    grpNotify.Tag = notes;
                 }
             }
             catch { }
@@ -148,7 +116,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         // Cài đặt giá trị ban đầu cho các ComboBox lọc
         private void SetupFilters() {
-            // Cài đặt cho ComboBox Lọc Tháng
+            // (Code này giữ nguyên)
             cbThang.Items.Clear();
             cbThang.Items.Add("Tất cả");
             for (int i = 1; i <= 12; i++) {
@@ -156,7 +124,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
             cbThang.SelectedIndex = 0;
 
-            // Cài đặt cho ComboBox Trạng thái Hóa Đơn
             cbTrangThaiHD.Items.Clear();
             cbTrangThaiHD.Items.Add("Tất cả");
             cbTrangThaiHD.Items.Add("Đang xu ly");
@@ -164,7 +131,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             cbTrangThaiHD.Items.Add("Đã hủy");
             cbTrangThaiHD.SelectedIndex = 0;
 
-            // Cài đặt cho ComboBox Trạng thái Khuyến Mãi (MỚI)
             cbLocTrangThaiKM.Items.Clear();
             cbLocTrangThaiKM.Items.Add("Tất cả");
             cbLocTrangThaiKM.Items.Add("Đang áp dụng");
@@ -172,254 +138,143 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             cbLocTrangThaiKM.Items.Add("Sắp diễn ra");
             cbLocTrangThaiKM.SelectedIndex = 0;
 
-            // Placeholder text handling (nếu cần)
             if (string.IsNullOrWhiteSpace(txtTimKiemHD.Text))
                 txtTimKiemHD.ForeColor = Color.Gray;
             if (string.IsNullOrWhiteSpace(txtTimKiemKho.Text))
                 txtTimKiemKho.ForeColor = Color.Gray;
         }
 
-        #region Các hàm tải dữ liệu (Load Data - Dùng EF Core)
+        #region Các hàm tải dữ liệu (ĐÃ TÁCH CSDL)
 
+        // *** ĐÃ TÁCH CSDL ***
         private void LoadData_NhanVien() {
             try {
-                using (DataSqlContext db = new DataSqlContext()) {
-                    int selectedMonth = cbThang.SelectedIndex;
+                int selectedMonth = cbThang.SelectedIndex;
 
-                    var query = from nv in db.NhanViens.Where(nv => nv.TrangThai == "Đang làm việc")
-                                join dh in db.DonHangs
-                                    .Where(d => selectedMonth == 0 || (d.NgayLap.HasValue && d.NgayLap.Value.Month == selectedMonth))
-                                    on nv.MaNv equals dh.MaNv into groupDonHang
-                                from donHang in groupDonHang.DefaultIfEmpty()
-                                group donHang by new { nv.MaNv, nv.TenNv } into g
-                                select new {
-                                    TenNV = g.Key.TenNv,
-                                    SoDon = g.Count(dh => dh != null),
-                                    TongDoanhThu = g.Sum(dh => (decimal?)dh.TongTien) ?? 0
-                                };
+                // 1. Gọi KhoTruyVan để lấy dữ liệu
+                var finalData = _khoTruyVan.TaiDuLieuNhanVien(selectedMonth);
 
-                    var finalData = query
-                        .OrderByDescending(x => x.TongDoanhThu)
-                        .AsEnumerable()
-                        .Select(x => new {
-                            x.TenNV,
-                            x.SoDon,
-                            TongDoanhThu = x.TongDoanhThu.ToString("N0", CultureInfo.InvariantCulture) + " đ",
-                            HieuSuat = TinhHieuSuat(x.TongDoanhThu)
-                        })
-                        .ToList();
+                // 2. Gán dữ liệu cho UI
+                dgvPerformance.DataSource = finalData;
 
-                    dgvPerformance.DataSource = finalData;
+                if (dgvPerformance.Columns["TenNV"] != null)
+                    dgvPerformance.Columns["TenNV"].HeaderText = "Tên Nhân Viên";
+                if (dgvPerformance.Columns["SoDon"] != null)
+                    dgvPerformance.Columns["SoDon"].HeaderText = "Số Đơn";
+                if (dgvPerformance.Columns["TongDoanhThu"] != null)
+                    dgvPerformance.Columns["TongDoanhThu"].HeaderText = "Tổng Doanh Thu";
+                if (dgvPerformance.Columns["HieuSuat"] != null)
+                    dgvPerformance.Columns["HieuSuat"].HeaderText = "Hiệu Suất";
 
-                    if (dgvPerformance.Columns["TenNV"] != null)
-                        dgvPerformance.Columns["TenNV"].HeaderText = "Tên Nhân Viên";
-                    if (dgvPerformance.Columns["SoDon"] != null)
-                        dgvPerformance.Columns["SoDon"].HeaderText = "Số Đơn";
-                    if (dgvPerformance.Columns["TongDoanhThu"] != null)
-                        dgvPerformance.Columns["TongDoanhThu"].HeaderText = "Tổng Doanh Thu";
-                    if (dgvPerformance.Columns["HieuSuat"] != null)
-                        dgvPerformance.Columns["HieuSuat"].HeaderText = "Hiệu Suất";
-
-                    dgvPerformance.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-                }
+                dgvPerformance.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
             catch (Exception ex) {
                 MessageBox.Show("Lỗi khi tải dữ liệu nhân viên: " + (ex.InnerException?.Message ?? ex.Message));
             }
         }
 
+        // *** ĐÃ TÁCH CSDL ***
         private void LoadData_HoaDon() {
             try {
-                using (DataSqlContext db = new DataSqlContext()) {
-                    var query = from dh in db.DonHangs
-                                join nv in db.NhanViens on dh.MaNv equals nv.MaNv
-                                select new {
-                                    MaHD = dh.MaDh,
-                                    NgayLap = dh.NgayLap,
-                                    NhanVien = nv.TenNv,
-                                    TongTienRaw = dh.TongTien ?? 0,
-                                    TrangThai = dh.TrangThai
-                                };
+                // 1. Lấy tham số từ UI
+                string timKiem = txtTimKiemHD.Text?.Trim().ToLower() ?? "";
+                string trangThai = cbTrangThaiHD.SelectedItem?.ToString() ?? "Tất cả";
+                if (timKiem == "tim kiem ma hd") timKiem = "";
 
-                    string timKiem = txtTimKiemHD.Text?.Trim().ToLower() ?? "";
-                    string trangThai = cbTrangThaiHD.SelectedItem?.ToString() ?? "Tất cả";
+                // 2. Gọi KhoTruyVan
+                var finalData = _khoTruyVan.TaiDuLieuHoaDon(timKiem, trangThai);
 
-                    if (!string.IsNullOrEmpty(timKiem) && timKiem != "tim kiem ma hd") {
-                        query = query.Where(x => x.MaHD.ToString().ToLower().Contains(timKiem));
-                    }
-
-                    if (trangThai != "Tất cả") {
-                        query = query.Where(x => x.TrangThai == trangThai);
-                    }
-
-                    var finalData = query
-                        .OrderByDescending(x => x.NgayLap)
-                        .AsEnumerable()
-                        .Select(x => new {
-                            x.MaHD,
-                            x.NgayLap,
-                            x.NhanVien,
-                            TongTien = x.TongTienRaw.ToString("N0", CultureInfo.InvariantCulture) + " đ",
-                            x.TrangThai
-                        })
-                        .ToList();
-
-                    dgvHoaDon.DataSource = finalData;
-                    dgvHoaDon.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-                }
+                // 3. Gán cho UI
+                dgvHoaDon.DataSource = finalData;
+                dgvHoaDon.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
             catch (Exception ex) {
                 MessageBox.Show("Lỗi khi tải dữ liệu hóa đơn: " + (ex.InnerException?.Message ?? ex.Message));
             }
         }
 
+        // *** ĐÃ TÁCH CSDL ***
         private void LoadData_TonKho() {
             try {
-                using (DataSqlContext db = new DataSqlContext()) {
-                    var query = from nl in db.NguyenLieus.Where(nl => nl.TrangThai == "Đang kinh doanh")
-                                select new {
-                                    TenHang = nl.TenNl,
-                                    Loai = "Nguyên Liệu",
-                                    SoLuongTon = nl.SoLuongTon,
-                                    DonVi = nl.DonViTinh,
-                                    NguongCanhBao = nl.NguongCanhBao ?? 0
-                                };
+                // 1. Lấy tham số từ UI
+                string timKiem = txtTimKiemKho.Text?.Trim().ToLower() ?? "";
+                if (timKiem == "tim kiem nguyen lieu") timKiem = "";
 
-                    string timKiem = txtTimKiemKho.Text?.Trim().ToLower() ?? "";
-                    if (!string.IsNullOrEmpty(timKiem) && timKiem != "tim kiem nguyen lieu") {
-                        query = query.Where(x => x.TenHang.ToLower().Contains(timKiem));
-                    }
+                // 2. Gọi KhoTruyVan
+                var finalData = _khoTruyVan.TaiDuLieuTonKho(timKiem);
 
-                    var finalData = query
-                        .OrderBy(x => x.TenHang)
-                        .AsEnumerable()
-                        .Select(x => new {
-                            x.TenHang,
-                            x.Loai,
-                            SoLuong = $"{x.SoLuongTon} {x.DonVi}",
-                            TrangThai = TinhTrangThaiKho(x.SoLuongTon, x.NguongCanhBao)
-                        })
-                        .ToList();
-
-                    dgvTonKho.DataSource = finalData;
-                    dgvTonKho.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-                }
+                // 3. Gán cho UI
+                dgvTonKho.DataSource = finalData;
+                dgvTonKho.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
             catch (Exception ex) {
                 MessageBox.Show("Lỗi khi tải dữ liệu tồn kho: " + (ex.InnerException?.Message ?? ex.Message));
             }
         }
 
+        // *** ĐÃ TÁCH CSDL ***
         private void LoadData_SanPham() {
             try {
-                using (DataSqlContext db = new DataSqlContext()) {
-                    var query = from sp in db.SanPhams
-                                select new {
-                                    sp.MaSp,
-                                    sp.TenSp,
-                                    sp.LoaiSp,
-                                    DonGiaRaw = sp.DonGia,
-                                    sp.DonVi,
-                                    sp.TrangThai
-                                };
+                // 1. Lấy tham số từ UI
+                string timKiem = txtTimKiemSP.Text?.Trim().ToLower() ?? "";
+                if (timKiem == "tìm theo tên sản phẩm") timKiem = "";
 
-                    string timKiem = txtTimKiemSP.Text?.Trim().ToLower() ?? "";
-                    if (!string.IsNullOrEmpty(timKiem) && timKiem != "tìm theo tên sản phẩm") {
-                        query = query.Where(x => x.TenSp.ToLower().Contains(timKiem));
-                    }
+                // 2. Gọi KhoTruyVan
+                var finalData = _khoTruyVan.TaiDuLieuSanPham(timKiem);
 
-                    var finalData = query
-                        .OrderBy(x => x.TenSp)
-                        .AsEnumerable()
-                        .Select(x => new {
-                            x.MaSp,
-                            TenSP = x.TenSp,
-                            Loai = x.LoaiSp,
-                            DonGia = x.DonGiaRaw.ToString("N0", CultureInfo.InvariantCulture) + " đ",
-                            x.DonVi,
-                            x.TrangThai
-                        })
-                        .ToList();
+                // 3. Gán cho UI
+                dgvSanPham.DataSource = finalData;
 
-                    dgvSanPham.DataSource = finalData;
+                if (dgvSanPham.Columns["MaSp"] != null)
+                    dgvSanPham.Columns["MaSp"].Visible = false;
+                if (dgvSanPham.Columns["TenSP"] != null)
+                    dgvSanPham.Columns["TenSP"].HeaderText = "Tên Sản Phẩm";
+                if (dgvSanPham.Columns["Loai"] != null)
+                    dgvSanPham.Columns["Loai"].HeaderText = "Loại";
+                if (dgvSanPham.Columns["DonGia"] != null)
+                    dgvSanPham.Columns["DonGia"].HeaderText = "Đơn Giá";
+                if (dgvSanPham.Columns["DonVi"] != null)
+                    dgvSanPham.Columns["DonVi"].HeaderText = "Đơn Vị";
+                if (dgvSanPham.Columns["TrangThai"] != null)
+                    dgvSanPham.Columns["TrangThai"].HeaderText = "Trạng Thái";
 
-                    if (dgvSanPham.Columns["MaSp"] != null)
-                        dgvSanPham.Columns["MaSp"].Visible = false;
-                    if (dgvSanPham.Columns["TenSP"] != null)
-                        dgvSanPham.Columns["TenSP"].HeaderText = "Tên Sản Phẩm";
-                    if (dgvSanPham.Columns["Loai"] != null)
-                        dgvSanPham.Columns["Loai"].HeaderText = "Loại";
-                    if (dgvSanPham.Columns["DonGia"] != null)
-                        dgvSanPham.Columns["DonGia"].HeaderText = "Đơn Giá";
-                    if (dgvSanPham.Columns["DonVi"] != null)
-                        dgvSanPham.Columns["DonVi"].HeaderText = "Đơn Vị";
-                    if (dgvSanPham.Columns["TrangThai"] != null)
-                        dgvSanPham.Columns["TrangThai"].HeaderText = "Trạng Thái";
-
-                    dgvSanPham.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-                }
+                dgvSanPham.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
             catch (Exception ex) {
                 MessageBox.Show("Lỗi khi tải dữ liệu sản phẩm: " + (ex.InnerException?.Message ?? ex.Message));
             }
         }
 
-        // <-- HÀM MỚI -->
+        // *** ĐÃ TÁCH CSDL ***
         private void LoadData_KhuyenMai() {
             try {
-                using (DataSqlContext db = new DataSqlContext()) {
-                    // Giả sử db.KhuyenMais
-                    var query = from km in db.KhuyenMais
-                                select km;
+                // 1. Lấy tham số từ UI
+                string trangThai = cbLocTrangThaiKM.SelectedItem?.ToString() ?? "Tất cả";
+                string timKiem = txtTimKiemKM.Text?.Trim().ToLower() ?? "";
+                if (timKiem == "tìm theo tên km") timKiem = "";
 
-                    // Lọc theo Trạng thái
-                    string trangThai = cbLocTrangThaiKM.SelectedItem?.ToString() ?? "Tất cả";
-                    if (trangThai != "Tất cả") {
-                        query = query.Where(x => x.TrangThai == trangThai);
-                    }
+                // 2. Gọi KhoTruyVan
+                var finalData = _khoTruyVan.TaiDuLieuKhuyenMai(timKiem, trangThai);
 
-                    // Lọc theo Tên KM
-                    string timKiem = txtTimKiemKM.Text?.Trim().ToLower() ?? "";
-                    if (!string.IsNullOrEmpty(timKiem) && timKiem != "tìm theo tên km") {
-                        query = query.Where(x => x.TenKm.ToLower().Contains(timKiem));
-                    }
+                // 3. Gán cho UI
+                dgvKhuyenMai.DataSource = finalData;
 
-                    var finalData = query
-                        .OrderByDescending(x => x.NgayBatDau)
-                        .AsEnumerable() // Chuyển sang client-side để dùng TinhGiaTriKM
-                        .Select(x => new {
-                            x.MaKm,
-                            TenKM = x.TenKm,
-                            Loai = x.LoaiKm,
-                            GiaTri = TinhGiaTriKM(x.GiaTri, x.LoaiKm), // Helper function
-                            BatDau = x.NgayBatDau,
-                            KetThuc = x.NgayKetThuc,
-                            x.TrangThai
-                        })
-                        .ToList();
+                if (dgvKhuyenMai.Columns["MaKm"] != null)
+                    dgvKhuyenMai.Columns["MaKm"].Visible = false;
+                if (dgvKhuyenMai.Columns["TenKM"] != null)
+                    dgvKhuyenMai.Columns["TenKM"].HeaderText = "Tên Khuyến Mãi";
+                if (dgvKhuyenMai.Columns["Loai"] != null)
+                    dgvKhuyenMai.Columns["Loai"].HeaderText = "Loại";
+                if (dgvKhuyenMai.Columns["GiaTri"] != null)
+                    dgvKhuyenMai.Columns["GiaTri"].HeaderText = "Giá Trị";
+                if (dgvKhuyenMai.Columns["BatDau"] != null)
+                    dgvKhuyenMai.Columns["BatDau"].HeaderText = "Bắt Đầu";
+                if (dgvKhuyenMai.Columns["KetThuc"] != null)
+                    dgvKhuyenMai.Columns["KetThuc"].HeaderText = "Kết Thúc";
+                if (dgvKhuyenMai.Columns["TrangThai"] != null)
+                    dgvKhuyenMai.Columns["TrangThai"].HeaderText = "Trạng Thái";
 
-                    dgvKhuyenMai.DataSource = finalData;
-
-                    // Ẩn cột MaKm
-                    if (dgvKhuyenMai.Columns["MaKm"] != null)
-                        dgvKhuyenMai.Columns["MaKm"].Visible = false;
-
-                    // Đổi tên cột
-                    if (dgvKhuyenMai.Columns["TenKM"] != null)
-                        dgvKhuyenMai.Columns["TenKM"].HeaderText = "Tên Khuyến Mãi";
-                    if (dgvKhuyenMai.Columns["Loai"] != null)
-                        dgvKhuyenMai.Columns["Loai"].HeaderText = "Loại";
-                    if (dgvKhuyenMai.Columns["GiaTri"] != null)
-                        dgvKhuyenMai.Columns["GiaTri"].HeaderText = "Giá Trị";
-                    if (dgvKhuyenMai.Columns["BatDau"] != null)
-                        dgvKhuyenMai.Columns["BatDau"].HeaderText = "Bắt Đầu";
-                    if (dgvKhuyenMai.Columns["KetThuc"] != null)
-                        dgvKhuyenMai.Columns["KetThuc"].HeaderText = "Kết Thúc";
-                    if (dgvKhuyenMai.Columns["TrangThai"] != null)
-                        dgvKhuyenMai.Columns["TrangThai"].HeaderText = "Trạng Thái";
-
-                    dgvKhuyenMai.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
-                }
+                dgvKhuyenMai.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
             catch (Exception ex) {
                 MessageBox.Show("Lỗi khi tải dữ liệu khuyến mãi: " + (ex.InnerException?.Message ?? ex.Message));
@@ -428,7 +283,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         #endregion
 
-        #region Các hàm xử lý sự kiện (Event Handlers)
+        #region Các hàm xử lý sự kiện (Event Handlers - Giữ nguyên)
 
         private void btnLoc_Click(object sender, EventArgs e) {
             LoadData_NhanVien();
@@ -462,7 +317,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             MessageBox.Show("Chức năng 'Sửa Sản Phẩm' đang được phát triển!", "Thông báo");
         }
 
-        // <-- CÁC HÀM MỚI CHO KHUYẾN MÃI -->
         private void txtTimKiemKM_TextChanged(object sender, EventArgs e) {
             LoadData_KhuyenMai();
         }
@@ -478,32 +332,25 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         private void btnSuaKM_Click(object sender, EventArgs e) {
             MessageBox.Show("Chức năng 'Sửa Khuyến Mãi' đang được phát triển!", "Thông báo");
         }
-        // <-- KẾT THÚC THÊM MỚI -->
 
         private void btnChuyenFormOder_Click(object sender, EventArgs e) {
-            // Confirm navigation to Order screen
             var confirm = MessageBox.Show("Chuyển sang trang Order?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm != DialogResult.Yes) return;
 
             try {
-                using var db = new DataSqlContext();
-                var account = db.TaiKhoans; // dummy account for navigation
-
-
-                // Open the ordering MainForm. Pass MaNV = 0 (guest/unknown employee).
+                // (Đoạn code này không cần truy cập CSDL, chỉ là khởi tạo)
                 var orderForm = new MainForm(_currentMaNV);
                 orderForm.StartPosition = FormStartPosition.CenterScreen;
                 orderForm.Show();
-                // Make sure the new form is visible on top
                 orderForm.BringToFront();
                 orderForm.Activate();
 
-                // When the order form is closed, show this manager form again
                 orderForm.FormClosed += (s2, e2) => {
                     try {
                         this.Show();
                         this.BringToFront();
                         this.Activate();
+                        // Tải lại dữ liệu khi quay về
                         LoadData_NhanVien();
                         LoadData_HoaDon();
                         LoadData_TonKho();
@@ -517,22 +364,21 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         private void cbThang_SelectedIndexChanged(object sender, EventArgs e) {
+            // (Đã có nút Lọc riêng)
         }
 
         private void dgvPerformance_CellContentClick(object sender, DataGridViewCellEventArgs e) {
+            // (Để trống)
         }
 
-        // Send custom notification about selected employee to Admin/Login admin
         private void btnSendNotify_Click(object sender, EventArgs e) {
             try {
-                // Ensure a row is selected
                 if (dgvPerformance.SelectedRows.Count == 0) {
                     MessageBox.Show("Vui lòng chọn một nhân viên trong bảng để thông báo.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 var row = dgvPerformance.SelectedRows[0];
-                // Assume there is a column 'TenNV' in data source
                 var ten = row.Cells["TenNV"].Value?.ToString() ?? "(không tên)";
                 var custom = txtNotifyMessage.Text?.Trim();
                 if (string.IsNullOrEmpty(custom)) {
@@ -542,7 +388,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 var fullMsg = $"[Quản lí] Người được chọn: {ten} - {custom}";
 
-                // Push notification via NotificationCenter (NhanVienInactive type used to target admin)
                 var n = new NotificationCenter.Notification { Type = NotificationCenter.NotificationType.NhanVienInactive, Message = fullMsg, Data = ten };
                 NotificationCenter.Raise(n);
 
@@ -555,7 +400,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         #endregion
 
-        #region Các hàm tô màu DataGridView (Cell Formatting)
+        #region Các hàm tô màu DataGridView (Cell Formatting - Giữ nguyên)
 
         private void dgvPerformance_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
             if (dgvPerformance.Columns[e.ColumnIndex].Name == "HieuSuat" && e.Value != null) {
@@ -646,7 +491,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // <-- HÀM TÔ MÀU MỚI -->
         private void dgvKhuyenMai_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
             if (dgvKhuyenMai.Columns[e.ColumnIndex].Name == "TrangThai" && e.Value != null) {
                 string trangThai = e.Value.ToString();
@@ -672,48 +516,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         #endregion
 
-        #region Các hàm phụ (Helper Functions)
+        #region Các hàm phụ (ĐÃ DI CHUYỂN)
 
-        private string TinhHieuSuat(decimal tongDoanhThu) {
-            if (tongDoanhThu > 500000)
-                return "Xuất Sắc";
-            if (tongDoanhThu > 100000)
-                return "Tốt";
-            return "Cần Cải Thiện";
-        }
-
-        private string TinhTrangThaiKho(decimal? soLuong, decimal nguong) {
-            if (soLuong == null || soLuong == 0)
-                return "Hết hàng";
-            if (soLuong < nguong)
-                return "Cảnh báo";
-            return "Dồi dào";
-        }
-
-        // <-- HÀM PHỤ MỚI -->
-        private string TinhGiaTriKM(decimal? giaTri, string loai) {
-            if (giaTri == null) return "N/A";
-
-            // G29 dùng để loại bỏ các số 0 không cần thiết (ví dụ: 10.00 -> 10)
-            if (loai == "HoaDon" || loai == "SanPham") // Giảm %
-            {
-                return $"{giaTri.Value.ToString("G29")}%";
-            }
-            if (loai == "GiamTien") // Nếu có loại giảm tiền trực tiếp
-            {
-                return $"{giaTri.Value.ToString("N0", CultureInfo.InvariantCulture)} đ";
-            }
-            return giaTri.Value.ToString("G29");
-        }
+        // Các hàm TinhHieuSuat, TinhTrangThaiKho, TinhGiaTriKM
+        // đã được di chuyển sang KhoTruyVanQuanLi.cs
 
         #endregion
 
         private void QuanLi_Load_1(object sender, EventArgs e) {
-
+            // (Trống)
         }
 
         private void grpNotify_Enter(object sender, EventArgs e) {
-
+            // (Trống)
         }
 
     }

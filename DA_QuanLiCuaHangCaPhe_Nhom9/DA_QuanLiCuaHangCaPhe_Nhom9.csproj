@@ -60,9 +60,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Function\function_Admin\" />
-    <Folder Include="Function\function_QuanLi\" />
-  </ItemGroup>
-
 </Project>
