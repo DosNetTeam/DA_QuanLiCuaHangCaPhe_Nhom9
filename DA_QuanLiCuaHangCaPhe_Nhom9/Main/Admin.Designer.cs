@@ -30,10 +30,11 @@
             tongquan = new TabPage();
             tongquandulieu = new DataGridView();
             pnChucnang = new Panel();
-            panel2 = new Panel();
+            pnnutthoat = new Panel();
             btnLognout = new Button();
             quanlynhanvien = new TabPage();
-            panel1 = new Panel();
+            pnthongtinnv = new Panel();
+            btnsuathongtinnv = new Button();
             btndoimatkhau = new Button();
             txtmatkhau = new TextBox();
             txttentaikhoan = new TextBox();
@@ -62,7 +63,7 @@
             txtsoluong = new TextBox();
             txtma = new TextBox();
             lblsoluong = new Label();
-            label1 = new Label();
+            lbltinhtrang = new Label();
             lblten = new Label();
             lblma = new Label();
             lbldonvi = new Label();
@@ -72,7 +73,7 @@
             tabPageSanPham = new TabPage();
             dgvSanPham = new DataGridView();
             gbsanpham = new GroupBox();
-            textBox1 = new TextBox();
+            txttinhtrangsp = new TextBox();
             btnthem = new Button();
             txtdon_vi = new TextBox();
             txtloai = new TextBox();
@@ -106,7 +107,7 @@
             lblngaybatdau = new Label();
             lblgiatri = new Label();
             lblloaikm = new Label();
-            label2 = new Label();
+            lblgtapdung = new Label();
             lbltrangthaikm = new Label();
             lblmota = new Label();
             lbltenkm = new Label();
@@ -117,9 +118,9 @@
             tongquan.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tongquandulieu).BeginInit();
             pnChucnang.SuspendLayout();
-            panel2.SuspendLayout();
+            pnnutthoat.SuspendLayout();
             quanlynhanvien.SuspendLayout();
-            panel1.SuspendLayout();
+            pnthongtinnv.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dtgvquanlynhanvien).BeginInit();
             quanlykho.SuspendLayout();
             tabControlKho.SuspendLayout();
@@ -140,9 +141,9 @@
             // 
             btnCreateAccount.BackColor = Color.FromArgb(46, 125, 50);
             btnCreateAccount.ForeColor = Color.White;
-            btnCreateAccount.Location = new Point(10, 3);
+            btnCreateAccount.Location = new Point(647, 89);
             btnCreateAccount.Name = "btnCreateAccount";
-            btnCreateAccount.Size = new Size(150, 40);
+            btnCreateAccount.Size = new Size(128, 40);
             btnCreateAccount.TabIndex = 2;
             btnCreateAccount.Text = "Tạo tài khoản";
             btnCreateAccount.UseVisualStyleBackColor = false;
@@ -164,9 +165,9 @@
             // 
             btnDeleteAccount.BackColor = Color.FromArgb(244, 67, 54);
             btnDeleteAccount.ForeColor = Color.White;
-            btnDeleteAccount.Location = new Point(166, 3);
+            btnDeleteAccount.Location = new Point(647, 135);
             btnDeleteAccount.Name = "btnDeleteAccount";
-            btnDeleteAccount.Size = new Size(150, 40);
+            btnDeleteAccount.Size = new Size(128, 35);
             btnDeleteAccount.TabIndex = 4;
             btnDeleteAccount.Text = "Xóa tài khoản";
             btnDeleteAccount.UseVisualStyleBackColor = false;
@@ -216,7 +217,7 @@
             // 
             // pnChucnang
             // 
-            pnChucnang.Controls.Add(panel2);
+            pnChucnang.Controls.Add(pnnutthoat);
             pnChucnang.Controls.Add(btnLognout);
             pnChucnang.Dock = DockStyle.Bottom;
             pnChucnang.Location = new Point(3, 368);
@@ -224,16 +225,14 @@
             pnChucnang.Size = new Size(892, 46);
             pnChucnang.TabIndex = 5;
             // 
-            // panel2
+            // pnnutthoat
             // 
-            panel2.Controls.Add(btnCreateAccount);
-            panel2.Controls.Add(btnDeleteAccount);
-            panel2.Controls.Add(btnExit);
-            panel2.Dock = DockStyle.Right;
-            panel2.Location = new Point(440, 0);
-            panel2.Name = "panel2";
-            panel2.Size = new Size(452, 46);
-            panel2.TabIndex = 7;
+            pnnutthoat.Controls.Add(btnExit);
+            pnnutthoat.Dock = DockStyle.Right;
+            pnnutthoat.Location = new Point(440, 0);
+            pnnutthoat.Name = "pnnutthoat";
+            pnnutthoat.Size = new Size(452, 46);
+            pnnutthoat.TabIndex = 7;
             // 
             // btnLognout
             // 
@@ -250,7 +249,7 @@
             // 
             // quanlynhanvien
             // 
-            quanlynhanvien.Controls.Add(panel1);
+            quanlynhanvien.Controls.Add(pnthongtinnv);
             quanlynhanvien.Controls.Add(dtgvquanlynhanvien);
             quanlynhanvien.Location = new Point(4, 29);
             quanlynhanvien.Name = "quanlynhanvien";
@@ -260,37 +259,52 @@
             quanlynhanvien.Text = "Quản Lý Nhân Viên";
             quanlynhanvien.UseVisualStyleBackColor = true;
             // 
-            // panel1
+            // pnthongtinnv
             // 
-            panel1.Controls.Add(btndoimatkhau);
-            panel1.Controls.Add(txtmatkhau);
-            panel1.Controls.Add(txttentaikhoan);
-            panel1.Controls.Add(txtvaitro);
-            panel1.Controls.Add(txtchucvu);
-            panel1.Controls.Add(txtsdt);
-            panel1.Controls.Add(txthoten);
-            panel1.Controls.Add(txtmanv);
-            panel1.Controls.Add(lblchucvu);
-            panel1.Controls.Add(lblvaitro);
-            panel1.Controls.Add(lblmatkhau);
-            panel1.Controls.Add(lbltentaikhoan);
-            panel1.Controls.Add(lblhoten);
-            panel1.Controls.Add(lblmanv);
-            panel1.Controls.Add(lblsdt);
-            panel1.Controls.Add(lblthongtinnhanvien);
-            panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(3, 239);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(892, 175);
-            panel1.TabIndex = 1;
+            pnthongtinnv.Controls.Add(btnCreateAccount);
+            pnthongtinnv.Controls.Add(btnDeleteAccount);
+            pnthongtinnv.Controls.Add(btnsuathongtinnv);
+            pnthongtinnv.Controls.Add(btndoimatkhau);
+            pnthongtinnv.Controls.Add(txtmatkhau);
+            pnthongtinnv.Controls.Add(txttentaikhoan);
+            pnthongtinnv.Controls.Add(txtvaitro);
+            pnthongtinnv.Controls.Add(txtchucvu);
+            pnthongtinnv.Controls.Add(txtsdt);
+            pnthongtinnv.Controls.Add(txthoten);
+            pnthongtinnv.Controls.Add(txtmanv);
+            pnthongtinnv.Controls.Add(lblchucvu);
+            pnthongtinnv.Controls.Add(lblvaitro);
+            pnthongtinnv.Controls.Add(lblmatkhau);
+            pnthongtinnv.Controls.Add(lbltentaikhoan);
+            pnthongtinnv.Controls.Add(lblhoten);
+            pnthongtinnv.Controls.Add(lblmanv);
+            pnthongtinnv.Controls.Add(lblsdt);
+            pnthongtinnv.Controls.Add(lblthongtinnhanvien);
+            pnthongtinnv.Dock = DockStyle.Bottom;
+            pnthongtinnv.Location = new Point(3, 239);
+            pnthongtinnv.Name = "pnthongtinnv";
+            pnthongtinnv.Size = new Size(892, 175);
+            pnthongtinnv.TabIndex = 1;
+            // 
+            // btnsuathongtinnv
+            // 
+            btnsuathongtinnv.BackColor = Color.DarkGray;
+            btnsuathongtinnv.ForeColor = Color.Black;
+            btnsuathongtinnv.Location = new Point(781, 135);
+            btnsuathongtinnv.Name = "btnsuathongtinnv";
+            btnsuathongtinnv.Size = new Size(108, 35);
+            btnsuathongtinnv.TabIndex = 8;
+            btnsuathongtinnv.Text = "Sửa";
+            btnsuathongtinnv.UseVisualStyleBackColor = false;
+            btnsuathongtinnv.Click += button3_Click_1;
             // 
             // btndoimatkhau
             // 
             btndoimatkhau.BackColor = Color.Cyan;
             btndoimatkhau.ForeColor = Color.Black;
-            btndoimatkhau.Location = new Point(776, 117);
+            btndoimatkhau.Location = new Point(781, 89);
             btndoimatkhau.Name = "btndoimatkhau";
-            btndoimatkhau.Size = new Size(108, 41);
+            btndoimatkhau.Size = new Size(108, 40);
             btndoimatkhau.TabIndex = 1;
             btndoimatkhau.Text = "Đổi mật khẩu";
             btndoimatkhau.UseVisualStyleBackColor = false;
@@ -505,7 +519,7 @@
             gbthongtinnguyenlieu.Controls.Add(txtsoluong);
             gbthongtinnguyenlieu.Controls.Add(txtma);
             gbthongtinnguyenlieu.Controls.Add(lblsoluong);
-            gbthongtinnguyenlieu.Controls.Add(label1);
+            gbthongtinnguyenlieu.Controls.Add(lbltinhtrang);
             gbthongtinnguyenlieu.Controls.Add(lblten);
             gbthongtinnguyenlieu.Controls.Add(lblma);
             gbthongtinnguyenlieu.Controls.Add(lbldonvi);
@@ -566,15 +580,15 @@
             lblsoluong.TabIndex = 0;
             lblsoluong.Text = "Số Lượng:";
             // 
-            // label1
+            // lbltinhtrang
             // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 163);
-            label1.Location = new Point(629, 27);
-            label1.Name = "label1";
-            label1.Size = new Size(93, 23);
-            label1.TabIndex = 0;
-            label1.Text = "Tình trạng:";
+            lbltinhtrang.AutoSize = true;
+            lbltinhtrang.Font = new Font("Segoe UI Semibold", 10.2F, FontStyle.Bold, GraphicsUnit.Point, 163);
+            lbltinhtrang.Location = new Point(629, 27);
+            lbltinhtrang.Name = "lbltinhtrang";
+            lbltinhtrang.Size = new Size(93, 23);
+            lbltinhtrang.TabIndex = 0;
+            lbltinhtrang.Text = "Tình trạng:";
             // 
             // lblten
             // 
@@ -671,7 +685,7 @@
             // 
             // gbsanpham
             // 
-            gbsanpham.Controls.Add(textBox1);
+            gbsanpham.Controls.Add(txttinhtrangsp);
             gbsanpham.Controls.Add(btnthem);
             gbsanpham.Controls.Add(txtdon_vi);
             gbsanpham.Controls.Add(txtloai);
@@ -697,12 +711,12 @@
             gbsanpham.Text = "Thông Tin Sản Phẩm";
             gbsanpham.Visible = false;
             // 
-            // textBox1
+            // txttinhtrangsp
             // 
-            textBox1.Location = new Point(747, 35);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(125, 27);
-            textBox1.TabIndex = 5;
+            txttinhtrangsp.Location = new Point(747, 35);
+            txttinhtrangsp.Name = "txttinhtrangsp";
+            txttinhtrangsp.Size = new Size(125, 27);
+            txttinhtrangsp.TabIndex = 5;
             // 
             // btnthem
             // 
@@ -919,7 +933,7 @@
             gbkhuyenmai.Controls.Add(lblngaybatdau);
             gbkhuyenmai.Controls.Add(lblgiatri);
             gbkhuyenmai.Controls.Add(lblloaikm);
-            gbkhuyenmai.Controls.Add(label2);
+            gbkhuyenmai.Controls.Add(lblgtapdung);
             gbkhuyenmai.Controls.Add(lbltrangthaikm);
             gbkhuyenmai.Controls.Add(lblmota);
             gbkhuyenmai.Controls.Add(lbltenkm);
@@ -1044,16 +1058,16 @@
             lblloaikm.TabIndex = 0;
             lblloaikm.Text = "Loại KM:";
             // 
-            // label2
+            // lblgtapdung
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
-            label2.Location = new Point(459, 33);
-            label2.Name = "label2";
-            label2.Size = new Size(115, 20);
-            label2.TabIndex = 0;
-            label2.Text = "Giá trị áp dụng:";
-            label2.Click += label2_Click;
+            lblgtapdung.AutoSize = true;
+            lblgtapdung.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+            lblgtapdung.Location = new Point(459, 33);
+            lblgtapdung.Name = "lblgtapdung";
+            lblgtapdung.Size = new Size(115, 20);
+            lblgtapdung.TabIndex = 0;
+            lblgtapdung.Text = "Giá trị áp dụng:";
+            lblgtapdung.Click += label2_Click;
             // 
             // lbltrangthaikm
             // 
@@ -1136,10 +1150,10 @@
             tongquan.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)tongquandulieu).EndInit();
             pnChucnang.ResumeLayout(false);
-            panel2.ResumeLayout(false);
+            pnnutthoat.ResumeLayout(false);
             quanlynhanvien.ResumeLayout(false);
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            pnthongtinnv.ResumeLayout(false);
+            pnthongtinnv.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)dtgvquanlynhanvien).EndInit();
             quanlykho.ResumeLayout(false);
             tabControlKho.ResumeLayout(false);
@@ -1172,7 +1186,7 @@
         private DataGridView tongquandulieu;
         private DataGridView dtgvquanlynhanvien;
         private DataGridView dgvdoanhthu;
-        private Panel panel1;
+        private Panel pnthongtinnv;
         private Label lblthongtinnhanvien;
         private Label lblsdt;
         private Label lblmanv;
@@ -1245,11 +1259,12 @@
         private Button btnsuakm;
         private Button btnxoakm;
         private Panel pnChucnang;
-        private Panel panel2;
-        private TextBox textBox1;
+        private Panel pnnutthoat;
+        private TextBox txttinhtrangsp;
         private TextBox textBox2;
-        private Label label1;
-        private Label label2;
+        private Label lbltinhtrang;
+        private Label lblgtapdung;
         private TextBox txtgtkm;
+        private Button btnsuathongtinnv;
     }
 }
