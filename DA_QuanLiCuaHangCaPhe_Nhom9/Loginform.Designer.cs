@@ -107,7 +107,7 @@
             // pictureBox1
             // 
             pictureBox1.BorderStyle = BorderStyle.Fixed3D;
-            pictureBox1.Image = Properties.Resources.download;
+            pictureBox1.Image = MyResources.Properties.Resources.download;
             pictureBox1.Location = new Point(298, 95);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(237, 202);
