@@ -1,77 +1,59 @@
-﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main; // Thêm
+using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
-    // Đảm bảo tên class này khớp với tên Form của bạn
     public partial class ThemKhachHangMoi : Form {
-        // Biến để lưu SĐT được truyền từ MainForm
         private string _soDienThoai;
-
-
+        private readonly KhoTruyVanMainForm _khoTruyVan;
 
         public ThemKhachHangMoi(string sdt) {
             InitializeComponent();
             _soDienThoai = sdt;
+            _khoTruyVan = new KhoTruyVanMainForm();
         }
 
         private void ThemKhachHangMoi_Load(object sender, EventArgs e) {
-            // Tự động điền SĐT vào TextBox
-            // (Giả sử TextBox SĐT tên là 'txtSDT')
             txtSDT.Text = _soDienThoai;
-            txtSDT.Enabled = false; // Không cho sửa SĐT
-
-            // Thêm các lựa chọn vào ComboBox
-            // (Giả sử ComboBox tên là 'cboLoaiKH')
-            // --- SỬA: Xoá trước khi thêm để tránh duplicate nếu hàm Load chạy nhiều lần ---
+            txtSDT.Enabled = false;
             if (cbLoaiKH != null) {
                 cbLoaiKH.Items.Clear();
                 cbLoaiKH.Items.Add("Thuong");
                 cbLoaiKH.Items.Add("VIP");
-
-                // Chọn "Thuong" làm mặc định
                 cbLoaiKH.SelectedIndex = 0;
             }
         }
 
-        // Hàm này được gọi khi bấm nút "Hủy"        
         private void btnCancel_Click(object sender, EventArgs e) {
-            // Gửi tín hiệu "Cancel" về cho MainForm
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
-        // Hàm này được gọi khi bấm nút "Lưu"        
+        // *** ĐÃ THAY ĐỔI: Gọi KhoTruyVan ***
         private void btnSave_Click(object sender, EventArgs e) {
-            // 1. Kiểm tra dữ liệu (Tên KH là bắt buộc)
-
-            // .Trim() là hàm dùng để xóa mọi dấu cách ở đầu và cuối
-            // Sau đó, ta so sánh xem kết quả có rỗng ("") không.
-
             if (txtTenKH.Text.Trim() == "") {
                 MessageBox.Show("Vui lòng nhập Tên khách hàng.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return; // Không làm gì cả
+                return;
             }
 
             try {
-                // 2. Tạo đối tượng KhachHang mới
                 var khachHangMoi = new KhachHang {
-                    TenKh = txtTenKH.Text,
+                    TenKh = txtTenKH.Text.Trim(), // Thêm .Trim()
                     SoDienThoai = txtSDT.Text,
-
-                    DiaChi = txtDiaChi.Text,
-
+                    DiaChi = txtDiaChi.Text.Trim(), // Thêm .Trim()
                     LoaiKh = cbLoaiKH.SelectedItem.ToString()
                 };
 
-                // 3. Mở kết nối CSDL và lưu
-                using (DataSqlContext db = new DataSqlContext()) {
-                    db.KhachHangs.Add(khachHangMoi);
-                    db.SaveChanges(); // Lưu vào CSDL
-                }
+                // *** THAY ĐỔI: Gọi KhoTruyVan ***
+                bool success = _khoTruyVan.ThemKhachHangMoi(khachHangMoi);
 
-                // 4. Gửi tín hiệu "OK" (thành công) về cho MainForm
-                MessageBox.Show("Thêm khách hàng mới thành công!", "Thông báo");
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                if (success) {
+                    MessageBox.Show("Thêm khách hàng mới thành công!", "Thông báo");
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
+                else {
+                    MessageBox.Show("Lỗi khi lưu khách hàng. Vui lòng thử lại.");
+                }
             }
             catch (Exception ex) {
                 MessageBox.Show("Lỗi khi lưu khách hàng: " + ex.InnerException?.Message ?? ex.Message);
@@ -79,4 +61,3 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
     }
 }
-

@@ -7,66 +7,29 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
     public partial class MainForm : Form {
         // === KHAI BÁO CÁC BIẾN ===
-
         private int _currentMaNV = 3;
         private int? _currentMaKH = null;
         private string _currentMaLoai = "TatCa";
         private decimal tongGoc = 0;
         private decimal soTienGiam = 0;
 
-        // Khai báo các lớp dịch vụ và kho truy vấn
+        // Khai báo các lớp dịch vụ, kho, và giỏ hàng
         private readonly DichVuDonHang _dichVuDonHang;
         private readonly KhoTruyVanMainForm _khoTruyVan;
+        private readonly GioHang _gioHang; // <-- BIẾN MỚI
 
 
         #region thông báo toast
         // (Giữ nguyên code)
         private void NotificationCenter_NotificationRaised(NotificationCenter.Notification n) {
-            try {
-                if (n.Type == NotificationCenter.NotificationType.UnpaidInvoice || n.Type == NotificationCenter.NotificationType.LowStock) {
-                    ShowToast(n.Message);
-                }
-            }
-            catch { }
+            try { if (n.Type == NotificationCenter.NotificationType.UnpaidInvoice || n.Type == NotificationCenter.NotificationType.LowStock) { ShowToast(n.Message); } } catch { }
         }
-
         private void ShowToast(string message) {
-            if (this.InvokeRequired) {
-                this.BeginInvoke(new Action(() => ShowToast(message)));
-                return;
-            }
-
-            Form toast = new Form();
-            toast.FormBorderStyle = FormBorderStyle.None;
-            toast.StartPosition = FormStartPosition.Manual;
-            toast.BackColor = Color.FromArgb(45, 45, 48);
-            toast.Size = new Size(350, 90);
-
-            var ownerRect = this.Bounds;
-            var screen = Screen.FromControl(this).WorkingArea;
-            var x = Math.Min(ownerRect.Right + 10, screen.Right - toast.Width - 10);
-            var y = Math.Min(ownerRect.Bottom - toast.Height - 10, screen.Bottom - toast.Height - 10);
-            toast.Location = new Point(x - toast.Width, y);
-
-            Label lbl = new Label();
-            lbl.Text = message;
-            lbl.ForeColor = Color.White;
-            lbl.Dock = DockStyle.Fill;
-            lbl.Padding = new Padding(8);
-
-            toast.Controls.Add(lbl);
-
-            System.Windows.Forms.Timer t = new System.Windows.Forms.Timer();
-            t.Interval = 6000;
-            t.Tick += (s, e) => { t.Stop(); toast.Close(); };
-            t.Start();
-
-            toast.Show(this);
+            if (this.InvokeRequired) { this.BeginInvoke(new Action(() => ShowToast(message))); return; }
+            Form toast = new Form(); toast.FormBorderStyle = FormBorderStyle.None; toast.StartPosition = FormStartPosition.Manual; toast.BackColor = Color.FromArgb(45, 45, 48); toast.Size = new Size(350, 90); var ownerRect = this.Bounds; var screen = Screen.FromControl(this).WorkingArea; var x = Math.Min(ownerRect.Right + 10, screen.Right - toast.Width - 10); var y = Math.Min(ownerRect.Bottom - toast.Height - 10, screen.Bottom - toast.Height - 10); toast.Location = new Point(x - toast.Width, y); Label lbl = new Label(); lbl.Text = message; lbl.ForeColor = Color.White; lbl.Dock = DockStyle.Fill; lbl.Padding = new Padding(8); toast.Controls.Add(lbl); System.Windows.Forms.Timer t = new System.Windows.Forms.Timer(); t.Interval = 6000; t.Tick += (s, e) => { t.Stop(); toast.Close(); }; t.Start(); toast.Show(this);
         }
-
         protected override void OnFormClosed(FormClosedEventArgs e) {
-            base.OnFormClosed(e);
-            NotificationCenter.NotificationRaised -= NotificationCenter_NotificationRaised;
+            base.OnFormClosed(e); NotificationCenter.NotificationRaised -= NotificationCenter_NotificationRaised;
         }
         #endregion
 
@@ -75,9 +38,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             InitializeComponent();
             _currentMaNV = MaNV;
 
-            // Khởi tạo cả 2 lớp
+            // *** THAY ĐỔI: Khởi tạo các lớp ***
             _dichVuDonHang = new DichVuDonHang();
             _khoTruyVan = new KhoTruyVanMainForm();
+            // Truyền _dichVuDonHang vào cho _gioHang sử dụng
+            _gioHang = new GioHang(_dichVuDonHang);
 
             NotificationCenter.NotificationRaised += NotificationCenter_NotificationRaised;
         }
@@ -100,120 +65,59 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         #region Các hàm tải dữ liệu (Đã tách CSDL)
 
-        // *** ĐÃ TÁCH CSDL ***
+        // (Giữ nguyên)
         private void TaiLoaiSanPham() {
             flpLoaiSP.Controls.Clear();
             flpLoaiSP.FlowDirection = FlowDirection.TopDown;
-
             try {
-                // 1. Gọi Repository để lấy dữ liệu
                 var cacLoaiSP = _khoTruyVan.TaiLoaiSanPham();
-
-                // 2. Phần logic tạo UI (Button) giữ nguyên
-                Button btnTatCa = new Button {
-                    Text = "Tất Cả",
-                    Tag = "TatCa",
-                    Width = flpLoaiSP.Width,
-                    Height = 45,
-                    Margin = new Padding(5),
-                    Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-                    BackColor = Color.LightGray,
-                };
-
+                Button btnTatCa = new Button { Text = "Tất Cả", Tag = "TatCa", Width = flpLoaiSP.Width, Height = 45, Margin = new Padding(5), Font = new Font("Segoe UI", 9F, FontStyle.Bold), BackColor = Color.LightGray, };
                 btnTatCa.Click += BtnLoai_Click;
                 flpLoaiSP.Controls.Add(btnTatCa);
-
                 foreach (var tenLoai in cacLoaiSP) {
-                    Button btn = new Button {
-                        Text = tenLoai,
-                        Tag = tenLoai,
-                        Width = flpLoaiSP.Width,
-                        Height = 50,
-                        Margin = new Padding(5)
-                    };
+                    Button btn = new Button { Text = tenLoai, Tag = tenLoai, Width = flpLoaiSP.Width, Height = 50, Margin = new Padding(5) };
                     btn.Click += BtnLoai_Click;
                     flpLoaiSP.Controls.Add(btn);
                 }
             }
-            catch (Exception ex) {
-                MessageBox.Show("Lỗi khi tải loại sản phẩm: " + ex.InnerException?.Message ?? ex.Message);
-            }
+            catch (Exception ex) { MessageBox.Show("Lỗi khi tải loại sản phẩm: " + ex.InnerException?.Message ?? ex.Message); }
         }
 
-        // *** ĐÃ TÁCH CSDL ***
+        // (Giữ nguyên)
         private void TaiSanPham(string maLoai) {
             flpSanPham.Controls.Clear();
             string searchText = txtTimKiemSP.Text.Trim().ToLower();
-
             try {
-                // --- BƯỚC 1: LẤY DỮ LIỆU TỪ REPOSITORY ---
                 var duLieu = _khoTruyVan.LayDuLieuSanPham();
                 var tatCaSanPham = duLieu.TatCaSanPham;
                 var allDinhLuong = duLieu.AllDinhLuong;
                 var allNguyenLieu = duLieu.AllNguyenLieu;
 
-                // --- BƯỚC 2: LỌC VÀ TẠO NÚT (Logic gốc của bạn giữ nguyên) ---
                 foreach (var sp in tatCaSanPham) {
-                    if (maLoai != "TatCa" && sp.LoaiSp != maLoai) {
-                        continue;
-                    }
-                    if (!string.IsNullOrEmpty(searchText) && !sp.TenSp.ToLower().Contains(searchText)) {
-                        continue;
-                    }
+                    if (maLoai != "TatCa" && sp.LoaiSp != maLoai) continue;
+                    if (!string.IsNullOrEmpty(searchText) && !sp.TenSp.ToLower().Contains(searchText)) continue;
 
-                    Button btn = new Button { /* ... (Tạo Button) ... */
-                        Text = $"{sp.TenSp}\n{sp.DonGia:N0} đ",
-                        Tag = sp,
-                        Width = 140,
-                        Height = 100,
-                        Margin = new Padding(5),
-                        BackColor = Color.White,
-                        FlatStyle = FlatStyle.Flat,
-                        Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-                        ForeColor = Color.Black
-                    };
-                    btn.FlatAppearance.BorderSize = 1;
-                    btn.FlatAppearance.BorderColor = Color.Gainsboro;
+                    Button btn = new Button { Text = $"{sp.TenSp}\n{sp.DonGia:N0} đ", Tag = sp, Width = 140, Height = 100, Margin = new Padding(5), BackColor = Color.White, FlatStyle = FlatStyle.Flat, Font = new Font("Segoe UI", 9F, FontStyle.Bold), ForeColor = Color.Black };
+                    btn.FlatAppearance.BorderSize = 1; btn.FlatAppearance.BorderColor = Color.Gainsboro;
 
-
-                    // Gọi hàm từ DichVuDonHang (giữ nguyên)
                     var trangThaiKho = _dichVuDonHang.KiemTraDuNguyenLieu(sp.MaSp, allDinhLuong, allNguyenLieu);
-
                     switch (trangThaiKho) {
-                        case DichVuDonHang.TrangThaiKho.DuHang:
-                            btn.Enabled = true;
-                            btn.BackColor = Color.White;
-                            btn.ForeColor = Color.Black;
-                            break;
-                        case DichVuDonHang.TrangThaiKho.SapHet:
-                            btn.Enabled = true;
-                            btn.BackColor = Color.Orange;
-                            btn.ForeColor = Color.White;
-                            btn.Text += "\n(Sắp hết)";
-                            break;
-                        case DichVuDonHang.TrangThaiKho.HetHang:
-                        default:
-                            btn.Enabled = false;
-                            btn.BackColor = Color.LightGray;
-                            btn.ForeColor = Color.Gray;
-                            btn.Text += "\n(HẾT HÀNG)";
-                            break;
+                        case DichVuDonHang.TrangThaiKho.DuHang: btn.Enabled = true; btn.BackColor = Color.White; btn.ForeColor = Color.Black; break;
+                        case DichVuDonHang.TrangThaiKho.SapHet: btn.Enabled = true; btn.BackColor = Color.Orange; btn.ForeColor = Color.White; btn.Text += "\n(Sắp hết)"; break;
+                        case DichVuDonHang.TrangThaiKho.HetHang: default: btn.Enabled = false; btn.BackColor = Color.LightGray; btn.ForeColor = Color.Gray; btn.Text += "\n(HẾT HÀNG)"; break;
                     }
-
                     btn.Click += BtnSanPham_Click;
                     flpSanPham.Controls.Add(btn);
                 }
             }
-            catch (Exception ex) {
-                MessageBox.Show("Lỗi khi tải sản phẩm: " + ex.Message);
-            }
+            catch (Exception ex) { MessageBox.Show("Lỗi khi tải sản phẩm: " + ex.Message); }
         }
 
         #endregion
 
         #region Các hàm xử lý sự kiện (Event Handlers)
-        // (Giữ nguyên không thay đổi)
 
+        // (Giữ nguyên)
         private void BtnLoai_Click(object sender, EventArgs e) {
             Button nutDuocBam = (Button)sender;
             string maLoai = nutDuocBam.Tag.ToString();
@@ -221,14 +125,31 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             TaiSanPham(maLoai);
         }
 
+        // *** THAY ĐỔI: Gọi _gioHang.ThemMon ***
         private void BtnSanPham_Click(object sender, EventArgs e) {
             Button nutDuocBam = (Button)sender;
             SanPham spDuocChon = (SanPham)nutDuocBam.Tag;
-            ThemSanPhamVaoDonHang(spDuocChon);
+
+            // 1. Gọi logic giỏ hàng
+            var ketQua = _gioHang.ThemMon(spDuocChon);
+
+            // 2. Kiểm tra kết quả
+            if (ketQua.Success) {
+                // 3. Cập nhật UI
+                CapNhatGiaoDienGioHang();
+                CapNhatTongTien();
+            }
+            else {
+                // Báo lỗi nếu thêm thất bại (ví dụ: hết hàng)
+                MessageBox.Show(ketQua.Message, "Hết Hàng", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
+        // (Giữ nguyên)
         private void btnThanhToan_Click(object sender, EventArgs e) {
-            if (lvDonHang.Items.Count > 0) {
+            // *** THAY ĐỔI: Kiểm tra giỏ hàng bằng _gioHang ***
+            if (_gioHang.LaySoLuongMon() > 0) {
+                // CÓ MÓN (THANH TOÁN NHANH)
                 int maDonHangVuaTao = ThucHienLuuTam();
                 if (maDonHangVuaTao > 0) {
                     ThanhToan frmThanhToan = new ThanhToan(maDonHangVuaTao, tongGoc, soTienGiam);
@@ -239,30 +160,49 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 }
             }
             else {
+                // GIỎ HÀNG RỖNG (THANH TOÁN ĐƠN CŨ)
                 ChonDonHangCho cdhc = new ChonDonHangCho();
                 var resultChon = cdhc.ShowDialog();
                 if (resultChon == DialogResult.OK) {
                     int maDonHangChon = cdhc.MaDonHangDaChon;
-                    ThanhToan thanhtoan = new ThanhToan(maDonHangChon, tongGoc, soTienGiam);
+                    ThanhToan thanhtoan = new ThanhToan(maDonHangChon, tongGoc, soTienGiam); // tongGoc, soTienGiam sẽ là 0
                     var resultThanhToan = thanhtoan.ShowDialog();
-                    if (resultThanhToan == DialogResult.OK) {
+                    if ((resultThanhToan == DialogResult.OK) || (resultThanhToan == DialogResult.Cancel)) {
                         TaiSanPham(_currentMaLoai);
                     }
                 }
+                else if (resultChon == DialogResult.Cancel) TaiSanPham(_currentMaLoai);
             }
         }
 
+        // *** THAY ĐỔI: Gọi _gioHang.XoaTatCa ***
         private void btnHuyDon_Click(object sender, EventArgs e) {
-            var confirm = MessageBox.Show("Bạn có chắc muốn hủy đơn hàng này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (confirm == DialogResult.Yes) {
-                ResetMainForm();
+
+            if (lvDonHang.SelectedItems.Count > 0) {
+                var confirm = MessageBox.Show("Bạn có chắc muốn hủy đơn hàng này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (confirm == DialogResult.Yes) {
+                    ResetMainForm();
+                }
             }
+            else {
+                MessageBox.Show("Vui lòng thêm sản phẩm vào giỏ hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+
         }
 
+        // *** THAY ĐỔI: Gọi _gioHang.XoaMon ***
         private void btnXoaMon_Click(object sender, EventArgs e) {
             if (lvDonHang.SelectedItems.Count > 0) {
+                // 1. Lấy MaSp từ Tag của ListViewItem
                 ListViewItem itemDaChon = lvDonHang.SelectedItems[0];
-                lvDonHang.Items.Remove(itemDaChon);
+                int maSp = (int)itemDaChon.Tag;
+
+                // 2. Gọi logic giỏ hàng
+                _gioHang.XoaMon(maSp);
+
+                // 3. Cập nhật UI
+                CapNhatGiaoDienGioHang();
                 CapNhatTongTien();
             }
             else {
@@ -270,32 +210,37 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
+        // *** THAY ĐỔI: Gọi _gioHang.GiamSoLuong ***
         private void btnGIamSoLuong_Click(object sender, EventArgs e) {
             if (lvDonHang.SelectedItems.Count > 0) {
+                // 1. Lấy MaSp từ Tag
                 ListViewItem itemDaChon = lvDonHang.SelectedItems[0];
+                int maSp = (int)itemDaChon.Tag;
                 int soLuongHienTai = int.Parse(itemDaChon.SubItems[1].Text);
-                bool daThayDoi = false;
+
+                bool daXoaMon = false;
+
                 if (soLuongHienTai > 1) {
-                    int soLuongMoi = soLuongHienTai - 1;
-                    string donGiaStr = itemDaChon.SubItems[2].Text.Replace(".", "");
-                    decimal donGia = decimal.Parse(donGiaStr, System.Globalization.CultureInfo.InvariantCulture);
-                    decimal thanhTienMoi = soLuongMoi * donGia;
-                    itemDaChon.SubItems[1].Text = soLuongMoi.ToString();
-                    itemDaChon.SubItems[3].Text = thanhTienMoi.ToString("N0");
-                    daThayDoi = true;
+                    // Chỉ giảm
+                    _gioHang.GiamSoLuong(maSp);
                 }
                 else {
+                    // Giảm về 0 -> Xóa
                     var confirm = MessageBox.Show(
                         "Số lượng món này là 1. Giảm nữa sẽ xóa món này khỏi giỏ hàng. Bạn có chắc không?",
                         "Xác nhận xóa món",
                         MessageBoxButtons.YesNo,
                         MessageBoxIcon.Question);
+
                     if (confirm == DialogResult.Yes) {
-                        lvDonHang.Items.Remove(itemDaChon);
-                        daThayDoi = true;
+                        _gioHang.GiamSoLuong(maSp);
+                        daXoaMon = true;
                     }
                 }
-                if (daThayDoi) {
+
+                // 3. Cập nhật UI (nếu có thay đổi)
+                if (daXoaMon || soLuongHienTai > 1) {
+                    CapNhatGiaoDienGioHang();
                     CapNhatTongTien();
                 }
             }
@@ -304,10 +249,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
+        // (Giữ nguyên)
         private void txtTimKiemSP_TextChanged(object sender, EventArgs e) {
             TaiSanPham(_currentMaLoai);
         }
 
+        // (Giữ nguyên)
         private void btnThem_Click(object sender, EventArgs e) {
             ThemKhachHangMoi tmk = new ThemKhachHangMoi(txtTimKiemKH.Text.Trim());
             var result = tmk.ShowDialog();
@@ -316,6 +263,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
+        // (Giữ nguyên)
         private void btnLuuTam_Click(object sender, EventArgs e) {
             int maDonHangMoi = ThucHienLuuTam();
             if (maDonHangMoi > 0) {
@@ -324,122 +272,103 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
+        // (Giữ nguyên)
         private void txtTimKiemKH_KeyPress(object sender, KeyPressEventArgs e) {
             if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar)) {
                 e.Handled = true;
             }
         }
 
+        // (Giữ nguyên)
         private void txtTimKiemKH_TextChanged(object sender, EventArgs e) {
             string sdt = txtTimKiemKH.Text.Trim();
-            if (string.IsNullOrEmpty(sdt)) {
-                lblTenKH.Text = "Khách vãng lai";
-                _currentMaKH = null;
-                btnThem.Enabled = false;
-                return;
-            }
-            if (sdt.Length != 10 || !sdt.All(char.IsDigit)) // .All() là LINQ, nhưng nó nằm trong logic gốc của bạn
-            {
-                lblTenKH.Text = "Nhập đủ 10 số";
-                _currentMaKH = null;
-                btnThem.Enabled = false;
-                return;
-            }
-
+            if (string.IsNullOrEmpty(sdt)) { lblTenKH.Text = "Khách vãng lai"; _currentMaKH = null; btnThem.Enabled = false; return; }
+            if (sdt.Length != 10 || !sdt.All(char.IsDigit)) { lblTenKH.Text = "Nhập đủ 10 số"; _currentMaKH = null; btnThem.Enabled = false; return; }
             SearchKhachHangBySDT(sdt);
         }
 
         #endregion
 
-        #region Các hàm logic nghiệp vụ (Đã tách CSDL)
+        #region Các hàm logic nghiệp vụ (Business Logic)
 
-        // Thêm SP vào giỏ hàng (Không truy cập CSDL)
-        private void ThemSanPhamVaoDonHang(SanPham sp) {
-            foreach (ListViewItem item in lvDonHang.Items) {
-                int maSpTrongGio = (int)item.Tag;
-                if (maSpTrongGio == sp.MaSp) {
-                    int soLuongCu = int.Parse(item.SubItems[1].Text);
-                    int soLuongMoi = soLuongCu + 1;
+        // *** HÀM MỚI: Cập nhật ListView từ GioHang ***
+        /// <summary>
+        /// Xóa sạch ListView và vẽ lại từ dữ liệu trong _gioHang.
+        /// </summary>
+        private void CapNhatGiaoDienGioHang() {
+            lvDonHang.Items.Clear();
 
-                    // Gọi DichVuDonHang (Giữ nguyên)
-                    var kiemTra = _dichVuDonHang.KiemTraSoLuongTonThucTe(sp.MaSp, soLuongMoi);
-                    if (kiemTra.DuHang == false) {
-                        MessageBox.Show(kiemTra.ThongBao, "Hết Hàng", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
+            var dsMonAn = _gioHang.LayTatCaMon();
 
-                    decimal thanhTienMoi = soLuongMoi * sp.DonGia;
-                    item.SubItems[1].Text = soLuongMoi.ToString();
-                    item.SubItems[3].Text = thanhTienMoi.ToString("N0");
-                    CapNhatTongTien();
-                    return;
-                }
+            foreach (var item in dsMonAn) {
+                ListViewItem lvi = new ListViewItem(item.TenSp);
+                lvi.Tag = item.MaSp;
+                lvi.SubItems.Add(item.SoLuong.ToString());
+                lvi.SubItems.Add(item.DonGiaGoc.ToString("N0"));
+                lvi.SubItems.Add(item.ThanhTienGoc.ToString("N0"));
+
+                lvDonHang.Items.Add(lvi);
             }
-
-            var kiemTraMoi = _dichVuDonHang.KiemTraSoLuongTonThucTe(sp.MaSp, 1);
-            if (kiemTraMoi.DuHang == false) {
-                MessageBox.Show(kiemTraMoi.ThongBao, "Hết Hàng", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            ListViewItem lvi = new ListViewItem(sp.TenSp);
-            lvi.Tag = sp.MaSp;
-            lvi.SubItems.Add("1");
-            lvi.SubItems.Add(sp.DonGia.ToString("N0"));
-            lvi.SubItems.Add(sp.DonGia.ToString("N0"));
-            lvDonHang.Items.Add(lvi);
-            CapNhatTongTien();
         }
 
-        // *** ĐÃ TÁCH CSDL ***
+
+        /*
+        HÀM ThemSanPhamVaoDonHang() CŨ ĐÃ BỊ XÓA
+        (Logic đã chuyển vào BtnSanPham_Click và GioHang.cs)
+        */
+
+
+        // *** THAY ĐỔI: Tính tổng từ _gioHang ***
         private void CapNhatTongTien() {
-            decimal tongTien = 0;
+            // 1. Lấy tổng tiền gốc từ giỏ hàng
+            decimal tongTien = _gioHang.LayTongTienGoc();
             decimal tongTienGiamGia = 0;
 
-            foreach (ListViewItem item in lvDonHang.Items) {
-                int maSP = (int)item.Tag;
-                int soLuong = int.Parse(item.SubItems[1].Text);
-                string donGiaGocStr = item.SubItems[2].Text.Replace(".", "");
-                decimal donGiaGoc = decimal.Parse(donGiaGocStr, CultureInfo.CurrentCulture);
-                string chuoiThanhTien = item.SubItems[3].Text.Replace(".", "");
-                decimal thanhTien = decimal.Parse(chuoiThanhTien, CultureInfo.CurrentCulture);
-                tongTien = tongTien + thanhTien;
+            var dsMonAn = _gioHang.LayTatCaMon();
 
-                // Gọi DichVuDonHang (Giữ nguyên)
-                decimal donGiaMoi = _dichVuDonHang.GetGiaBan(maSP, donGiaGoc);
-                decimal discountPerItem = donGiaGoc - donGiaMoi;
-                tongTienGiamGia += (discountPerItem * soLuong);
+            // Lặp qua giỏ hàng để tính giảm giá 'SanPham'
+            foreach (var item in dsMonAn) {
+                // Gọi DichVuDonHang để lấy giá đã KM
+                decimal donGiaMoi = _dichVuDonHang.GetGiaBan(item.MaSp, item.DonGiaGoc);
+                decimal discountPerItem = item.DonGiaGoc - donGiaMoi;
+                tongTienGiamGia += (discountPerItem * item.SoLuong);
             }
 
-            // *** THAY ĐỔI: Gọi Repository để lấy KM Hóa Đơn ***
+            // 2. Tìm khuyến mãi 'HoaDon' (Gọi KhoTruyVan)
             KhuyenMai kmHoaDon = null;
             try {
+                // Logic này giữ nguyên (vẫn gọi KhoTruyVan)
                 kmHoaDon = _khoTruyVan.LayKhuyenMaiHoaDon();
             }
             catch (Exception ex) {
                 MessageBox.Show("Lỗi khi lấy KM hóa đơn: " + ex.Message);
             }
 
-            // (Phần còn lại giữ nguyên)
+            // 3. Tính toán giảm giá 'HoaDon'
             decimal baseForHoaDon = tongTien - tongTienGiamGia;
             decimal tongGiamGiaHoaDon = 0;
             if (kmHoaDon != null) {
                 decimal phanTramGiam = kmHoaDon.GiaTri / 100;
                 tongGiamGiaHoaDon = baseForHoaDon * phanTramGiam;
             }
+
+            // 4. Tính toán tổng cuối cùng
             decimal tongTienGiaHD = tongTienGiamGia + tongGiamGiaHoaDon;
             decimal finalTotal = tongTien - tongTienGiaHD;
+
+            // 5. Cập nhật UI
             lblTienTruocGiam.Text = tongTien.ToString("N0") + " đ";
             lblGiamGia.Text = (-tongTienGiaHD).ToString("N0") + " đ";
             lblTongCong.Text = finalTotal.ToString("N0") + " đ";
+
             soTienGiam = tongTienGiaHD;
             tongGoc = tongTien;
         }
 
 
-        // *** ĐÃ TÁCH CSDL ***
+        // *** THAY ĐỔI: Lấy dữ liệu từ _gioHang ***
         private int ThucHienLuuTam() {
-            if (lvDonHang.Items.Count == 0) {
+            if (_gioHang.LaySoLuongMon() == 0) {
                 MessageBox.Show("Vui lòng thêm sản phẩm vào giỏ hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return -1;
             }
@@ -447,54 +376,57 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             string tongTienStr = lblTongCong.Text.Replace(" đ", "").Replace(".", "");
             decimal tongTien = decimal.Parse(tongTienStr, CultureInfo.InvariantCulture);
 
-            // Bước 1: Chuẩn bị dữ liệu (Lấy từ UI)
-            var gioHang = new List<ChiTietGioHang>();
-            foreach (ListViewItem item in lvDonHang.Items) {
-                gioHang.Add(new ChiTietGioHang {
-                    MaSP = (int)item.Tag,
-                    SoLuong = int.Parse(item.SubItems[1].Text),
-                    DonGia = decimal.Parse(item.SubItems[2].Text.Replace(".", ""), CultureInfo.InvariantCulture)
-                });
-            }
-
-            // Bước 2: Gọi Repository để lưu CSDL
             try {
-                // Truyền dữ liệu giỏ hàng và các thông tin khác
-                int maDonHangMoi = _khoTruyVan.LuuDonHangTam(gioHang, tongTien, _currentMaNV, _currentMaKH);
+                // Bước 1: Chuẩn bị dữ liệu (Lấy từ _gioHang)
+                var gioHangChoDb = new List<ChiTietGioHang>();
+                foreach (var item in _gioHang.LayTatCaMon()) {
+                    gioHangChoDb.Add(new ChiTietGioHang {
+                        MaSP = item.MaSp,
+                        SoLuong = item.SoLuong,
+                        DonGia = item.DonGiaGoc // Lưu giá gốc vào CSDL
+                    });
+                }
 
-                // Nếu hàm repository trả về -1 (có lỗi), thì báo lỗi
+                // Bước 2: Gọi KhoTruyVan
+                int maDonHangMoi = _khoTruyVan.LuuDonHangTam(gioHangChoDb, tongTien, _currentMaNV, _currentMaKH);
+
                 if (maDonHangMoi == -1) {
                     MessageBox.Show("Lỗi khi lưu tạm đơn hàng. Vui lòng kiểm tra log.");
                 }
                 return maDonHangMoi;
             }
             catch (Exception ex) {
-                // Bắt lỗi tổng quát (mặc dù repository đã tự bắt lỗi)
-                MessageBox.Show("Lỗi nghiêm trọng khi lưu tạm: " + ex.Message);
+                MessageBox.Show("Lỗi khi lưu tạm đơn hàng: " + ex.InnerException?.Message ?? ex.Message);
                 return -1;
             }
         }
 
-        // Reset (Không truy cập CSDL)
+        // *** THAY ĐỔI: Gọi _gioHang.XoaTatCa() ***
         private void ResetMainForm() {
+            // 1. Xóa giỏ hàng (logic)
+            _gioHang.XoaTatCa();
+            // 2. Xóa giỏ hàng (UI)
             lvDonHang.Items.Clear();
+            // 3. Cập nhật tổng tiền (về 0)
             CapNhatTongTien();
+            // 4. Reset thông tin khách hàng
             lblTenKH.Text = "Khách vãng lai";
             _currentMaKH = null;
             txtTimKiemKH.Text = "";
             txtTimKiemSP.Text = "";
+            // 5. Tải lại danh sách sản phẩm (Vì kho có thể đã bị trừ)
             TaiSanPham(_currentMaLoai);
             lvDonHang.SelectedItems.Clear();
             btnThem.Enabled = false;
         }
 
-        // *** ĐÃ TÁCH CSDL ***
+        // *** THAY ĐỔI: Gọi _khoTruyVan ***
         private void SearchKhachHangBySDT(string sdt) {
             try {
-                // 1. Gọi Repository để lấy dữ liệu
+                // 1. Gọi KhoTruyVan
                 var khachHang = _khoTruyVan.SearchKhachHangBySDT(sdt);
 
-                // 2. Phần logic cập nhật UI giữ nguyên
+                // 2. Cập nhật UI
                 if (khachHang != null) {
                     lblTenKH.Text = khachHang.TenKh;
                     _currentMaKH = khachHang.MaKh;
