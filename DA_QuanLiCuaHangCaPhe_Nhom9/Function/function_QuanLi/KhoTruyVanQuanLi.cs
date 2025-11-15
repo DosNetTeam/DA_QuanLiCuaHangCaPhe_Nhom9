@@ -56,6 +56,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
         // --- CÁC HÀM PHỤ (HELPER) ĐƯỢC CHUYỂN TỪ QUANLI.CS SANG ---
         // (Đây là các hàm logic, không phải truy vấn CSDL)
 
+        // Tính xếp hạng hiệu suất theo doanh thu
         public string TinhHieuSuat(decimal tongDoanhThu) {
             if (tongDoanhThu > 500000)
                 return "Xuất Sắc";
@@ -64,6 +65,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
             return "Cần Cải Thiện";
         }
 
+        // Tính trạng thái kho dựa trên số lượng và ngưỡng cảnh báo
         public string TinhTrangThaiKho(decimal? soLuong, decimal nguong) {
             if (soLuong == null || soLuong == 0)
                 return "Hết hàng";
@@ -72,6 +74,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
             return "Dồi dào";
         }
 
+        // Định dạng giá trị khuyến mãi theo loại
         public string TinhGiaTriKM(decimal? giaTri, string loai) {
             if (giaTri == null) return "N/A";
             if (loai == "HoaDon" || loai == "SanPham") {
@@ -85,6 +88,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
 
         // --- CÁC HÀM TRUY VẤN CSDL (ĐÃ VIẾT LẠI BẰNG FOREACH) ---
 
+        // Tải dữ liệu hiệu suất nhân viên cho tháng được chọn
         public List<DuLieuNhanVien> TaiDuLieuNhanVien(int selectedMonth) {
             var ketQua = new List<DuLieuNhanVien>();
             try {
@@ -92,7 +96,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                     var allNhanVien = db.NhanViens.ToList();
                     var allDonHang = db.DonHangs.ToList();
 
-                    // 1. Lọc NhanVien (thay .Where(nv => nv.TrangThai == "Đang làm việc"))
+                    // 1. Lọc NhanVien đang làm việc
                     var nhanVienDangLam = new List<NhanVien>();
                     foreach (var nv in allNhanVien) {
                         if (nv.TrangThai == "Đang làm việc") {
@@ -100,7 +104,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                         }
                     }
 
-                    // 2. Lọc DonHang theo tháng (thay .Where(d => ...))
+                    // 2. Lọc DonHang theo tháng
                     var donHangTrongThang = new List<DonHang>();
                     if (selectedMonth == 0) // "Tất cả"
                     {
@@ -114,12 +118,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                         }
                     }
 
-                    // 3. Thực hiện Group By thủ công (thay 'group by')
+                    // 3. Group By thủ công: với mỗi NV tính số đơn và tổng doanh thu
                     foreach (var nv in nhanVienDangLam) {
                         int soDon = 0;
                         decimal tongDoanhThu = 0;
 
-                        // (thay 'join' và 'group')
                         foreach (var dh in donHangTrongThang) {
                             if (dh.MaNv == nv.MaNv) {
                                 soDon++;
@@ -127,7 +130,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                             }
                         }
 
-                        // Thêm vào kết quả (kể cả NV không có đơn)
                         ketQua.Add(new DuLieuNhanVien {
                             TenNV = nv.TenNv,
                             SoDon = soDon,
@@ -136,13 +138,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                         });
                     }
 
-                    // 4. Sắp xếp (thay .OrderByDescending)
-                    // Dùng Sort của List<>
+                    // 4. Sắp xếp giảm dần theo TongDoanhThu bằng cách parse string trở lại decimal
                     ketQua.Sort((a, b) => {
-                        // Chuyển đổi TongDoanhThu (string) về decimal để so sánh
                         decimal doanhThuA = decimal.Parse(a.TongDoanhThu.Replace(" đ", "").Replace(".", ""), CultureInfo.InvariantCulture);
                         decimal doanhThuB = decimal.Parse(b.TongDoanhThu.Replace(" đ", "").Replace(".", ""), CultureInfo.InvariantCulture);
-                        return doanhThuB.CompareTo(doanhThuA); // Sắp xếp giảm dần
+                        return doanhThuB.CompareTo(doanhThuA); // giảm dần
                     });
                 }
             }
@@ -152,6 +152,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
             return ketQua;
         }
 
+        // Tải danh sách hóa đơn (đã join với tên nhân viên)
         public List<DuLieuHoaDon> TaiDuLieuHoaDon(string timKiem, string trangThai) {
             var ketQua = new List<DuLieuHoaDon>();
             try {
@@ -159,7 +160,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                     var allDonHang = db.DonHangs.ToList();
                     var allNhanVien = db.NhanViens.ToList();
 
-                    // 1. Join thủ công DonHang và NhanVien
+                    // Join thủ công DonHang - NhanVien, chuyển thành DTO
                     var dsDonHangDayDu = new List<DuLieuHoaDon>();
                     foreach (var dh in allDonHang) {
                         string tenNV = "(Không rõ)";
@@ -179,21 +180,18 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                         });
                     }
 
-                    // 2. Lọc (thay .Where)
+                    // Lọc theo timKiem và trangThai nếu cần
                     if (string.IsNullOrEmpty(timKiem) && trangThai == "Tất cả") {
-                        ketQua = dsDonHangDayDu; // Không lọc
+                        ketQua = dsDonHangDayDu;
                     }
                     else {
                         foreach (var x in dsDonHangDayDu) {
                             bool timKiemOk = true;
                             bool trangThaiOk = true;
 
-                            // Lọc tìm kiếm
                             if (!string.IsNullOrEmpty(timKiem)) {
                                 timKiemOk = x.MaHD.ToString().ToLower().Contains(timKiem);
                             }
-
-                            // Lọc trạng thái
                             if (trangThai != "Tất cả") {
                                 trangThaiOk = (x.TrangThai == trangThai);
                             }
@@ -204,7 +202,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                         }
                     }
 
-                    // 3. Sắp xếp (thay .OrderByDescending)
+                    // Sort theo NgayLap giảm dần
                     ketQua.Sort((a, b) => b.NgayLap.GetValueOrDefault().CompareTo(a.NgayLap.GetValueOrDefault()));
                 }
             }
@@ -214,6 +212,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
             return ketQua;
         }
 
+        // Tải dữ liệu tồn kho (nguyên liệu) và format để hiển thị
         public List<DuLieuTonKho> TaiDuLieuTonKho(string timKiem) {
             var ketQua = new List<DuLieuTonKho>();
             try {
@@ -221,7 +220,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                     var allNguyenLieu = db.NguyenLieus.ToList();
                     var dsNguyenLieuDayDu = new List<DuLieuTonKho>();
 
-                    // 1. Lọc và chuyển đổi (thay .Where và .Select)
                     foreach (var nl in allNguyenLieu) {
                         if (nl.TrangThai == "Đang kinh doanh") {
                             dsNguyenLieuDayDu.Add(new DuLieuTonKho {
@@ -233,9 +231,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                         }
                     }
 
-                    // 2. Lọc tìm kiếm (thay .Where)
                     if (string.IsNullOrEmpty(timKiem)) {
-                        ketQua = dsNguyenLieuDayDu; // Không lọc
+                        ketQua = dsNguyenLieuDayDu;
                     }
                     else {
                         foreach (var x in dsNguyenLieuDayDu) {
@@ -245,7 +242,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                         }
                     }
 
-                    // 3. Sắp xếp (thay .OrderBy)
                     ketQua.Sort((a, b) => a.TenHang.CompareTo(b.TenHang));
                 }
             }
@@ -255,6 +251,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
             return ketQua;
         }
 
+        // Tải dữ liệu sản phẩm cho UI quản lý sản phẩm
         public List<DuLieuSanPham> TaiDuLieuSanPham(string timKiem) {
             var ketQua = new List<DuLieuSanPham>();
             try {
@@ -262,7 +259,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                     var allSanPham = db.SanPhams.ToList();
                     var dsSanPhamDayDu = new List<DuLieuSanPham>();
 
-                    // 1. Chuyển đổi (thay .Select)
                     foreach (var sp in allSanPham) {
                         dsSanPhamDayDu.Add(new DuLieuSanPham {
                             MaSp = sp.MaSp,
@@ -274,9 +270,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                         });
                     }
 
-                    // 2. Lọc tìm kiếm (thay .Where)
                     if (string.IsNullOrEmpty(timKiem)) {
-                        ketQua = dsSanPhamDayDu; // Không lọc
+                        ketQua = dsSanPhamDayDu;
                     }
                     else {
                         foreach (var x in dsSanPhamDayDu) {
@@ -286,7 +281,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                         }
                     }
 
-                    // 3. Sắp xếp (thay .OrderBy)
                     ketQua.Sort((a, b) => a.TenSP.CompareTo(b.TenSP));
                 }
             }
@@ -296,6 +290,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
             return ketQua;
         }
 
+        // Tải danh sách khuyến mãi, format giá trị theo loại
         public List<DuLieuKhuyenMai> TaiDuLieuKhuyenMai(string timKiem, string trangThai) {
             var ketQua = new List<DuLieuKhuyenMai>();
             try {
@@ -303,7 +298,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                     var allKhuyenMai = db.KhuyenMais.ToList();
                     var dsKMDaChuyenDoi = new List<DuLieuKhuyenMai>();
 
-                    // 1. Chuyển đổi (thay .Select)
                     foreach (var km in allKhuyenMai) {
                         dsKMDaChuyenDoi.Add(new DuLieuKhuyenMai {
                             MaKm = km.MaKm,
@@ -316,9 +310,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                         });
                     }
 
-                    // 2. Lọc (thay .Where)
                     if (string.IsNullOrEmpty(timKiem) && trangThai == "Tất cả") {
-                        ketQua = dsKMDaChuyenDoi; // Không lọc
+                        ketQua = dsKMDaChuyenDoi;
                     }
                     else {
                         foreach (var x in dsKMDaChuyenDoi) {
@@ -338,7 +331,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                         }
                     }
 
-                    // 3. Sắp xếp (thay .OrderByDescending)
                     ketQua.Sort((a, b) => b.BatDau.GetValueOrDefault().CompareTo(a.BatDau.GetValueOrDefault()));
                 }
             }
@@ -348,6 +340,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
             return ketQua;
         }
 
+        // Tải các thông báo tổng hợp (nhân viên không hoạt động, hóa đơn chưa thanh toán, tồn kho thấp)
         public List<string> TaiThongBao() {
             var list = new List<string>();
             try {
@@ -358,7 +351,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                     var allThanhToan = db.ThanhToans.ToList();
                     var allNguyenLieu = db.NguyenLieus.ToList();
 
-                    // 1) Nhân viên không hoạt động
+                    // 1) Nhân viên không hoạt động (trong 30 ngày)
                     int countInactive = 0;
                     foreach (var nv in allNhanVien) {
                         bool coDonHang = false;
@@ -372,33 +365,32 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                         if (!coDonHang) {
                             list.Add($"Nhân viên lâu không hoạt động: {nv.TenNv}");
                             countInactive++;
-                            if (countInactive >= 5) break; // (thay .Take(5))
+                            if (countInactive >= 5) break; // Giới hạn 5 thông báo
                         }
                     }
 
-                    // 2) Hóa đơn chưa thanh toán
+                    // 2) Hóa đơn chưa thanh toán (cũ hơn 1 ngày)
                     int countUnpaid = 0;
                     foreach (var tt in allThanhToan) {
                         if (tt.TrangThai == "Chưa thanh toán") {
-                            // Cần join thủ công để lấy NgayLap
                             foreach (var dh in allDonHang) {
                                 if (tt.MaDh == dh.MaDh && dh.NgayLap <= DateTime.Now.AddDays(-1)) {
                                     list.Add($"Hóa đơn chưa thanh toán: #{dh.MaDh} - {dh.NgayLap?.ToString("dd/MM/yy")}");
                                     countUnpaid++;
-                                    break; // Dừng vòng lặp DonHang, đi đến ThanhToan tiếp theo
+                                    break; // tiếp record ThanhToan tiếp theo
                                 }
                             }
                         }
-                        if (countUnpaid >= 5) break; // (thay .Take(5))
+                        if (countUnpaid >= 5) break; // Giới hạn 5
                     }
 
-                    // 3) Hàng tồn kho sắp hết
+                    // 3) Hàng tồn kho sắp/đã hết
                     int countLow = 0;
                     foreach (var nl in allNguyenLieu) {
                         if (nl.SoLuongTon <= (nl.NguongCanhBao ?? 0)) {
                             list.Add($"Hàng trong kho còn ít: {nl.TenNl} ({nl.SoLuongTon ?? 0})");
                             countLow++;
-                            if (countLow >= 10) break; // (thay .Take(10))
+                            if (countLow >= 10) break; // Giới hạn 10
                         }
                     }
                 }

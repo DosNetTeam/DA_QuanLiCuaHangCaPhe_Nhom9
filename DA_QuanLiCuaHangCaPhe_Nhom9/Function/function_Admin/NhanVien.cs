@@ -15,19 +15,21 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
 
     /// Lớp này chịu trách nhiệm truy vấn CSDL
     /// cho chức năng Quản Lý Nhân Viên và Tài Khoản.
-
+    /// (ĐÃ VIẾT LẠI BẰNG FOREACH, KHÔNG LINQ)
 
     public class NhanVien_function // Đổi tên class cho khớp tên file
     {
+        // Lấy danh sách nhân viên chuyển thành DTO để hiển thị ở Admin
         public List<DuLieuNhanVien> TaiDuLieuNhanVien() {
             var ketQua = new List<DuLieuNhanVien>();
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
+                    // Tải toàn bộ NhanVien, TaiKhoan, VaiTro để join thủ công
                     var allNhanVien = db.NhanViens.ToList();
                     var allTaiKhoan = db.TaiKhoans.ToList();
                     var allVaiTro = db.VaiTros.ToList();
 
-                    // Join thủ công
+                    // Với từng nhân viên, tìm tài khoản (nếu có) và vai trò tương ứng
                     foreach (var nv in allNhanVien) {
                         TaiKhoan tkCuaNv = null;
                         foreach (var tk in allTaiKhoan) {
@@ -71,6 +73,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
             return ketQua;
         }
 
+        // Lấy entity NhanVien kèm TaiKhoan và VaiTro navigation nếu có
         public Models.NhanVien LayChiTietNhanVien(int maNv) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
@@ -83,11 +86,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                     }
 
                     if (nhanVien != null) {
-                        // Load tài khoản
+                        // Tìm tài khoản liên quan và gán navigation property
                         foreach (var tk in db.TaiKhoans.ToList()) {
                             if (tk.MaNv == nhanVien.MaNv) {
                                 nhanVien.TaiKhoan = tk;
-                                // Load vai trò
+                                // Nếu tìm thấy tài khoản thì load VaiTro navigation
                                 foreach (var vt in db.VaiTros.ToList()) {
                                     if (vt.MaVaiTro == tk.MaVaiTro) {
                                         tk.MaVaiTroNavigation = vt;
@@ -107,6 +110,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
             }
         }
 
+        // Lấy danh sách VaiTro để fill combobox khi tạo tài khoản
         public List<VaiTro> LayDanhSachVaiTro() {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
@@ -119,12 +123,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
             }
         }
 
-        // (Trả về: 0 = OK, 1 = Lỗi, 2 = Sai MK, 3 = Không tìm thấy TK)
+        // Đổi mật khẩu tài khoản: trả về mã trạng thái (0=OK,2=sai MK,3=không tìm thấy,1=lỗi)
         public int DoiMatKhau(string tenDangNhap, string matKhauCu, string matKhauMoi) {
             try {
                 using (var db = new DataSqlContext()) {
                     TaiKhoan taiKhoan = null;
-                    foreach (var tk in db.TaiKhoans) // Tối ưu
+                    foreach (var tk in db.TaiKhoans) // Lặp trên DbSet
                     {
                         if (tk.TenDangNhap == tenDangNhap) {
                             taiKhoan = tk;
@@ -133,7 +137,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                     }
 
                     if (taiKhoan == null) return 3; // Không tìm thấy
-                    if (taiKhoan.MatKhau != matKhauCu) return 2; // Sai MK
+                    if (taiKhoan.MatKhau != matKhauCu) return 2; // Sai mật khẩu hiện tại
 
                     taiKhoan.MatKhau = matKhauMoi;
                     db.SaveChanges();
@@ -146,9 +150,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
             }
         }
 
+        // Cập nhật thông tin NV (chucVu) và gán lại vai trò theo tên vai trò
         public bool CapNhatNhanVien(int maNv, string chucVuMoi, string tenVaiTroMoi) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
+                    // Tìm vai trò theo tên (string)
                     VaiTro vaiTro = null;
                     foreach (var vt in db.VaiTros.ToList()) {
                         if (vt.TenVaiTro == tenVaiTroMoi) {
@@ -158,8 +164,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                     }
                     if (vaiTro == null) return false;
 
+                    // Tìm nhân viên theo MaNv
                     Models.NhanVien nhanVien = null;
-                    foreach (var nv in db.NhanViens) // Tối ưu
+                    foreach (var nv in db.NhanViens) // Lặp trực tiếp
                     {
                         if (nv.MaNv == maNv) {
                             nhanVien = nv;
@@ -168,10 +175,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                     }
                     if (nhanVien == null) return false;
 
+                    // Cập nhật chức vụ
                     nhanVien.ChucVu = chucVuMoi;
 
+                    // Nếu NV có tài khoản -> cập nhật MaVaiTro
                     TaiKhoan taiKhoan = null;
-                    foreach (var tk in db.TaiKhoans) // Tối ưu
+                    foreach (var tk in db.TaiKhoans) // Lặp trực tiếp
                     {
                         if (tk.MaNv == maNv) {
                             taiKhoan = tk;
@@ -193,6 +202,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
             }
         }
 
+        // Tạo tài khoản mới cho MaNv: kiểm tra tồn tại username trước khi tạo
         public bool TaoTaiKhoan(int maNv, string tenDangNhap, string matKhau, int maVaiTro) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
@@ -224,11 +234,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
             }
         }
 
+        // Xóa tài khoản theo MaNv
         public bool XoaTaiKhoan(int maNv) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
                     TaiKhoan account = null;
-                    foreach (var tk in db.TaiKhoans) // Tối ưu
+                    foreach (var tk in db.TaiKhoans) // Lặp trực tiếp
                     {
                         if (tk.MaNv == maNv) {
                             account = tk;

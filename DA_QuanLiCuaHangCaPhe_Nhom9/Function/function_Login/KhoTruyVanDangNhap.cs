@@ -18,6 +18,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Login {
 
     /// Lớp này chịu trách nhiệm truy vấn CSDL
     /// cho chức năng Đăng nhập.
+    /// (ĐÃ VIẾT LẠI BẰNG FOREACH, KHÔNG LINQ)
 
     public class KhoTruyVanDangNhap {
 
@@ -28,12 +29,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Login {
         public ThongTinTaiKhoan XacThuc(string username) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
-                    // 1. Lấy tất cả dữ liệu thô
+                    // 1. Lấy tất cả dữ liệu thô để join thủ công
                     var allTaiKhoan = db.TaiKhoans.ToList();
                     var allNhanVien = db.NhanViens.ToList();
                     var allVaiTro = db.VaiTros.ToList();
 
-                    // 2. Tìm tài khoản
+                    // 2. Tìm tài khoản theo TenDangNhap
                     TaiKhoan taiKhoanTimThay = null;
                     foreach (var tk in allTaiKhoan) {
                         if (tk.TenDangNhap == username) {
@@ -42,12 +43,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Login {
                         }
                     }
 
-                    // 3. Nếu không tìm thấy
+                    // 3. Nếu không tìm thấy -> trả null cho caller (Loginform xử lý)
                     if (taiKhoanTimThay == null) {
                         return null;
                     }
 
-                    // 4. Tìm Tên Nhân viên (Join thủ công)
+                    // 4. Tìm tên nhân viên tương ứng (join thủ công)
                     string tenNV = "(Không tìm thấy NV)";
                     foreach (var nv in allNhanVien) {
                         if (nv.MaNv == taiKhoanTimThay.MaNv) {
@@ -56,7 +57,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Login {
                         }
                     }
 
-                    // 5. Tìm Tên Vai Trò (Join thủ công)
+                    // 5. Tìm tên vai trò tương ứng (join thủ công)
                     string tenVaiTro = "(Không tìm thấy VT)";
                     foreach (var vt in allVaiTro) {
                         if (vt.MaVaiTro == taiKhoanTimThay.MaVaiTro) {
@@ -65,7 +66,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Login {
                         }
                     }
 
-                    // 6. Tạo đối tượng DTO để trả về
+                    // 6. Gói kết quả vào DTO và trả về
                     var thongTin = new ThongTinTaiKhoan {
                         TenDangNhap = taiKhoanTimThay.TenDangNhap,
                         MatKhau = taiKhoanTimThay.MatKhau,
@@ -79,6 +80,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Login {
                 }
             }
             catch (Exception ex) {
+                // Ghi log lên console để dev trace lỗi kết nối/EF
                 Console.WriteLine("Lỗi khi xác thực đăng nhập: " + ex.Message);
                 return null; // Trả về null nếu có lỗi CSDL
             }

@@ -3,10 +3,17 @@
 namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
     // DTO trả về toàn bộ dữ liệu cần cho form ThanhToan
     public class ThongTinDonHangDayDu {
-        public DonHang DonHang { get; set; }                // entity DonHang gốc
-        public List<ChiTietDonHang> ChiTiet { get; set; }   // danh sách chi tiết đơn
-        public Models.ThanhToan ThanhToan { get; set; }     // record ThanhToan liên quan
-        public List<SanPham> SanPhams { get; set; }         // toàn bộ sản phẩm để join tên
+        // DonHang: đối tượng chính của đơn
+        public DonHang DonHang { get; set; }
+
+        // Chi tiết các mặt hàng trong đơn (ChiTietDonHang)
+        public List<ChiTietDonHang> ChiTiet { get; set; }
+
+        // Bản ghi ThanhToan liên quan (trạng thái "Chưa thanh toán" khi tải)
+        public Models.ThanhToan ThanhToan { get; set; }
+
+        // Danh sách sản phẩm toàn bộ (dùng join thủ công để lấy tên)
+        public List<SanPham> SanPhams { get; set; } // Danh sách SP để lấy tên
     }
 
     // DTO dùng để hiển thị preview (không thay đổi DB)
@@ -45,7 +52,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
                     var ketQua = new ThongTinDonHangDayDu();
                     ketQua.ChiTiet = new List<ChiTietDonHang>();
 
-                    // 1. Tải DonHang: lặp qua db.DonHangs.ToList() và so sánh MaDh
+                    // 1. Tải Đơn Hàng: lặp qua toàn bộ DonHangs và tìm MaDh khớp
                     foreach (var dh in db.DonHangs.ToList()) {
                         if (dh.MaDh == maDonHangChon) {
                             ketQua.DonHang = dh;
@@ -53,14 +60,14 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
                         }
                     }
 
-                    // 2. Tải Chi Tiết Đơn Hàng: lặp toàn bộ ChiTietDonHangs và chọn những mục có MaDh tương ứng
+                    // 2. Tải Chi Tiết Đơn Hàng: thêm tất cả ChiTietDonHang có MaDh bằng MaDH
                     foreach (var ct in db.ChiTietDonHangs.ToList()) {
                         if (ct.MaDh == maDonHangChon) {
                             ketQua.ChiTiet.Add(ct);
                         }
                     }
 
-                    // 3. Tải ThanhToan: tìm record ThanhToan có MaDh tương ứng và TrangThai = "Chưa thanh toán"
+                    // 3. Tải Thanh Toán: tìm record thanh toán chưa thanh toán của đơn này
                     foreach (var tt in db.ThanhToans.ToList()) {
                         if (tt.MaDh == maDonHangChon && tt.TrangThai == "Chưa thanh toán") {
                             ketQua.ThanhToan = tt;
@@ -68,10 +75,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
                         }
                     }
 
-                    // 4. Lấy danh sách SanPham để phục vụ join tên khi hiển thị chi tiết hóa đơn
+                    // 4. Tải Sản Phẩm (để lấy tên khi render hóa đơn)
                     ketQua.SanPhams = db.SanPhams.ToList();
 
-                    // Nếu thiếu DonHang hoặc ThanhToan chưa thanh toán -> trả null để caller xử lý
+                    // Nếu không có DonHang hoặc ThanhToan (chưa thanh toán) -> trả null để UI xử lý
                     if (ketQua.DonHang == null || ketQua.ThanhToan == null) {
                         return null;
                     }
@@ -79,7 +86,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
                 }
             }
             catch (Exception ex) {
-                // Log lỗi ra console — không ném để UI bắt và hiển thị message phù hợp
+                // Ghi log ra console (dùng khi debug). UI sẽ nhận null.
                 Console.WriteLine("Lỗi khi tải thông tin thanh toán: " + ex.Message);
                 return null;
             }
@@ -95,13 +102,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
         public bool XacNhanThanhToan(int maDonHang, string hinhThuc) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
-                    // Tìm DonHang bằng foreach trên DbSet
+                    // Tìm DonHang bằng vòng foreach
                     DonHang donHang = null;
                     foreach (var dh in db.DonHangs) {
                         if (dh.MaDh == maDonHang) { donHang = dh; break; }
                     }
 
-                    // Tìm ThanhToan có trạng thái "Chưa thanh toán"
+                    // Tìm record ThanhToan liên quan đang ở trạng thái "Chưa thanh toán"
                     Models.ThanhToan thanhToan = null;
                     foreach (var tt in db.ThanhToans) {
                         if (tt.MaDh == maDonHang && tt.TrangThai == "Chưa thanh toán") {
@@ -109,12 +116,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
                         }
                     }
 
-                    // Nếu không tìm thấy -> trả false để caller biết
+                    // Nếu không tìm thấy -> trả về false cho caller
                     if (donHang == null || thanhToan == null) {
                         return false;
                     }
 
-                    // Cập nhật trạng thái và phương thức thanh toán
+                    // Cập nhật trạng thái và phương thức thanh toán, lưu
                     donHang.TrangThai = "Đã thanh toán";
                     thanhToan.TrangThai = "Đã thanh toán";
                     thanhToan.HinhThuc = hinhThuc;
@@ -142,22 +149,23 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
             var ketQua = new List<DuLieuDonHangCho>();
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
-                    var allDonHang = db.DonHangs.ToList();   // tải toàn bộ DonHang
-                    var allKhachHang = db.KhachHangs.ToList(); // tải toàn bộ KhachHang
+                    // Tải toàn bộ DonHang và KhachHang (để join thủ công)
+                    var allDonHang = db.DonHangs.ToList();
+                    var allKhachHang = db.KhachHangs.ToList();
 
                     var donHangCho = new List<DonHang>();
 
-                    // Lọc DonHang có TrangThai == "Đang xử lý"
+                    // Lọc các đơn có TrangThai == "Đang xử lý"
                     foreach (var dh in allDonHang) {
                         if (dh.TrangThai == "Đang xử lý") {
                             donHangCho.Add(dh);
                         }
                     }
 
-                    // Sắp theo NgayLap tăng dần (dùng Sort + CompareTo)
+                    // Sắp theo NgayLap tăng dần
                     donHangCho.Sort((a, b) => a.NgayLap.GetValueOrDefault().CompareTo(b.NgayLap.GetValueOrDefault()));
 
-                    // Map từng DonHang -> DuLieuDonHangCho, tìm tên Kh nếu có MaKh
+                    // Chuyển mỗi DonHang thành DuLieuDonHangCho (resolve tên KH bằng join thủ công)
                     foreach (var dh in donHangCho) {
                         string tenKH = "Khách vãng lai";
                         if (dh.MaKh != null) {
@@ -193,11 +201,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
                     DonHang donHang = null;
-                    // Tìm DonHang bằng foreach
+                    // Tìm DonHang theo id
                     foreach (var dh in db.DonHangs.ToList()) {
                         if (dh.MaDh == maDH) {
                             donHang = dh;
-                            // Khởi tạo danh sách chi tiết và điền bằng cách lặp qua ChiTietDonHangs
+                            // Khởi tạo danh sách ChiTietDonHangs và điền bằng cách lặp toàn bộ ChiTietDonHangs
                             donHang.ChiTietDonHangs = new List<ChiTietDonHang>();
                             foreach (var ct in db.ChiTietDonHangs.ToList()) {
                                 if (ct.MaDh == maDH) {
@@ -235,7 +243,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
                                 if (dh.MaDh == maDHCanHuy) { donHang = dh; break; }
                             }
 
-                            // Tìm ThanhToan đang ở trạng thái "Chưa thanh toán"
+                            // Tìm thanh toán chưa thanh toán tương ứng
                             Models.ThanhToan thanhToan = null;
                             foreach (var tt in db.ThanhToans) {
                                 if (tt.MaDh == maDHCanHuy && tt.TrangThai == "Chưa thanh toán") {
@@ -243,7 +251,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
                                 }
                             }
 
-                            // Lấy chi tiết đơn để dùng khi hoàn kho
+                            // Lấy chi tiết đơn để hoàn kho
                             var chiTiet = new List<ChiTietDonHang>();
                             foreach (var ct in db.ChiTietDonHangs.ToList()) {
                                 if (ct.MaDh == maDHCanHuy) { chiTiet.Add(ct); }
@@ -255,11 +263,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
                                 return false;
                             }
 
-                            // --- HOÀN KHO: tải toàn bộ công thức và nguyên liệu 1 lần để xử lý bằng foreach ---
+                            // --- HOÀN KHO ---
+                            // Tải một lần toàn bộ công thức và nguyên liệu để xử lý bằng foreach
                             var allCongThuc = db.DinhLuongs.ToList();
                             var allNguyenLieu = db.NguyenLieus.ToList();
 
-                            // Với từng món trong chi tiết, tìm công thức (DinhLuong) tương ứng và cộng trả nguyên liệu
+                            // Với mỗi món trong chi tiết, tìm công thức và cộng trả nguyên liệu về kho
                             foreach (var monAn in chiTiet) {
                                 var congThucCuaMon = new List<DinhLuong>();
                                 foreach (var dl in allCongThuc) {
@@ -277,10 +286,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
                                         }
 
                                         if (nguyenLieuTrongKho != null) {
-                                            // Lượng cần cộng = SoLuongCan (của công thức) * số lượng món trong đơn
+                                            // Cộng lượng tương ứng = SoLuongCan * SoLuong món
                                             decimal luongCanCong = nguyenLieuCan.SoLuongCan * monAn.SoLuong;
-                                            nguyenLieuTrongKho.SoLuongTon += luongCanCong; // cộng trả
-                                            db.Update(nguyenLieuTrongKho); // đánh dấu thay đổi
+                                            nguyenLieuTrongKho.SoLuongTon += luongCanCong;
+                                            db.Update(nguyenLieuTrongKho); // Đánh dấu entity đã thay đổi
                                         }
                                     }
                                 }

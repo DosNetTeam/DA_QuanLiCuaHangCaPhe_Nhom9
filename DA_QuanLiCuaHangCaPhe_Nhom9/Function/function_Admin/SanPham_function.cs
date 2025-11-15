@@ -14,15 +14,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
 
     /// Lớp này chịu trách nhiệm truy vấn CSDL
     /// cho chức năng Quản Lý Sản Phẩm.
+    /// (ĐÃ VIẾT LẠI BẰNG FOREACH, KHÔNG LINQ)
 
     public class SanPham_function {
+        // Lấy danh sách sản phẩm chuyển sang DTO DuLieuSanPham cho UI
         public List<DuLieuSanPham> TaiDuLieuSanPham() {
             var ketQua = new List<DuLieuSanPham>();
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
                     var products = db.SanPhams.ToList();
 
-                    // Chuyển đổi
+                    // Chuyển đổi model -> DTO
                     foreach (var sp in products) {
                         ketQua.Add(new DuLieuSanPham {
                             MaSp = sp.MaSp,
@@ -34,7 +36,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                         });
                     }
 
-                    // Sắp xếp
+                    // Sắp xếp theo tên sản phẩm (tăng dần)
                     ketQua.Sort((a, b) => string.Compare(a.TenSp, b.TenSp));
                 }
             }
@@ -44,6 +46,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
             return ketQua;
         }
 
+        // Lấy chi tiết một sản phẩm theo mã, trả về entity SanPham (hoặc null nếu không tìm thấy)
         public SanPham LayChiTietSanPham(int maSp) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
@@ -59,6 +62,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
             }
         }
 
+        // Thêm sản phẩm mới vào DB, trả về entity vừa thêm (kèm MaSp do EF gán)
         public SanPham ThemSanPham(string tenSp, string loaiSp, decimal donGia, string donVi, string trangThai) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
@@ -85,11 +89,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
             }
         }
 
+        // Cập nhật sản phẩm; trả về entity cập nhật hoặc null nếu không tìm thấy
         public SanPham CapNhatSanPham(int maSp, string tenSp, string loaiSp, decimal donGia, string donVi, string trangThai) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
                     SanPham product = null;
-                    foreach (var sp in db.SanPhams) // Tối ưu: không cần ToList()
+                    foreach (var sp in db.SanPhams) // Lặp trực tiếp trên DbSet (deferred execution)
                     {
                         if (sp.MaSp == maSp) {
                             product = sp;
@@ -117,11 +122,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
             }
         }
 
+        // Xóa sản phẩm theo mã; trả về true nếu thành công
         public bool XoaSanPham(int maSp) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
                     SanPham product = null;
-                    foreach (var sp in db.SanPhams) // Tối ưu
+                    foreach (var sp in db.SanPhams) // Lặp trực tiếp trên DbSet
                     {
                         if (sp.MaSp == maSp) {
                             product = sp;
@@ -137,10 +143,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                 }
             }
             catch (Exception ex) {
-                // Kiểm tra lỗi ràng buộc
+                // Nếu lỗi ràng buộc FK, log inner exception để biết chi tiết
                 if (ex.InnerException != null && ex.InnerException.Message.Contains("REFERENCE constraint")) {
                     Console.WriteLine($"Lỗi ràng buộc khi xóa SP: {ex.InnerException.Message}");
-                    // (Bạn có thể ném lại lỗi hoặc trả về một mã lỗi cụ thể)
                 }
                 else {
                     Console.WriteLine($"Lỗi khi xóa sản phẩm: {ex.Message}");

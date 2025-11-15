@@ -6,15 +6,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
     /// Chỉ lưu trữ dữ liệu, không có logic.
 
     public class GioHangItem {
-        // Mã sản phẩm (khóa tham chiếu đến bảng SanPham)
+        // Mã sản phẩm (primary key tham chiếu đến bảng SanPham)
         public int MaSp { get; set; }
-        // Tên sản phẩm để hiển thị lên UI
+
+        // Tên hiển thị của sản phẩm (để dễ render UI)
         public string TenSp { get; set; }
-        // Số lượng đơn vị của món trong giỏ
+
+        // Số lượng hiện có trong giỏ
         public int SoLuong { get; set; }
-        // Giá gốc của sản phẩm (chưa áp dụng khuyến mãi)
+
+        // Giá gốc của sản phẩm (trước khi áp dụng khuyến mãi)
         public decimal DonGiaGoc { get; set; } // Giá gốc (chưa KM)
-        // Thành tiền = SoLuong * DonGiaGoc (giữ sẵn để tránh tính lại nhiều lần)
+
+        // Thành tiền tính theo DonGiaGoc * SoLuong (lưu để không phải tính lại nhiều lần)
         public decimal ThanhTienGoc { get; set; } // SoLuong * DonGiaGoc
     }
 
@@ -26,10 +30,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
         // Danh sách các món đang có trong giỏ
         private List<GioHangItem> _items;
 
-        // Dịch vụ để kiểm tra tồn kho / giá bán / logic liên quan đơn hàng
+        // Dịch vụ dùng để kiểm tra tồn kho / giá bán khi thay đổi giỏ
         private readonly DichVuDonHang _dichVuDonHang;
 
-        // Constructor: nhận DichVuDonHang từ MainForm để tái sử dụng logic kiểm kho / giá
+        // Constructor nhận DichVuDonHang để thực hiện kiểm tra nghiệp vụ
         public GioHang(DichVuDonHang dichVu) {
             _items = new List<GioHangItem>(); // Khởi tạo list rỗng
             _dichVuDonHang = dichVu; // Lưu tham chiếu đến dịch vụ kiểm kho
@@ -37,10 +41,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
 
 
         /// Thêm một sản phẩm vào giỏ hoặc tăng số lượng.
-        /// Trả về (Success, Message): Success=true khi thành công, false + thông báo khi thất bại.
 
+        /// <returns>Một tuple (bool Success, string Message). 
+        /// True nếu thành công, False và kèm thông báo lỗi nếu thất bại.
+        /// </returns>
         public (bool Success, string Message) ThemMon(SanPham sp) {
-            // Tìm xem sản phẩm đã tồn tại trong giỏ chưa bằng cách so sánh MaSp
+            // Tìm xem đã có item này trong giỏ chưa (so sánh theo MaSp)
             GioHangItem itemCoSan = null;
             foreach (var item in _items) {
                 if (item.MaSp == sp.MaSp) {
@@ -50,35 +56,35 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
             }
 
             if (itemCoSan != null) {
-                // Nếu đã có trong giỏ -> dự kiến tăng số lượng lên +1
+                // Nếu đã có, dự kiến tăng 1 đơn vị
                 int soLuongMoi = itemCoSan.SoLuong + 1;
 
-                // Kiểm tra kho thực tế: gọi DichVuDonHang.KiemTraSoLuongTonThucTe để biết có đủ nguyên liệu cho số lượng mới không
+                // Kiểm tra kho thực tế qua DichVuDonHang
                 var kiemTra = _dichVuDonHang.KiemTraSoLuongTonThucTe(sp.MaSp, soLuongMoi);
                 if (kiemTra.DuHang == false) {
-                    // Nếu không đủ nguyên liệu, trả về false kèm thông báo từ dịch vụ
+                    // Không đủ nguyên liệu -> trả về lỗi để UI hiển thị
                     return (false, kiemTra.ThongBao);
                 }
 
-                // Nếu đủ -> cập nhật số lượng và thành tiền gốc cho item trong giỏ
+                // Cập nhật số lượng và thành tiền của item đã có
                 itemCoSan.SoLuong = soLuongMoi;
                 itemCoSan.ThanhTienGoc = soLuongMoi * itemCoSan.DonGiaGoc;
             }
             else {
-                // Nếu chưa có trong giỏ -> kiểm tra kho với 1 đơn vị trước khi thêm
+                // Nếu chưa có item trong giỏ -> kiểm tra kho cho 1 món
                 var kiemTra = _dichVuDonHang.KiemTraSoLuongTonThucTe(sp.MaSp, 1);
                 if (kiemTra.DuHang == false) {
-                    // Không đủ nguyên liệu cho 1 món -> trả về lỗi
+                    // Không có đủ nguyên liệu cho 1 món -> trả về lỗi
                     return (false, kiemTra.ThongBao);
                 }
 
-                // Nếu đủ -> tạo GioHangItem mới với số lượng = 1 và thêm vào danh sách
+                // Tạo GioHangItem mới và add vào danh sách
                 _items.Add(new GioHangItem {
                     MaSp = sp.MaSp,
                     TenSp = sp.TenSp,
                     SoLuong = 1,
-                    DonGiaGoc = sp.DonGia, // lưu giá gốc
-                    ThanhTienGoc = sp.DonGia // thành tiền ban đầu = 1 * DonGia
+                    DonGiaGoc = sp.DonGia, // Lưu giá gốc từ model SanPham
+                    ThanhTienGoc = sp.DonGia // initial thành tiền = 1 * DonGia
                 });
             }
 
@@ -87,11 +93,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
         }
 
 
-        /// Giảm số lượng của một món (giảm 1).
-        /// Trả về true nếu món bị xóa (sau khi giảm = 0), false nếu chỉ giảm.
+        /// Giảm số lượng của một món.
 
+        /// <returns>True nếu món bị xóa (SL=0), False nếu chỉ giảm.</returns>
         public bool GiamSoLuong(int maSp) {
-            // Tìm item theo mã
+            // Tìm item trong danh sách theo mã
             GioHangItem itemCanGiam = null;
             foreach (var item in _items) {
                 if (item.MaSp == maSp) {
@@ -104,13 +110,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
             if (itemCanGiam == null) return false;
 
             if (itemCanGiam.SoLuong > 1) {
-                // Nếu số lượng > 1 -> giảm 1 và cập nhật thành tiền
+                // Giảm số lượng và cập nhật thành tiền
                 itemCanGiam.SoLuong--;
                 itemCanGiam.ThanhTienGoc = itemCanGiam.SoLuong * itemCanGiam.DonGiaGoc;
-                return false; // chỉ giảm, không xóa
+                return false; // Chỉ giảm, không xóa
             }
             else {
-                // Nếu số lượng hiện tại = 1 -> xóa item khỏi giỏ
+                // Nếu số lượng chỉ có 1 -> xóa hoàn toàn item khỏi giỏ
                 _items.Remove(itemCanGiam);
                 return true; // đã xóa
             }
@@ -151,7 +157,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
         }
 
 
-        /// Lấy tổng tiền (chưa tính khuyến mãi).
+        /// Lấy tổng tiền (chưa tính KM).
 
         public decimal LayTongTienGoc() {
             decimal tong = 0;
@@ -163,7 +169,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
         }
 
 
-        /// Đếm số lượng món trong giỏ.
+        /// Đếm số lượng mục (khác với tổng số lượng đơn vị) trong giỏ.
 
         public int LaySoLuongMon() {
             return _items.Count;

@@ -3,48 +3,64 @@ using DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin;
 using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
+    // Form quản trị (Admin) — chịu trách nhiệm hiển thị và thao tác với:
+    // - Thống kê tổng quan, doanh thu
+    // - Quản lý nhân viên / tài khoản
+    // - Quản lý kho (nguyên liệu)
+    // - Quản lý sản phẩm
+    // - Quản lý khuyến mãi
     public partial class Admin : Form {
         // === THAY ĐỔI: Khai báo 5 Repository mới ===
-        private readonly KhoSp_Nl _repoKho;
-        private readonly KhuyenMai_function _repoKM;
-        private readonly NhanVien_function _repoNhanVien;
-        private readonly SanPham_function _repoSanPham;
-        private readonly ThongKe _repoThongKe;
+        // Các trường này là các lớp "KhoTruyVan"/service giúp tách repository ra khỏi UI.
+        private readonly KhoSp_Nl _repoKho;               // Truy vấn kho nguyên liệu
+        private readonly KhuyenMai_function _repoKM;      // Truy vấn khuyến mãi
+        private readonly NhanVien_function _repoNhanVien; // Truy vấn nhân viên / tài khoản / vai trò
+        private readonly SanPham_function _repoSanPham;   // Truy vấn sản phẩm
+        private readonly ThongKe _repoThongKe;           // Truy vấn thống kê, doanh thu
 
+        // Id nhân viên đang được chọn trong bảng (dùng khi sửa/xóa)
         private int selectedEmployeeId = 0;
 
+        // Constructor của form Admin:
+        // - Khởi tạo UI component
+        // - Khởi tạo các repository
+        // - Đăng ký các sự kiện của DataGridView / Tab / các control
         public Admin() {
             InitializeComponent();
 
             // === THAY ĐỔI: Khởi tạo 5 Repository ===
-            _repoKho = new KhoSp_Nl();
-            _repoKM = new KhuyenMai_function();
-            _repoNhanVien = new NhanVien_function();
-            _repoSanPham = new SanPham_function();
-            _repoThongKe = new ThongKe();
+            _repoKho = new KhoSp_Nl();                // Tạo instance xử lý dữ liệu kho
+            _repoKM = new KhuyenMai_function();       // Tạo instance xử lý KM
+            _repoNhanVien = new NhanVien_function();  // Tạo instance xử lý NV
+            _repoSanPham = new SanPham_function();    // Tạo instance xử lý SP
+            _repoThongKe = new ThongKe();            // Tạo instance xử lý thống kê
 
             // (Các sự kiện giữ nguyên)
-            this.StartPosition = FormStartPosition.CenterScreen;
-            dtgvquanlynhanvien.CellClick += dataGridView1_CellClick;
-            dtgvquanlynhanvien.KeyDown += dataGridView1_KeyDown;
-            dgvkho.CellClick += dgvInventory_CellClick;
-            dgvkho.KeyDown += dgvInventory_KeyDown;
-            CreateSaveButton();
-            pnthongtinnv.Visible = false;
-            dgvSanPham.CellClick += dgvSanPham_CellClick;
-            dgvSanPham.KeyDown += dgvSanPham_KeyDown;
-            tabControlKho.SelectedIndexChanged += TabControlKho_SelectedIndexChanged;
-            dgvkhuyenmai.CellClick += dgvkhuyenmai_CellClick;
-            dgvkhuyenmai.KeyDown += dgvkhuyenmai_KeyDown;
+            this.StartPosition = FormStartPosition.CenterScreen;           // Đặt form giữa màn hình
+            dtgvquanlynhanvien.CellClick += dataGridView1_CellClick;      // Khi click trên DGV NV -> mở chi tiết
+            dtgvquanlynhanvien.KeyDown += dataGridView1_KeyDown;         // Khi nhấn phím ở DGV NV
+            dgvkho.CellClick += dgvInventory_CellClick;                   // Khi click DGV kho -> mở chi tiết
+            dgvkho.KeyDown += dgvInventory_KeyDown;                      // Phím ở DGV kho
+            CreateSaveButton();                                          // Placeholder (không làm gì hiện tại)
+            pnthongtinnv.Visible = false;                                // Ẩn panel thông tin NV lúc đầu
+            dgvSanPham.CellClick += dgvSanPham_CellClick;                // Sự kiện click sản phẩm
+            dgvSanPham.KeyDown += dgvSanPham_KeyDown;                    // Sự kiện phím cho sản phẩm
+            tabControlKho.SelectedIndexChanged += TabControlKho_SelectedIndexChanged; // Chuyển tab xử lý
+            dgvkhuyenmai.CellClick += dgvkhuyenmai_CellClick;            // Click KM -> chi tiết
+            dgvkhuyenmai.KeyDown += dgvkhuyenmai_KeyDown;                // Phím ở KM
         }
 
+        // Hàm placeholder cho việc tạo nút lưu (hiện không chứa logic)
         private void CreateSaveButton() { }
 
-        // (Các sự kiện DGV giữ nguyên)
+        // Sự kiện khi click 1 hàng trong DataGridView Sản phẩm:
+        // - Nếu dòng hợp lệ -> hiển thị chi tiết sản phẩm ở panel bên
         private void dgvSanPham_CellClick(object? sender, DataGridViewCellEventArgs e) {
             if (e.RowIndex >= 0) { ShowProductDetailInPanel(e.RowIndex); }
         }
 
+        // Sự kiện khi dùng phím (Enter) ở DataGridView Sản phẩm:
+        // - Khi nhấn Enter trên hàng hiện tại -> cũng mở chi tiết
         private void dgvSanPham_KeyDown(object? sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter && dgvSanPham.CurrentRow != null) {
                 e.Handled = true;
@@ -52,30 +68,39 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoSanPham ***
+        // --- LOAD SẢN PHẨM VÀ ĐIỀU CHỈNH GIAO DIỆN ---
+        // Lấy dữ liệu sản phẩm từ repository và gán vào dgvSanPham,
+        // rồi format cột và tô màu theo trạng thái.
         private void LoadProductData() {
             try {
-                var products = _repoSanPham.TaiDuLieuSanPham(); // Gọi repo
-                dgvSanPham.DataSource = products;
+                var products = _repoSanPham.TaiDuLieuSanPham(); // Gọi repo lấy danh sách sản phẩm DTO
+                dgvSanPham.DataSource = products;               // Gán làm nguồn dữ liệu cho DataGridView
 
-                // (Định dạng cột và màu giữ nguyên)
+                // Áp style chung cho DataGridView
                 StyleDataGridView(dgvSanPham);
+
+                // Đặt tên cột rõ ràng cho người dùng
                 dgvSanPham.Columns["MaSp"].HeaderText = "Mã SP";
                 dgvSanPham.Columns["TenSp"].HeaderText = "Tên sản phẩm";
                 dgvSanPham.Columns["LoaiSp"].HeaderText = "Loại";
                 dgvSanPham.Columns["DonGia"].HeaderText = "Đơn giá";
                 dgvSanPham.Columns["DonVi"].HeaderText = "Đơn vị";
                 dgvSanPham.Columns["TrangThai"].HeaderText = "Trạng thái";
+
+                // Format hiển thị số (Đơn giá)
                 dgvSanPham.Columns["DonGia"].DefaultCellStyle.Format = "N0";
 
+                // Duyệt qua từng hàng để tô màu dựa trên cột "TrangThai"
                 for (int i = 0; i < dgvSanPham.Rows.Count; i++) {
                     DataGridViewRow row = dgvSanPham.Rows[i];
                     if (row.Cells["TrangThai"].Value != null) {
                         string trangThai = row.Cells["TrangThai"].Value.ToString();
+                        // Nếu còn bán -> nền xanh nhẹ, chữ xanh đậm
                         if (trangThai == "Còn bán") {
                             row.DefaultCellStyle.BackColor = Color.FromArgb(223, 240, 216);
                             row.DefaultCellStyle.ForeColor = Color.FromArgb(60, 118, 61);
                         }
+                        // Nếu ngừng bán -> nền đỏ nhạt, chữ đỏ
                         else if (trangThai == "Ngừng bán") {
                             row.DefaultCellStyle.BackColor = Color.FromArgb(242, 222, 222);
                             row.DefaultCellStyle.ForeColor = Color.FromArgb(169, 68, 66);
@@ -84,14 +109,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 }
             }
             catch (Exception ex) {
+                // Báo lỗi người dùng nếu có ngoại lệ khi load dữ liệu
                 MessageBox.Show("Lỗi khi tải dữ liệu sản phẩm: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        // Sự kiện load Form Admin: khởi tạo dữ liệu tổng quan
         private void Admin_Load(object sender, EventArgs e) {
             LoadOverviewData();
         }
 
+        // Khi đổi tab điều khiển chính (bandieukhien) thì tải dữ liệu tương ứng
         private void tabControl1_SelectedIndexChanged(object? sender, EventArgs e) {
             switch (bandieukhien.SelectedIndex) {
                 case 0: LoadOverviewData(); break;
@@ -102,28 +130,33 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoThongKe ***
+        // --- THỐNG KÊ TỔNG QUAN ---
+        // Gọi _repoThongKe để lấy dữ liệu tổng quan và bind vào DataGridView
         private void LoadOverviewData() {
             try {
-                List<DuLieuTongQuan> overviewData = _repoThongKe.TaiDuLieuTongQuan(); // Gọi repo
-                tongquandulieu.DataSource = overviewData;
+                List<DuLieuTongQuan> overviewData = _repoThongKe.TaiDuLieuTongQuan(); // Gọi repo lấy DTO
+                tongquandulieu.DataSource = overviewData;                             // Gán datasource
 
+                // Format DataGridView rồi đổi tên các cột hiển thị
                 StyleDataGridView(tongquandulieu);
                 tongquandulieu.Columns["Category"].HeaderText = "Danh mục";
                 tongquandulieu.Columns["Count"].HeaderText = "Số lượng";
                 tongquandulieu.Columns["Details"].HeaderText = "Chi tiết";
             }
             catch (Exception ex) {
+                // Thông báo lỗi nếu repo ném ngoại lệ
                 MessageBox.Show($"Lỗi khi tải dữ liệu tổng quan:\n{ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoNhanVien ***
+        // --- TẢI DỮ LIỆU NHÂN VIÊN ---
+        // Gọi repository nhân viên để nhận danh sách hiển thị
         private void LoadEmployeeData() {
             try {
-                var employees = _repoNhanVien.TaiDuLieuNhanVien(); // Gọi repo
-                dtgvquanlynhanvien.DataSource = employees;
+                var employees = _repoNhanVien.TaiDuLieuNhanVien(); // Gọi repo trả về list DTO
+                dtgvquanlynhanvien.DataSource = employees;         // Bind vào DataGridView
 
+                // Định dạng hiển thị cột
                 StyleDataGridView(dtgvquanlynhanvien);
                 dtgvquanlynhanvien.Columns["MaNv"].HeaderText = "Mã NV";
                 dtgvquanlynhanvien.Columns["TenNv"].HeaderText = "Họ tên";
@@ -138,12 +171,14 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoKho ***
+        // --- TẢI DỮ LIỆU KHO NGUYÊN LIỆU ---
+        // Gọi repository kho để lấy danh sách nguyên liệu (đã sắp, tính trạng thái)
         private void LoadInventoryData() {
             try {
-                var sortedList = _repoKho.TaiDuLieuKho(); // Gọi repo
-                dgvkho.DataSource = sortedList;
+                var sortedList = _repoKho.TaiDuLieuKho(); // Gọi repo trả về DTO danh sách kho
+                dgvkho.DataSource = sortedList;           // Bind vào DataGridView kho
 
+                // Áp style và đổi tên cột hiển thị
                 StyleDataGridView(dgvkho);
                 dgvkho.Columns["MaNl"].HeaderText = "Mã NL";
                 dgvkho.Columns["TenNl"].HeaderText = "Tên nguyên liệu";
@@ -152,6 +187,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 dgvkho.Columns["NguongCanhBao"].HeaderText = "Ngưỡng cảnh báo";
                 dgvkho.Columns["TinhTrang"].HeaderText = "Tình trạng";
 
+                // Duyệt từng hàng để tô màu theo tình trạng kho
                 for (int i = 0; i < dgvkho.Rows.Count; i++) {
                     DataGridViewRow row = dgvkho.Rows[i];
                     if (row.Cells["TinhTrang"].Value != null) {
@@ -176,10 +212,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoThongKe ***
+        // --- TẢI DỮ LIỆU DOANH THU / THỐNG KÊ ---
         private void LoadRevenueData() {
             try {
-                var sortedData = _repoThongKe.TaiDuLieuDoanhThu(); // Gọi repo
+                var sortedData = _repoThongKe.TaiDuLieuDoanhThu(); // Gọi repo trả về DTO doanh thu
                 dgvdoanhthu.DataSource = sortedData;
 
                 StyleDataGridView(dgvdoanhthu);
@@ -189,6 +225,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 dgvdoanhthu.Columns["DoanhThuTrungBinh"].HeaderText = "TB/Đơn";
                 dgvdoanhthu.Columns["DonHangLonNhat"].HeaderText = "Cao nhất";
                 dgvdoanhthu.Columns["DonHangNhoNhat"].HeaderText = "Thấp nhất";
+
+                // Format các cột số lớn
                 dgvdoanhthu.Columns["TongDoanhThu"].DefaultCellStyle.Format = "N0";
                 dgvdoanhthu.Columns["DoanhThuTrungBinh"].DefaultCellStyle.Format = "N0";
                 dgvdoanhthu.Columns["DonHangLonNhat"].DefaultCellStyle.Format = "N0";
@@ -199,7 +237,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // Style (Giữ nguyên)
+        // StyleDataGridView: chuẩn hóa giao diện cho tất cả DataGridView sử dụng trong form
         private void StyleDataGridView(DataGridView dgv) {
             dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(33, 150, 243);
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
@@ -226,16 +264,18 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
 
-        // *** THAY ĐỔI: Gọi _repoSanPham ***
+        // --- HIỂN THỊ CHI TIẾT SẢN PHẨM TRONG PANEL ---
+        // Lấy MaSp từ hàng được chọn, gọi repo để lấy chi tiết và gán vào các TextBox trong group sản phẩm
         private void ShowProductDetailInPanel(int rowIndex) {
             try {
                 DataGridViewRow row = dgvSanPham.Rows[rowIndex];
                 if (row.Cells["MaSp"].Value == null) return;
                 int maSp = Convert.ToInt32(row.Cells["MaSp"].Value);
 
-                SanPham product = _repoSanPham.LayChiTietSanPham(maSp); // Gọi repo
+                SanPham product = _repoSanPham.LayChiTietSanPham(maSp); // Gọi repo lấy chi tiết
 
                 if (product != null) {
+                    // Gán các trường vào UI
                     txtmasp.Text = product.MaSp.ToString();
                     txttensp.Text = product.TenSp;
                     txtgia.Text = product.DonGia.ToString("N0");
@@ -243,6 +283,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     txtloai.Text = product.LoaiSp ?? "";
                     txtdon_vi.Text = product.DonVi ?? "";
                     txttinhtrangsp.Text = product.TrangThai ?? "Còn kinh doanh";
+
+                    // Thiết lập trạng thái read-only / editable cho các control
                     txtmasp.ReadOnly = true;
                     txttensp.ReadOnly = false;
                     txtloai.ReadOnly = false;
@@ -250,6 +292,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     txtdon_vi.ReadOnly = false;
                     txtgia.ReadOnly = false;
                     txttinhtrangsp.ReadOnly = false;
+
+                    // Hiển thị nhóm thông tin sản phẩm và focus vào tên để người dùng sửa nhanh
                     gbsanpham.Visible = true;
                     gbsanpham.BringToFront();
                     txttensp.Focus();
@@ -261,22 +305,25 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoNhanVien ***
+        // --- HIỂN THỊ CHI TIẾT NHÂN VIÊN TRONG PANEL ---
+        // Lấy MaNv từ hàng chọn, gọi repo lấy chi tiết và gán lên các textbox
         private void ShowEmployeeDetailInPanel(int rowIndex) {
             try {
                 DataGridViewRow row = dtgvquanlynhanvien.Rows[rowIndex];
                 if (row.Cells["MaNv"].Value == null) return;
                 int maNv = Convert.ToInt32(row.Cells["MaNv"].Value);
-                selectedEmployeeId = maNv;
+                selectedEmployeeId = maNv; // Lưu id đang chọn
 
                 var nhanVien = _repoNhanVien.LayChiTietNhanVien(maNv); // Gọi repo
 
                 if (nhanVien != null) {
+                    // Gán dữ liệu NV lên giao diện
                     txtmanv.Text = nhanVien.MaNv.ToString();
                     txthoten.Text = nhanVien.TenNv;
                     txtsdt.Text = string.IsNullOrEmpty(nhanVien.SoDienThoai) ? "Chưa cập nhật" : nhanVien.SoDienThoai;
                     txtchucvu.Text = nhanVien.ChucVu;
 
+                    // Nếu NV có tài khoản, hiển thị thông tin tài khoản
                     if (nhanVien.TaiKhoan != null) {
                         txttentaikhoan.Text = nhanVien.TaiKhoan.TenDangNhap;
                         txtmatkhau.Text = nhanVien.TaiKhoan.MatKhau;
@@ -290,16 +337,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                         }
                     }
                     else {
+                        // Nếu chưa có TK -> hiển thị "Chưa có"
                         txttentaikhoan.Text = "Chưa có";
                         txtmatkhau.Text = "";
                         txtvaitro.Text = "N/A";
                         txtvaitro.Tag = null;
                     }
+
+                    // Thiết lập chế độ hiển thị mật khẩu và editability
                     txtmatkhau.ReadOnly = true;
                     txtmatkhau.UseSystemPasswordChar = true;
                     txtchucvu.ReadOnly = false;
                     txtvaitro.ReadOnly = false;
-                    pnthongtinnv.Visible = true;
+                    pnthongtinnv.Visible = true; // Hiện panel thông tin NV
                 }
             }
             catch (Exception ex) {
@@ -307,14 +357,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoNhanVien ***
+        // --- ĐỔI MẬT KHẨU (BUTTON) ---
+        // Mở một dialog nhỏ để nhập mật khẩu hiện tại / mới / xác nhận rồi gọi repo để đổi
         private void button1_Click(object sender, EventArgs e) // Đổi mật khẩu
         {
             try {
+                // Kiểm tra đã chọn nhân viên chưa
                 if (string.IsNullOrEmpty(txtmanv.Text)) { MessageBox.Show("Vui lòng chọn nhân viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 string tenDangNhap = txttentaikhoan.Text;
                 if (tenDangNhap == "Chưa có") { MessageBox.Show("Nhân viên này chưa có tài khoản!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
+                // Tạo Form prompt tạm để nhập mật khẩu
                 using (Form promptForm = new Form()) {
                     // (Code tạo Form Prompt giữ nguyên)
                     promptForm.Width = 450;
@@ -345,19 +398,23 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     promptForm.AcceptButton = btnOK;
                     promptForm.CancelButton = btnCancel;
 
+                    // Hiển thị dialog và xử lý khi người dùng nhấn Lưu
                     if (promptForm.ShowDialog() == DialogResult.OK) {
+                        // Validate nhập
                         if (string.IsNullOrWhiteSpace(txtOldPass.Text)) { MessageBox.Show("Vui lòng nhập mật khẩu hiện tại!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                         if (string.IsNullOrWhiteSpace(txtNewPass.Text)) { MessageBox.Show("Vui lòng nhập mật khẩu mới!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                         if (txtNewPass.Text.Length < 3) { MessageBox.Show("Mật khẩu mới phải có ít nhất 3 ký tự!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                         if (txtNewPass.Text != txtConfirmPass.Text) { MessageBox.Show("Mật khẩu xác nhận không khớp!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
-                        // *** THAY ĐỔI: Gọi _repoNhanVien ***
+                        // *** THAY ĐỔI: Gọi _repoNhanVien để đổi mật khẩu ***
+                        // Trả về mã: 0 = OK, 2 = sai mật khẩu hiện tại, 3 = không tìm thấy tài khoản, khác = lỗi
                         int ketQua = _repoNhanVien.DoiMatKhau(tenDangNhap, txtOldPass.Text, txtNewPass.Text);
 
+                        // Xử lý kết quả trả về
                         if (ketQua == 0) {
                             MessageBox.Show($"Đổi mật khẩu thành công cho: {tenDangNhap}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             txtmatkhau.Text = txtNewPass.Text;
-                            LoadEmployeeData();
+                            LoadEmployeeData(); // Reload danh sách NV để cập nhật hiển thị
                         }
                         else if (ketQua == 2) {
                             MessageBox.Show("Mật khẩu hiện tại không đúng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -375,6 +432,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 MessageBox.Show($"Lỗi khi đổi mật khẩu:\n{ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally {
+                // Đảm bảo textbox mật khẩu ở trạng thái an toàn (ẩn ký tự)
                 if (txtmatkhau != null) {
                     txtmatkhau.ReadOnly = true;
                     txtmatkhau.UseSystemPasswordChar = true;
@@ -382,7 +440,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoKho ***
+        // --- HIỂN THỊ CHI TIẾT NGUYÊN LIỆU ---
+        // Lấy MaNl, gọi repo để lấy thông tin nguyên liệu và gán lên UI
         private void ShowInventoryDetailInPanel(int rowIndex) {
             try {
                 DataGridViewRow row = dgvkho.Rows[rowIndex];
@@ -392,11 +451,14 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 NguyenLieu ingredient = _repoKho.LayChiTietNguyenLieu(maNl); // Gọi repo
 
                 if (ingredient != null) {
+                    // Gán dữ liệu vào các textbox
                     txtma.Text = ingredient.MaNl.ToString();
                     txtten.Text = ingredient.TenNl;
                     txtsoluong.Text = ingredient.SoLuongTon?.ToString() ?? "0";
                     txtdonvi.Text = ingredient.DonViTinh;
                     textBox2.Text = ingredient.TrangThai ?? "Đang kinh doanh";
+
+                    // Thiết lập trạng thái editable/readonly cho form cập nhật
                     txtma.ReadOnly = true;
                     txtten.ReadOnly = true;
                     txtdonvi.ReadOnly = true;
@@ -404,6 +466,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     textBox2.ReadOnly = false;
                     txtsoluong.Focus();
                     txtsoluong.SelectAll();
+
+                    // Ghi Tag để biết đang ở chế độ cập nhật (lblcapnhat.Tag != null)
                     lblcapnhat.Tag = maNl;
                     lblcapnhat.Text = "Cập nhật";
                     gbthongtinnguyenlieu.Visible = true;
@@ -415,10 +479,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoKho ***
+        // --- LƯU (CẬP NHẬT HOẶC THÊM) NGUYÊN LIỆU ---
+        // Nếu lblcapnhat.Tag != null -> UPDATE, ngược lại -> ADD NEW
         private void button2_Click(object sender, EventArgs e) // Lưu (Nguyên liệu)
         {
             try {
+                // Validate input số lượng
                 if (!decimal.TryParse(txtsoluong.Text, out decimal soLuongMoi) || soLuongMoi < 0) { MessageBox.Show("Vui lòng nhập số lượng hợp lệ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txtsoluong.Focus(); return; }
                 string tinhTrangMoi = textBox2.Text.Trim();
 
@@ -427,21 +493,25 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     int maNl = (int)lblcapnhat.Tag;
                     if (MessageBox.Show($"Xác nhận CẬP NHẬT '{txtten.Text}'?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
-                    bool success = _repoKho.CapNhatNguyenLieu(maNl, soLuongMoi, tinhTrangMoi); // Gọi repo
+                    // Gọi repo để cập nhật số lượng và trạng thái
+                    bool success = _repoKho.CapNhatNguyenLieu(maNl, soLuongMoi, tinhTrangMoi);
                     if (success) { MessageBox.Show("Cập nhật thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information); }
                     else { MessageBox.Show("Cập nhật thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 }
                 else // Chế độ ADD NEW
                 {
+                    // Validate các trường bắt buộc
                     if (string.IsNullOrWhiteSpace(txtten.Text)) { MessageBox.Show("Vui lòng nhập tên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txtten.Focus(); return; }
                     if (string.IsNullOrWhiteSpace(txtdonvi.Text)) { MessageBox.Show("Vui lòng nhập đơn vị!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txtdonvi.Focus(); return; }
                     if (MessageBox.Show($"Xác nhận THÊM MỚI '{txtten.Text}'?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
-                    var newIngredient = _repoKho.ThemNguyenLieu(txtten.Text.Trim(), txtdonvi.Text.Trim(), soLuongMoi, tinhTrangMoi); // Gọi repo
+                    // Gọi repo để thêm nguyên liệu mới
+                    var newIngredient = _repoKho.ThemNguyenLieu(txtten.Text.Trim(), txtdonvi.Text.Trim(), soLuongMoi, tinhTrangMoi);
                     if (newIngredient != null) { MessageBox.Show($"Thêm thành công! Mã mới: {newIngredient.MaNl}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information); }
                     else { MessageBox.Show("Thêm mới thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 }
 
+                // Reload danh sách kho và dọn form
                 LoadInventoryData();
                 ClearInventoryForm();
                 gbthongtinnguyenlieu.Visible = false;
@@ -451,7 +521,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // (Giữ nguyên)
+        // (Giữ nguyên) - Hiển thị form thêm mới nguyên liệu, đặt mặc định và focus vào tên
         private void button4_Click(object sender, EventArgs e) // Thêm mới (Nguyên liệu)
         {
             ClearInventoryForm();
@@ -469,7 +539,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             txtten.Focus();
         }
 
-        // (Giữ nguyên)
+        // Xóa dữ liệu trong form nguyên liệu (reset các textbox)
         private void ClearInventoryForm() {
             txtma.Clear();
             txtten.Clear();
@@ -480,7 +550,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             lblcapnhat.Text = "Cập nhật";
         }
 
-        // *** THAY ĐỔI: Gọi _repoSanPham ***
+        // --- THÊM SẢN PHẨM ---
+        // Validate input và gọi _repoSanPham.ThemSanPham(...) để lưu
         private void btnthem_Click(object sender, EventArgs e) // Thêm Sản Phẩm
         {
             try {
@@ -488,7 +559,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 if (string.IsNullOrWhiteSpace(txtdongia.Text) || !decimal.TryParse(txtdongia.Text.Replace(".", "").Replace(",", ""), out decimal donGia)) { MessageBox.Show("Vui lòng nhập đơn giá hợp lệ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txtdongia.Focus(); return; }
                 if (MessageBox.Show($"Xác nhận THÊM MỚI '{txttensp.Text}'?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
-                var newProduct = _repoSanPham.ThemSanPham( // Gọi repo
+                // Gọi repo để thêm sản phẩm mới với thông tin từ form
+                var newProduct = _repoSanPham.ThemSanPham(
                     txttensp.Text.Trim(),
                     txtloai.Text.Trim(),
                     donGia,
@@ -498,7 +570,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 if (newProduct != null) {
                     MessageBox.Show($"Thêm sản phẩm thành công! Mã mới: {newProduct.MaSp}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadProductData();
+                    LoadProductData();     // Reload danh sách sản phẩm sau khi thêm
                     gbsanpham.Visible = false;
                 }
                 else {
@@ -510,7 +582,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoSanPham ***
+        // --- SỬA SẢN PHẨM ---
+        // Lấy mã SP từ textbox, validate, gọi repo cập nhật rồi reload
         private void btnsua_Click(object sender, EventArgs e) // Sửa Sản Phẩm
         {
             try {
@@ -520,7 +593,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 if (string.IsNullOrWhiteSpace(txtdongia.Text) || !decimal.TryParse(txtdongia.Text.Replace(".", "").Replace(",", ""), out decimal donGia)) { MessageBox.Show("Vui lòng nhập đơn giá hợp lệ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txtdongia.Focus(); return; }
                 if (MessageBox.Show($"Xác nhận CẬP NHẬT '{txttensp.Text}'?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
-                var updatedProduct = _repoSanPham.CapNhatSanPham( // Gọi repo
+                // Gọi repo cập nhật sản phẩm
+                var updatedProduct = _repoSanPham.CapNhatSanPham(
                     maSp,
                     txttensp.Text.Trim(),
                     txtloai.Text.Trim(),
@@ -543,7 +617,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoSanPham ***
+        // --- XÓA SẢN PHẨM ---
+        // Gọi repo để xóa sản phẩm theo mã, xử lý kết quả trả về
         private void btnxoa_Click(object sender, EventArgs e) // Xóa Sản Phẩm
         {
             try {
@@ -567,7 +642,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // (Giữ nguyên)
+        // Khi thay đổi tab kho/sản phẩm trong phần quản lý kho
         private void TabControlKho_SelectedIndexChanged(object? sender, EventArgs e) {
             try {
                 if (tabControlKho.SelectedIndex == 0) {
@@ -584,10 +659,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoKM ***
+        // --- TẢI DỮ LIỆU KHUYẾN MÃI ---
         private void LoadKhuyenMaiData() {
             try {
-                var khuyenMais = _repoKM.TaiDuLieuKhuyenMai(); // Gọi repo
+                var khuyenMais = _repoKM.TaiDuLieuKhuyenMai(); // Gọi repo trả về DTO KM
                 dgvkhuyenmai.DataSource = khuyenMais;
 
                 StyleDataGridView(dgvkhuyenmai);
@@ -599,6 +674,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 dgvkhuyenmai.Columns["NgayBatDau"].HeaderText = "Ngày bắt đầu";
                 dgvkhuyenmai.Columns["NgayKetThuc"].HeaderText = "Ngày kết thúc";
                 dgvkhuyenmai.Columns["TrangThai"].HeaderText = "Trạng thái";
+
+                // Format hiển thị ngày
                 dgvkhuyenmai.Columns["NgayBatDau"].DefaultCellStyle.Format = "dd/MM/yyyy";
                 dgvkhuyenmai.Columns["NgayKetThuc"].DefaultCellStyle.Format = "dd/MM/yyyy";
             }
@@ -607,26 +684,27 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // (Giữ nguyên)
+        // (Giữ nguyên) - mở chi tiết khuyến mãi khi click
         private void dgvkhuyenmai_CellClick(object? sender, DataGridViewCellEventArgs e) {
             if (e.RowIndex >= 0) { ShowKhuyenMaiDetailInPanel(e.RowIndex); }
         }
 
-        // (Giữ nguyên)
+        // (Giữ nguyên) - phím Enter ở DGV KM -> mở chi tiết
         private void dgvkhuyenmai_KeyDown(object? sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Enter && dgvkhuyenmai.CurrentRow != null) { e.Handled = true; ShowKhuyenMaiDetailInPanel(dgvkhuyenmai.CurrentRow.Index); }
         }
 
-        // *** THAY ĐỔI: Gọi _repoKM ***
+        // Hiển thị chi tiết khuyến mãi khi chọn 1 hàng
         private void ShowKhuyenMaiDetailInPanel(int rowIndex) {
             try {
                 DataGridViewRow row = dgvkhuyenmai.Rows[rowIndex];
                 if (row.Cells["MaKm"].Value == null) return;
                 int maKm = Convert.ToInt32(row.Cells["MaKm"].Value);
 
-                var khuyenMai = _repoKM.LayChiTietKhuyenMai(maKm); // Gọi repo
+                var khuyenMai = _repoKM.LayChiTietKhuyenMai(maKm); // Gọi repo lấy Models.KhuyenMai
 
                 if (khuyenMai != null) {
+                    // Gán lên UI
                     txttenkm.Text = khuyenMai.TenKm;
                     txtmota.Text = khuyenMai.MoTa ?? "";
                     cmbloaikm.SelectedItem = khuyenMai.LoaiKm ?? "HoaDon";
@@ -645,15 +723,18 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoNhanVien ***
+        // --- TẠO TÀI KHOẢN CHO NHÂN VIÊN ---
         private void btnCreateAccount_Click(object sender, EventArgs e) {
             try {
+                // Kiểm tra đã chọn nhân viên trong danh sách chưa
                 if (dtgvquanlynhanvien.SelectedRows.Count == 0) { MessageBox.Show("Vui lòng chọn nhân viên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 int maNv = Convert.ToInt32(dtgvquanlynhanvien.SelectedRows[0].Cells["MaNv"].Value);
                 string tenNv = dtgvquanlynhanvien.SelectedRows[0].Cells["TenNv"].Value.ToString();
                 string taiKhoan = dtgvquanlynhanvien.SelectedRows[0].Cells["TaiKhoan"].Value.ToString();
+                // Nếu NV đã có tài khoản thì dừng
                 if (taiKhoan != "Chưa có") { MessageBox.Show("Nhân viên này đã có tài khoản!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
 
+                // Tạo prompt form để nhập tên đăng nhập, mật khẩu và vai trò
                 using (Form promptForm = new Form()) {
                     // (Code tạo Form Prompt giữ nguyên)
                     promptForm.Width = 450;
@@ -671,7 +752,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     Label lblRole = new Label() { Text = "Vai trò:", Left = 20, Top = 130, Width = 150 };
                     ComboBox cmbRole = new ComboBox() { Left = 180, Top = 127, Width = 230, DropDownStyle = ComboBoxStyle.DropDownList };
 
-                    // *** THAY ĐỔI: Gọi _repoNhanVien ***
+                    // Lấy danh sách vai trò từ repo NV và gán cho ComboBox
                     cmbRole.DataSource = _repoNhanVien.LayDanhSachVaiTro();
                     cmbRole.DisplayMember = "TenVaiTro";
                     cmbRole.ValueMember = "MaVaiTro";
@@ -688,15 +769,16 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     promptForm.Controls.Add(btnOK);
                     promptForm.Controls.Add(btnCancel);
 
+                    // Nếu người dùng xác nhận tạo
                     if (promptForm.ShowDialog() == DialogResult.OK) {
                         if (string.IsNullOrWhiteSpace(txtUsername.Text) || string.IsNullOrWhiteSpace(txtPassword.Text)) { MessageBox.Show("Vui lòng nhập đầy đủ thông tin!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
-                        // *** THAY ĐỔI: Gọi _repoNhanVien ***
+                        // Gọi repo để tạo tài khoản (trả về true/false)
                         bool success = _repoNhanVien.TaoTaiKhoan(maNv, txtUsername.Text.Trim(), txtPassword.Text.Trim(), (int)cmbRole.SelectedValue);
 
                         if (success) {
                             MessageBox.Show("Tạo tài khoản thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            LoadEmployeeData();
+                            LoadEmployeeData(); // Reload danh sách nhân viên để hiển thị tài khoản đã tạo
                         }
                         else {
                             MessageBox.Show("Tên đăng nhập đã tồn tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -709,7 +791,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoNhanVien ***
+        // --- XÓA TÀI KHOẢN NHÂN VIÊN ---
         private void btnDeleteAccount_Click(object sender, EventArgs e) {
             try {
                 if (dtgvquanlynhanvien.SelectedRows.Count == 0) { MessageBox.Show("Vui lòng chọn nhân viên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
@@ -719,12 +801,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 if (taiKhoan == "Chưa có") { MessageBox.Show("Nhân viên này chưa có tài khoản!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
                 if (MessageBox.Show($"Xác nhận xóa tài khoản của: {tenNv}?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
-                // *** THAY ĐỔI: Gọi _repoNhanVien ***
+                // Gọi repo để xóa tài khoản theo MaNv
                 bool success = _repoNhanVien.XoaTaiKhoan(maNv);
 
                 if (success) {
                     MessageBox.Show("Xóa tài khoản thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadEmployeeData();
+                    LoadEmployeeData(); // Reload để cập nhật UI
                 }
                 else {
                     MessageBox.Show("Xóa tài khoản thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -735,32 +817,34 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // (Giữ nguyên)
+        // --- ĐĂNG XUẤT (Đóng form Admin để quay về Login) ---
         private void btnLogout_Click(object sender, EventArgs e) {
             DialogResult result = MessageBox.Show("Bạn có chắc muốn đăng xuất?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes) { this.Close(); }
         }
 
-        // (Giữ nguyên)
+        // --- THOÁT ỨNG DỤNG ---
         private void btnExit_Click(object sender, EventArgs e) {
             DialogResult result = MessageBox.Show("Bạn có chắc muốn thoát?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes) { Application.Exit(); }
         }
 
-        // (Các hàm trống giữ nguyên)
+        // (Các hàm trống/placeholder giữ nguyên)
         private void dgvInventory_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
         private void lblthongtinnhanvien_Click(object sender, EventArgs e) { }
         private void txtgtkm_TextChanged(object sender, EventArgs e) { }
         private void label2_Click(object sender, EventArgs e) { }
 
-        // *** THAY ĐỔI: Gọi _repoKM ***
+        // --- THÊM KHUYẾN MÃI ---
         private void btnthemkm_Click_1(object sender, EventArgs e) // Thêm KM
         {
             try {
+                // Validate tên và giá trị khuyến mãi
                 if (string.IsNullOrWhiteSpace(txttenkm.Text)) { MessageBox.Show("Vui lòng nhập tên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txttenkm.Focus(); return; }
                 if (!decimal.TryParse(txtgiatri.Text, out decimal giaTri) || giaTri < 0 || giaTri > 100) { MessageBox.Show("Giá trị phải từ 0-100!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txtgiatri.Focus(); return; }
                 if (MessageBox.Show($"Xác nhận THÊM MỚI '{txttenkm.Text}'?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
+                // Tạo Models.KhuyenMai mới từ dữ liệu form
                 var newKhuyenMai = new Models.KhuyenMai {
                     TenKm = txttenkm.Text.Trim(),
                     MoTa = txtmota.Text.Trim(),
@@ -771,11 +855,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     TrangThai = cmbtrangthaikm.SelectedItem?.ToString() ?? "Đang áp dụng"
                 };
 
-                bool success = _repoKM.ThemKhuyenMai(newKhuyenMai); // Gọi repo
+                // Gọi repo thêm KM
+                bool success = _repoKM.ThemKhuyenMai(newKhuyenMai);
 
                 if (success) {
                     MessageBox.Show("Thêm khuyến mãi thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadKhuyenMaiData();
+                    LoadKhuyenMaiData(); // Reload danh sách KM
                     gbkhuyenmai.Visible = false;
                 }
                 else {
@@ -787,7 +872,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoKM ***
+        // --- SỬA KHUYẾN MÃI ---
         private void btnsuakm_Click_1(object sender, EventArgs e) // Sửa KM
         {
             try {
@@ -797,7 +882,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 if (!decimal.TryParse(txtgiatri.Text, out decimal giaTri) || giaTri < 0 || giaTri > 100) { MessageBox.Show("Giá trị phải từ 0-100!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (MessageBox.Show("Xác nhận cập nhật khuyến mãi?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
-                bool success = _repoKM.CapNhatKhuyenMai( // Gọi repo
+                // Gọi repo cập nhật KM với dữ liệu từ form
+                bool success = _repoKM.CapNhatKhuyenMai(
                     maKm,
                     txttenkm.Text.Trim(),
                     txtmota.Text.Trim(),
@@ -822,13 +908,14 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoKM ***
+        // --- XÓA KHUYẾN MÃI ---
         private void btnxoakm_Click_1(object sender, EventArgs e) // Xóa KM
         {
             try {
                 if (dgvkhuyenmai.SelectedRows.Count == 0) { MessageBox.Show("Vui lòng chọn khuyến mãi!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (MessageBox.Show($"Xác nhận xóa {dgvkhuyenmai.SelectedRows.Count} khuyến mãi?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
+                // Thu thập danh sách MaKm để gửi cho repo
                 List<int> maKmList = new List<int>();
                 foreach (DataGridViewRow row in dgvkhuyenmai.SelectedRows) {
                     maKmList.Add(Convert.ToInt32(row.Cells["MaKm"].Value));
@@ -850,7 +937,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoNhanVien ***
+        // --- CẬP NHẬT NHÂN VIÊN ---
         private void button3_Click_1(object sender, EventArgs e) // Sửa NV
         {
             try {
@@ -860,7 +947,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 if (tenDangNhap == "Chưa có") { MessageBox.Show("Nhân viên này chưa có tài khoản!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (MessageBox.Show($"Xác nhận cập nhật cho: {txthoten.Text}?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
-                bool success = _repoNhanVien.CapNhatNhanVien( // Gọi repo
+                // Gọi repo cập nhật nhân viên (chức vụ, vai trò)
+                bool success = _repoNhanVien.CapNhatNhanVien(
                     maNv,
                     txtchucvu.Text.Trim(),
                     txtvaitro.Text.Trim()
@@ -868,7 +956,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 if (success) {
                     MessageBox.Show("Cập nhật thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadEmployeeData();
+                    LoadEmployeeData(); // Reload list để cập nhật UI
                 }
                 else {
                     MessageBox.Show("Cập nhật thất bại! (Lỗi: Không tìm thấy NV hoặc Vai trò)", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -879,20 +967,23 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** THAY ĐỔI: Gọi _repoKho ***
+        // --- XÓA NGUYÊN LIỆU ---
         private void button3_Click(object sender, EventArgs e) // Xóa Nguyên Liệu
         {
             try {
                 if (dgvkho.SelectedRows.Count == 0) { MessageBox.Show("Vui lòng chọn nguyên liệu để xóa.", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
                 if (MessageBox.Show($"Bạn có chắc muốn xóa {dgvkho.SelectedRows.Count} nguyên liệu đã chọn?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
+                // Gom mã nguyên liệu được chọn vào danh sách
                 List<int> maNlList = new List<int>();
                 foreach (DataGridViewRow row in dgvkho.SelectedRows) {
                     maNlList.Add(Convert.ToInt32(row.Cells["MaNl"].Value));
                 }
 
-                string ketQua = _repoKho.XoaNguyenLieu(maNlList); // Gọi repo
+                // Gọi repo để xóa, repo trả về chuỗi kết quả (có thể chứa thông báo)
+                string ketQua = _repoKho.XoaNguyenLieu(maNlList);
 
+                // Hiển thị kết quả trả về và reload danh sách kho
                 MessageBox.Show(ketQua, "Hoàn tất", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 LoadInventoryData();
