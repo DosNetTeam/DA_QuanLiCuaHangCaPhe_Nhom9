@@ -1,5 +1,4 @@
-﻿
-using DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin;
+﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin;
 using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
@@ -9,7 +8,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
     // - Quản lý kho (nguyên liệu)
     // - Quản lý sản phẩm
     // - Quản lý khuyến mãi
-    public partial class Admin : Form {
+    public partial class Admin : Form
+    {
         // === THAY ĐỔI: Khai báo 5 Repository mới ===
         // Các trường này là các lớp "KhoTruyVan"/service giúp tách repository ra khỏi UI.
         private readonly KhoSp_Nl _repoKho;               // Truy vấn kho nguyên liệu
@@ -25,7 +25,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // - Khởi tạo UI component
         // - Khởi tạo các repository
         // - Đăng ký các sự kiện của DataGridView / Tab / các control
-        public Admin() {
+        public Admin()
+        {
             InitializeComponent();
 
             // === THAY ĐỔI: Khởi tạo 5 Repository ===
@@ -55,14 +56,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         // Sự kiện khi click 1 hàng trong DataGridView Sản phẩm:
         // - Nếu dòng hợp lệ -> hiển thị chi tiết sản phẩm ở panel bên
-        private void dgvSanPham_CellClick(object? sender, DataGridViewCellEventArgs e) {
+        private void dgvSanPham_CellClick(object? sender, DataGridViewCellEventArgs e)
+        {
             if (e.RowIndex >= 0) { ShowProductDetailInPanel(e.RowIndex); }
         }
 
         // Sự kiện khi dùng phím (Enter) ở DataGridView Sản phẩm:
         // - Khi nhấn Enter trên hàng hiện tại -> cũng mở chi tiết
-        private void dgvSanPham_KeyDown(object? sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.Enter && dgvSanPham.CurrentRow != null) {
+        private void dgvSanPham_KeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && dgvSanPham.CurrentRow != null)
+            {
                 e.Handled = true;
                 ShowProductDetailInPanel(dgvSanPham.CurrentRow.Index);
             }
@@ -71,8 +75,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // --- LOAD SẢN PHẨM VÀ ĐIỀU CHỈNH GIAO DIỆN ---
         // Lấy dữ liệu sản phẩm từ repository và gán vào dgvSanPham,
         // rồi format cột và tô màu theo trạng thái.
-        private void LoadProductData() {
-            try {
+        private void LoadProductData()
+        {
+            try
+            {
                 var products = _repoSanPham.TaiDuLieuSanPham(); // Gọi repo lấy danh sách sản phẩm DTO
                 dgvSanPham.DataSource = products;               // Gán làm nguồn dữ liệu cho DataGridView
 
@@ -91,39 +97,51 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 dgvSanPham.Columns["DonGia"].DefaultCellStyle.Format = "N0";
 
                 // Duyệt qua từng hàng để tô màu dựa trên cột "TrangThai"
-                for (int i = 0; i < dgvSanPham.Rows.Count; i++) {
+                for (int i = 0; i < dgvSanPham.Rows.Count; i++)
+                {
                     DataGridViewRow row = dgvSanPham.Rows[i];
-                    if (row.Cells["TrangThai"].Value != null) {
+                    if (row.Cells["TrangThai"].Value != null)
+                    {
                         string trangThai = row.Cells["TrangThai"].Value.ToString();
                         // Nếu còn bán -> nền xanh nhẹ, chữ xanh đậm
-                        if (trangThai == "Còn bán") {
+                        if (trangThai == "Còn bán")
+                        {
                             row.DefaultCellStyle.BackColor = Color.FromArgb(223, 240, 216);
                             row.DefaultCellStyle.ForeColor = Color.FromArgb(60, 118, 61);
                         }
                         // Nếu ngừng bán -> nền đỏ nhạt, chữ đỏ
-                        else if (trangThai == "Ngừng bán") {
+                        else if (trangThai == "Ngừng bán")
+                        {
                             row.DefaultCellStyle.BackColor = Color.FromArgb(242, 222, 222);
                             row.DefaultCellStyle.ForeColor = Color.FromArgb(169, 68, 66);
                         }
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 // Báo lỗi người dùng nếu có ngoại lệ khi load dữ liệu
                 MessageBox.Show("Lỗi khi tải dữ liệu sản phẩm: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         // Sự kiện load Form Admin: khởi tạo dữ liệu tổng quan
-        private void Admin_Load(object sender, EventArgs e) {
+        private void Admin_Load(object sender, EventArgs e)
+        {
             LoadOverviewData();
         }
 
         // Khi đổi tab điều khiển chính (bandieukhien) thì tải dữ liệu tương ứng
-        private void tabControl1_SelectedIndexChanged(object? sender, EventArgs e) {
-            switch (bandieukhien.SelectedIndex) {
+        private void tabControl1_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            switch (bandieukhien.SelectedIndex)
+            {
                 case 0: LoadOverviewData(); break;
-                case 1: LoadEmployeeData(); pnthongtinnv.Visible = false; break;
+                case 1:
+                    LoadEmployeeData();
+                    pnthongtinnv.Visible = true; // Luôn hiện panel khi vào tab nhân viên
+                    ClearEmployeeForm(); // Reset form khi vào tab
+                    break;
                 case 2: LoadInventoryData(); gbthongtinnguyenlieu.Visible = false; gbsanpham.Visible = false; break;
                 case 3: LoadRevenueData(); break;
                 case 4: LoadKhuyenMaiData(); gbkhuyenmai.Visible = false; break;
@@ -132,8 +150,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         // --- THỐNG KÊ TỔNG QUAN ---
         // Gọi _repoThongKe để lấy dữ liệu tổng quan và bind vào DataGridView
-        private void LoadOverviewData() {
-            try {
+        private void LoadOverviewData()
+        {
+            try
+            {
                 List<DuLieuTongQuan> overviewData = _repoThongKe.TaiDuLieuTongQuan(); // Gọi repo lấy DTO
                 tongquandulieu.DataSource = overviewData;                             // Gán datasource
 
@@ -143,7 +163,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 tongquandulieu.Columns["Count"].HeaderText = "Số lượng";
                 tongquandulieu.Columns["Details"].HeaderText = "Chi tiết";
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 // Thông báo lỗi nếu repo ném ngoại lệ
                 MessageBox.Show($"Lỗi khi tải dữ liệu tổng quan:\n{ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -151,8 +172,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         // --- TẢI DỮ LIỆU NHÂN VIÊN ---
         // Gọi repository nhân viên để nhận danh sách hiển thị
-        private void LoadEmployeeData() {
-            try {
+        private void LoadEmployeeData()
+        {
+            try
+            {
                 var employees = _repoNhanVien.TaiDuLieuNhanVien(); // Gọi repo trả về list DTO
                 dtgvquanlynhanvien.DataSource = employees;         // Bind vào DataGridView
 
@@ -166,15 +189,18 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 dtgvquanlynhanvien.Columns["VaiTro"].HeaderText = "Vai trò";
                 dtgvquanlynhanvien.Columns["TrangThai"].HeaderText = "Trạng thái";
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi tải dữ liệu nhân viên: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         // --- TẢI DỮ LIỆU KHO NGUYÊN LIỆU ---
         // Gọi repository kho để lấy danh sách nguyên liệu (đã sắp, tính trạng thái)
-        private void LoadInventoryData() {
-            try {
+        private void LoadInventoryData()
+        {
+            try
+            {
                 var sortedList = _repoKho.TaiDuLieuKho(); // Gọi repo trả về DTO danh sách kho
                 dgvkho.DataSource = sortedList;           // Bind vào DataGridView kho
 
@@ -188,33 +214,41 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 dgvkho.Columns["TinhTrang"].HeaderText = "Trạng thái";
 
                 // Duyệt từng hàng để tô màu theo tình trạng kho
-                for (int i = 0; i < dgvkho.Rows.Count; i++) {
+                for (int i = 0; i < dgvkho.Rows.Count; i++)
+                {
                     DataGridViewRow row = dgvkho.Rows[i];
-                    if (row.Cells["TinhTrang"].Value != null) {
+                    if (row.Cells["TinhTrang"].Value != null)
+                    {
                         string tinhTrang = row.Cells["TinhTrang"].Value.ToString();
-                        if (tinhTrang == "Dồi dào") {
+                        if (tinhTrang == "Dồi dào")
+                        {
                             row.DefaultCellStyle.BackColor = Color.FromArgb(223, 240, 216);
                             row.DefaultCellStyle.ForeColor = Color.FromArgb(60, 118, 61);
                         }
-                        else if (tinhTrang == "Cảnh báo") {
+                        else if (tinhTrang == "Cảnh báo")
+                        {
                             row.DefaultCellStyle.BackColor = Color.FromArgb(255, 243, 205);
                             row.DefaultCellStyle.ForeColor = Color.FromArgb(156, 87, 0);
                         }
-                        else if (tinhTrang == "Hết hàng") {
+                        else if (tinhTrang == "Hết hàng")
+                        {
                             row.DefaultCellStyle.BackColor = Color.FromArgb(255, 205, 210);
                             row.DefaultCellStyle.ForeColor = Color.FromArgb(183, 28, 28);
                         }
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi tải dữ liệu kho: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         // --- TẢI DỮ LIỆU DOANH THU / THỐNG KÊ ---
-        private void LoadRevenueData() {
-            try {
+        private void LoadRevenueData()
+        {
+            try
+            {
                 var sortedData = _repoThongKe.TaiDuLieuDoanhThu(); // Gọi repo trả về DTO doanh thu
                 dgvdoanhthu.DataSource = sortedData;
 
@@ -232,13 +266,15 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 dgvdoanhthu.Columns["DonHangLonNhat"].DefaultCellStyle.Format = "N0";
                 dgvdoanhthu.Columns["DonHangNhoNhat"].DefaultCellStyle.Format = "N0";
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi tải dữ liệu doanh thu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         // StyleDataGridView: chuẩn hóa giao diện cho tất cả DataGridView sử dụng trong form
-        private void StyleDataGridView(DataGridView dgv) {
+        private void StyleDataGridView(DataGridView dgv)
+        {
             dgv.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(33, 150, 243);
             dgv.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
             dgv.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
@@ -250,31 +286,38 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         // (Các sự kiện DGV CellClick/KeyDown giữ nguyên)
-        private void dataGridView1_CellClick(object? sender, DataGridViewCellEventArgs e) {
+        private void dataGridView1_CellClick(object? sender, DataGridViewCellEventArgs e)
+        {
             if (e.RowIndex >= 0) { ShowEmployeeDetailInPanel(e.RowIndex); }
         }
-        private void dataGridView1_KeyDown(object? sender, KeyEventArgs e) {
+        private void dataGridView1_KeyDown(object? sender, KeyEventArgs e)
+        {
             if (e.KeyCode == Keys.Enter && dtgvquanlynhanvien.CurrentRow != null) { e.Handled = true; ShowEmployeeDetailInPanel(dtgvquanlynhanvien.CurrentRow.Index); }
         }
-        private void dgvInventory_CellClick(object? sender, DataGridViewCellEventArgs e) {
+        private void dgvInventory_CellClick(object? sender, DataGridViewCellEventArgs e)
+        {
             if (e.RowIndex >= 0) { ShowInventoryDetailInPanel(e.RowIndex); }
         }
-        private void dgvInventory_KeyDown(object? sender, KeyEventArgs e) {
+        private void dgvInventory_KeyDown(object? sender, KeyEventArgs e)
+        {
             if (e.KeyCode == Keys.Enter && dgvkho.CurrentRow != null) { e.Handled = true; ShowInventoryDetailInPanel(dgvkho.CurrentRow.Index); }
         }
 
 
         // --- HIỂN THỊ CHI TIẾT SẢN PHẨM TRONG PANEL ---
         // Lấy MaSp từ hàng được chọn, gọi repo để lấy chi tiết và gán vào các TextBox trong group sản phẩm
-        private void ShowProductDetailInPanel(int rowIndex) {
-            try {
+        private void ShowProductDetailInPanel(int rowIndex)
+        {
+            try
+            {
                 DataGridViewRow row = dgvSanPham.Rows[rowIndex];
                 if (row.Cells["MaSp"].Value == null) return;
                 int maSp = Convert.ToInt32(row.Cells["MaSp"].Value);
 
                 SanPham product = _repoSanPham.LayChiTietSanPham(maSp); // Gọi repo lấy chi tiết
 
-                if (product != null) {
+                if (product != null)
+                {
                     // Gán các trường vào UI
                     txtmasp.Text = product.MaSp.ToString();
                     txttensp.Text = product.TenSp;
@@ -300,15 +343,18 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     txttensp.SelectAll();
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi hiển thị chi tiết sản phẩm: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         // --- HIỂN THỊ CHI TIẾT NHÂN VIÊN TRONG PANEL ---
         // Lấy MaNv từ hàng chọn, gọi repo lấy chi tiết và gán lên các textbox
-        private void ShowEmployeeDetailInPanel(int rowIndex) {
-            try {
+        private void ShowEmployeeDetailInPanel(int rowIndex)
+        {
+            try
+            {
                 DataGridViewRow row = dtgvquanlynhanvien.Rows[rowIndex];
                 if (row.Cells["MaNv"].Value == null) return;
                 int maNv = Convert.ToInt32(row.Cells["MaNv"].Value);
@@ -316,43 +362,52 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 var nhanVien = _repoNhanVien.LayChiTietNhanVien(maNv); // Gọi repo
 
-                if (nhanVien != null) {
+                if (nhanVien != null)
+                {
                     // Gán dữ liệu NV lên giao diện
                     txtmanv.Text = nhanVien.MaNv.ToString();
                     txthoten.Text = nhanVien.TenNv;
                     txtsdt.Text = string.IsNullOrEmpty(nhanVien.SoDienThoai) ? "Chưa cập nhật" : nhanVien.SoDienThoai;
-                    txtchucvu.Text = nhanVien.ChucVu;
+                    cb_chucvu.DataSource = new[] { nhanVien.ChucVu };
+                    cb_chucvu.SelectedIndex = 0;
+                    cb_chucvu.Enabled = false;
 
                     // Nếu NV có tài khoản, hiển thị thông tin tài khoản
-                    if (nhanVien.TaiKhoan != null) {
+                    if (nhanVien.TaiKhoan != null)
+                    {
                         txttentaikhoan.Text = nhanVien.TaiKhoan.TenDangNhap;
                         txtmatkhau.Text = nhanVien.TaiKhoan.MatKhau;
-                        if (nhanVien.TaiKhoan.MaVaiTroNavigation != null) {
-                            txtvaitro.Text = nhanVien.TaiKhoan.MaVaiTroNavigation.TenVaiTro;
-                            txtvaitro.Tag = nhanVien.TaiKhoan.MaVaiTro;
+                        if (nhanVien.TaiKhoan.MaVaiTroNavigation != null)
+                        {
+                            cbvaitro.DataSource = new[] { nhanVien.TaiKhoan.MaVaiTroNavigation };
+                            cbvaitro.DisplayMember = "TenVaiTro";
+                            cbvaitro.ValueMember = "MaVaiTro";
+                            cbvaitro.SelectedIndex = 0;
+                            cbvaitro.Enabled = false;
                         }
-                        else {
-                            txtvaitro.Text = "N/A";
-                            txtvaitro.Tag = null;
+                        else
+                        {
+                            cbvaitro.DataSource = null;
+                            cbvaitro.Enabled = false;
                         }
                     }
-                    else {
-                        // Nếu chưa có TK -> hiển thị "Chưa có"
+                    else
+                    {
                         txttentaikhoan.Text = "Chưa có";
                         txtmatkhau.Text = "";
-                        txtvaitro.Text = "N/A";
-                        txtvaitro.Tag = null;
+                        cbvaitro.DataSource = null;
+                        cbvaitro.Enabled = false;
                     }
 
-                    // Thiết lập chế độ hiển thị mật khẩu và editability
                     txtmatkhau.ReadOnly = true;
                     txtmatkhau.UseSystemPasswordChar = true;
-                    txtchucvu.ReadOnly = false;
-                    txtvaitro.ReadOnly = false;
+                    txthoten.ReadOnly = false;
+                    txtsdt.ReadOnly = false;
                     pnthongtinnv.Visible = true; // Hiện panel thông tin NV
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi hiển thị chi tiết: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -361,14 +416,16 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // Mở một dialog nhỏ để nhập mật khẩu hiện tại / mới / xác nhận rồi gọi repo để đổi
         private void btndoimatkhau_Click(object sender, EventArgs e) // Đổi mật khẩu
         {
-            try {
+            try
+            {
                 // Kiểm tra đã chọn nhân viên chưa
                 if (string.IsNullOrEmpty(txtmanv.Text)) { MessageBox.Show("Vui lòng chọn nhân viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 string tenDangNhap = txttentaikhoan.Text;
                 if (tenDangNhap == "Chưa có") { MessageBox.Show("Nhân viên này chưa có tài khoản!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
                 // Tạo Form prompt tạm để nhập mật khẩu
-                using (Form promptForm = new Form()) {
+                using (Form promptForm = new Form())
+                {
                     // (Code tạo Form Prompt giữ nguyên)
                     promptForm.Width = 450;
                     promptForm.Height = 250;
@@ -399,7 +456,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     promptForm.CancelButton = btnCancel;
 
                     // Hiển thị dialog và xử lý khi người dùng nhấn Lưu
-                    if (promptForm.ShowDialog() == DialogResult.OK) {
+                    if (promptForm.ShowDialog() == DialogResult.OK)
+                    {
                         // Validate nhập
                         if (string.IsNullOrWhiteSpace(txtOldPass.Text)) { MessageBox.Show("Vui lòng nhập mật khẩu hiện tại!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                         if (string.IsNullOrWhiteSpace(txtNewPass.Text)) { MessageBox.Show("Vui lòng nhập mật khẩu mới!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
@@ -411,29 +469,36 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                         int ketQua = _repoNhanVien.DoiMatKhau(tenDangNhap, txtOldPass.Text, txtNewPass.Text);
 
                         // Xử lý kết quả trả về
-                        if (ketQua == 0) {
+                        if (ketQua == 0)
+                        {
                             MessageBox.Show($"Đổi mật khẩu thành công cho: {tenDangNhap}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             txtmatkhau.Text = txtNewPass.Text;
                             LoadEmployeeData(); // Reload danh sách NV để cập nhật hiển thị
                         }
-                        else if (ketQua == 2) {
+                        else if (ketQua == 2)
+                        {
                             MessageBox.Show("Mật khẩu hiện tại không đúng!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
-                        else if (ketQua == 3) {
+                        else if (ketQua == 3)
+                        {
                             MessageBox.Show("Không tìm thấy tài khoản!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
-                        else {
+                        else
+                        {
                             MessageBox.Show("Đã xảy ra lỗi khi đổi mật khẩu!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show($"Lỗi khi đổi mật khẩu:\n{ex.Message}", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            finally {
+            finally
+            {
                 // Đảm bảo textbox mật khẩu ở trạng thái an toàn (ẩn ký tự)
-                if (txtmatkhau != null) {
+                if (txtmatkhau != null)
+                {
                     txtmatkhau.ReadOnly = true;
                     txtmatkhau.UseSystemPasswordChar = true;
                 }
@@ -442,15 +507,18 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         // --- HIỂN THỊ CHI TIẾT NGUYÊN LIỆU ---
         // Lấy MaNl, gọi repo để lấy thông tin nguyên liệu và gán lên UI
-        private void ShowInventoryDetailInPanel(int rowIndex) {
-            try {
+        private void ShowInventoryDetailInPanel(int rowIndex)
+        {
+            try
+            {
                 DataGridViewRow row = dgvkho.Rows[rowIndex];
                 if (row.Cells["MaNl"].Value == null) return;
                 int maNl = Convert.ToInt32(row.Cells["MaNl"].Value);
 
                 NguyenLieu ingredient = _repoKho.LayChiTietNguyenLieu(maNl); // Gọi repo
 
-                if (ingredient != null) {
+                if (ingredient != null)
+                {
                     // Gán dữ liệu vào các textbox
                     txtma.Text = ingredient.MaNl.ToString();
                     txtten.Text = ingredient.TenNl;
@@ -474,7 +542,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     gbthongtinnguyenlieu.BringToFront();
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi hiển thị chi tiết nguyên liệu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -483,7 +552,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // Nếu lblcapnhat.Tag != null -> UPDATE, ngược lại -> ADD NEW
         private void lblcapnhat_Click(object sender, EventArgs e) // Lưu (Nguyên liệu)
         {
-            try {
+            try
+            {
                 // Validate input số lượng
                 if (!decimal.TryParse(txtsoluong.Text, out decimal soLuongMoi) || soLuongMoi < 0) { MessageBox.Show("Vui lòng nhập số lượng hợp lệ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txtsoluong.Focus(); return; }
                 string tinhTrangMoi = textBox2.Text.Trim();
@@ -516,7 +586,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 ClearInventoryForm();
                 gbthongtinnguyenlieu.Visible = false;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi lưu nguyên liệu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -540,7 +611,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         // Xóa dữ liệu trong form nguyên liệu (reset các textbox)
-        private void ClearInventoryForm() {
+        private void ClearInventoryForm()
+        {
             txtma.Clear();
             txtten.Clear();
             txtsoluong.Clear();
@@ -554,7 +626,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // Validate input và gọi _repoSanPham.ThemSanPham(...) để lưu
         private void btnthem_Click(object sender, EventArgs e) // Thêm Sản Phẩm
         {
-            try {
+            try
+            {
                 if (string.IsNullOrWhiteSpace(txttensp.Text)) { MessageBox.Show("Vui lòng nhập tên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txttensp.Focus(); return; }
                 if (string.IsNullOrWhiteSpace(txtdongia.Text) || !decimal.TryParse(txtdongia.Text.Replace(".", "").Replace(",", ""), out decimal donGia)) { MessageBox.Show("Vui lòng nhập đơn giá hợp lệ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txtdongia.Focus(); return; }
                 if (MessageBox.Show($"Xác nhận THÊM MỚI '{txttensp.Text}'?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
@@ -568,16 +641,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     txttinhtrangsp.Text.Trim()
                 );
 
-                if (newProduct != null) {
+                if (newProduct != null)
+                {
                     MessageBox.Show($"Thêm sản phẩm thành công! Mã mới: {newProduct.MaSp}", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadProductData();     // Reload danh sách sản phẩm sau khi thêm
                     gbsanpham.Visible = false;
                 }
-                else {
+                else
+                {
                     MessageBox.Show("Thêm sản phẩm thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi thêm sản phẩm: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -586,7 +662,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // Lấy mã SP từ textbox, validate, gọi repo cập nhật rồi reload
         private void btnsua_Click(object sender, EventArgs e) // Sửa Sản Phẩm
         {
-            try {
+            try
+            {
                 if (string.IsNullOrEmpty(txtmasp.Text)) { MessageBox.Show("Vui lòng chọn sản phẩm!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 int maSp = Convert.ToInt32(txtmasp.Text);
                 if (string.IsNullOrWhiteSpace(txttensp.Text)) { MessageBox.Show("Vui lòng nhập tên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txttensp.Focus(); return; }
@@ -603,16 +680,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     txttinhtrangsp.Text.Trim()
                 );
 
-                if (updatedProduct != null) {
+                if (updatedProduct != null)
+                {
                     MessageBox.Show("Cập nhật thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadProductData();
                     gbsanpham.Visible = false;
                 }
-                else {
+                else
+                {
                     MessageBox.Show("Cập nhật thất bại! Không tìm thấy SP.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi cập nhật sản phẩm: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -621,47 +701,58 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // Gọi repo để xóa sản phẩm theo mã, xử lý kết quả trả về
         private void btnxoa_Click(object sender, EventArgs e) // Xóa Sản Phẩm
         {
-            try {
+            try
+            {
                 if (string.IsNullOrEmpty(txtmasp.Text)) { MessageBox.Show("Vui lòng chọn sản phẩm!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 int maSp = Convert.ToInt32(txtmasp.Text);
                 if (MessageBox.Show($"Xác nhận XÓA '{txttensp.Text}'?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
                 bool success = _repoSanPham.XoaSanPham(maSp); // Gọi repo
 
-                if (success) {
+                if (success)
+                {
                     MessageBox.Show("Đã xóa sản phẩm thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadProductData();
                     gbsanpham.Visible = false;
                 }
-                else {
+                else
+                {
                     MessageBox.Show("Xóa thất bại! Sản phẩm có thể đang được sử dụng trong công thức hoặc đơn hàng.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi xóa sản phẩm: " + ex.InnerException?.Message ?? ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         // Khi thay đổi tab kho/sản phẩm trong phần quản lý kho
-        private void TabControlKho_SelectedIndexChanged(object? sender, EventArgs e) {
-            try {
-                if (tabControlKho.SelectedIndex == 0) {
+        private void TabControlKho_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            try
+            {
+                if (tabControlKho.SelectedIndex == 0)
+                {
                     LoadInventoryData();
                     gbthongtinnguyenlieu.Visible = false;
                 }
-                else if (tabControlKho.SelectedIndex == 1) {
+                else if (tabControlKho.SelectedIndex == 1)
+                {
                     LoadProductData();
                     gbsanpham.Visible = false;
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi chuyển tab: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         // --- TẢI DỮ LIỆU KHUYẾN MÃI ---
-        private void LoadKhuyenMaiData() {
-            try {
+        private void LoadKhuyenMaiData()
+        {
+            try
+            {
                 var khuyenMais = _repoKM.TaiDuLieuKhuyenMai(); // Gọi repo trả về DTO KM
                 dgvkhuyenmai.DataSource = khuyenMais;
 
@@ -679,31 +770,37 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 dgvkhuyenmai.Columns["NgayBatDau"].DefaultCellStyle.Format = "dd/MM/yyyy";
                 dgvkhuyenmai.Columns["NgayKetThuc"].DefaultCellStyle.Format = "dd/MM/yyyy";
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi tải dữ liệu khuyến mãi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         // (Giữ nguyên) - mở chi tiết khuyến mãi khi click
-        private void dgvkhuyenmai_CellClick(object? sender, DataGridViewCellEventArgs e) {
+        private void dgvkhuyenmai_CellClick(object? sender, DataGridViewCellEventArgs e)
+        {
             if (e.RowIndex >= 0) { ShowKhuyenMaiDetailInPanel(e.RowIndex); }
         }
 
         // (Giữ nguyên) - phím Enter ở DGV KM -> mở chi tiết
-        private void dgvkhuyenmai_KeyDown(object? sender, KeyEventArgs e) {
+        private void dgvkhuyenmai_KeyDown(object? sender, KeyEventArgs e)
+        {
             if (e.KeyCode == Keys.Enter && dgvkhuyenmai.CurrentRow != null) { e.Handled = true; ShowKhuyenMaiDetailInPanel(dgvkhuyenmai.CurrentRow.Index); }
         }
 
         // Hiển thị chi tiết khuyến mãi khi chọn 1 hàng
-        private void ShowKhuyenMaiDetailInPanel(int rowIndex) {
-            try {
+        private void ShowKhuyenMaiDetailInPanel(int rowIndex)
+        {
+            try
+            {
                 DataGridViewRow row = dgvkhuyenmai.Rows[rowIndex];
                 if (row.Cells["MaKm"].Value == null) return;
                 int maKm = Convert.ToInt32(row.Cells["MaKm"].Value);
 
                 var khuyenMai = _repoKM.LayChiTietKhuyenMai(maKm); // Gọi repo lấy Models.KhuyenMai
 
-                if (khuyenMai != null) {
+                if (khuyenMai != null)
+                {
                     // Gán lên UI
                     txttenkm.Text = khuyenMai.TenKm;
                     txtmota.Text = khuyenMai.MoTa ?? "";
@@ -718,82 +815,91 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     txttenkm.Focus();
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi hiển thị chi tiết khuyến mãi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         // --- TẠO TÀI KHOẢN CHO NHÂN VIÊN ---
-        private void btnCreateAccount_Click(object sender, EventArgs e) {
-            try {
-                // Kiểm tra đã chọn nhân viên trong danh sách chưa
-                if (dtgvquanlynhanvien.SelectedRows.Count == 0) { MessageBox.Show("Vui lòng chọn nhân viên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                int maNv = Convert.ToInt32(dtgvquanlynhanvien.SelectedRows[0].Cells["MaNv"].Value);
-                string tenNv = dtgvquanlynhanvien.SelectedRows[0].Cells["TenNv"].Value.ToString();
-                string taiKhoan = dtgvquanlynhanvien.SelectedRows[0].Cells["TaiKhoan"].Value.ToString();
-                // Nếu NV đã có tài khoản thì dừng
-                if (taiKhoan != "Chưa có") { MessageBox.Show("Nhân viên này đã có tài khoản!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
+        private void btnCreateAccount_Click(object sender, EventArgs e)
+        {
+            // Nếu đang chọn nhân viên (txtmanv khác '(tạo tự động)' và có số) thì reset form để nhập mới
+            if (!string.IsNullOrWhiteSpace(txtmanv.Text) && txtmanv.Text != "(tạo tự động)" && int.TryParse(txtmanv.Text, out _))
+            {
+                ClearEmployeeForm();
+                return;
+            }
 
-                // Tạo prompt form để nhập tên đăng nhập, mật khẩu và vai trò
-                using (Form promptForm = new Form()) {
-                    // (Code tạo Form Prompt giữ nguyên)
-                    promptForm.Width = 450;
-                    promptForm.Height = 280;
-                    promptForm.Text = "Tạo tài khoản mới";
-                    promptForm.StartPosition = FormStartPosition.CenterParent;
-                    promptForm.FormBorderStyle = FormBorderStyle.FixedDialog;
-                    promptForm.MaximizeBox = false;
-                    promptForm.MinimizeBox = false;
-                    Label lblInfo = new Label() { Text = $"Tạo tài khoản cho: {tenNv}", Left = 20, Top = 20, Width = 400, Font = new Font("Segoe UI", 10F, FontStyle.Bold) };
-                    Label lblUsername = new Label() { Text = "Tên đăng nhập:", Left = 20, Top = 60, Width = 150 };
-                    TextBox txtUsername = new TextBox() { Left = 180, Top = 57, Width = 230 };
-                    Label lblPassword = new Label() { Text = "Mật khẩu:", Left = 20, Top = 95, Width = 150 };
-                    TextBox txtPassword = new TextBox() { Left = 180, Top = 92, Width = 230, UseSystemPasswordChar = true };
-                    Label lblRole = new Label() { Text = "Vai trò:", Left = 20, Top = 130, Width = 150 };
-                    ComboBox cmbRole = new ComboBox() { Left = 180, Top = 127, Width = 230, DropDownStyle = ComboBoxStyle.DropDownList };
-
-                    // Lấy danh sách vai trò từ repo NV và gán cho ComboBox
-                    cmbRole.DataSource = _repoNhanVien.LayDanhSachVaiTro();
-                    cmbRole.DisplayMember = "TenVaiTro";
-                    cmbRole.ValueMember = "MaVaiTro";
-
-                    Button btnOK = new Button() { Text = "Tạo", Left = 180, Top = 175, Width = 110, Height = 35, BackColor = Color.FromArgb(46, 125, 50), ForeColor = Color.White, DialogResult = DialogResult.OK };
-                    Button btnCancel = new Button() { Text = "Hủy", Left = 300, Top = 175, Width = 110, Height = 35, BackColor = Color.FromArgb(211, 47, 47), ForeColor = Color.White, DialogResult = DialogResult.Cancel };
-                    promptForm.Controls.Add(lblInfo);
-                    promptForm.Controls.Add(lblUsername);
-                    promptForm.Controls.Add(txtUsername);
-                    promptForm.Controls.Add(lblPassword);
-                    promptForm.Controls.Add(txtPassword);
-                    promptForm.Controls.Add(lblRole);
-                    promptForm.Controls.Add(cmbRole);
-                    promptForm.Controls.Add(btnOK);
-                    promptForm.Controls.Add(btnCancel);
-
-                    // Nếu người dùng xác nhận tạo
-                    if (promptForm.ShowDialog() == DialogResult.OK) {
-                        if (string.IsNullOrWhiteSpace(txtUsername.Text) || string.IsNullOrWhiteSpace(txtPassword.Text)) { MessageBox.Show("Vui lòng nhập đầy đủ thông tin!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-
-                        // Gọi repo để tạo tài khoản (trả về true/false)
-                        bool success = _repoNhanVien.TaoTaiKhoan(maNv, txtUsername.Text.Trim(), txtPassword.Text.Trim(), (int)cmbRole.SelectedValue);
-
-                        if (success) {
-                            MessageBox.Show("Tạo tài khoản thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            LoadEmployeeData(); // Reload danh sách nhân viên để hiển thị tài khoản đã tạo
-                        }
-                        else {
-                            MessageBox.Show("Tên đăng nhập đã tồn tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
+            // Validate
+            if (string.IsNullOrWhiteSpace(txthoten.Text))
+            {
+                MessageBox.Show("Vui lòng nhập họ tên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txthoten.Focus(); return;
+            }
+            if (string.IsNullOrWhiteSpace(txttentaikhoan.Text))
+            {
+                MessageBox.Show("Vui lòng nhập tên đăng nhập!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txttentaikhoan.Focus(); return;
+            }
+            if (string.IsNullOrWhiteSpace(txtmatkhau.Text) || txtmatkhau.Text.Length < 3)
+            {
+                MessageBox.Show("Mật khẩu phải có ít nhất 3 ký tự!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtmatkhau.Focus(); return;
+            }
+            if (cbvaitro.SelectedItem == null)
+            {
+                MessageBox.Show("Vui lòng chọn vai trò!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cbvaitro.Focus(); return;
+            }
+            if (cb_chucvu.SelectedItem == null)
+            {
+                MessageBox.Show("Vui lòng chọn chức vụ!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cb_chucvu.Focus(); return;
+            }
+            // Validate số điện thoại nếu nhập
+            if (!string.IsNullOrWhiteSpace(txtsdt.Text))
+            {
+                string phone = txtsdt.Text.Trim();
+                if (phone.Length < 10 || phone.Length > 11 || !phone.All(char.IsDigit))
+                {
+                    MessageBox.Show("Số điện thoại không hợp lệ!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtsdt.Focus(); return;
                 }
             }
-            catch (Exception ex) {
-                MessageBox.Show("Lỗi khi tạo tài khoản: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            // Kiểm tra trùng tên đăng nhập
+            var taiKhoans = _repoNhanVien.LayDanhSachTaiKhoan();
+            if (taiKhoans.Any(t => t.TenDangNhap == txttentaikhoan.Text.Trim()))
+            {
+                MessageBox.Show("Tên đăng nhập đã tồn tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txttentaikhoan.Focus(); return;
+            }
+            var selectedVaiTro = (VaiTro)cbvaitro.SelectedItem;
+            string chucVu = cb_chucvu.SelectedItem.ToString();
+            // Luôn tạo mới nhân viên và tài khoản
+            int maNv = _repoNhanVien.ThemNhanVien(txthoten.Text.Trim(), chucVu, txtsdt.Text.Trim());
+            bool success = false;
+            if (maNv > 0)
+            {
+                success = _repoNhanVien.TaoTaiKhoan(maNv, txttentaikhoan.Text.Trim(), txtmatkhau.Text, selectedVaiTro.MaVaiTro);
+            }
+            if (success)
+            {
+                MessageBox.Show("Tạo tài khoản thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadEmployeeData();
+                ClearEmployeeForm();
+            }
+            else
+            {
+                MessageBox.Show("Tạo tài khoản thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         // --- XÓA TÀI KHOẢN NHÂN VIÊN ---
-        private void btnDeleteAccount_Click(object sender, EventArgs e) {
-            try {
+        private void btnDeleteAccount_Click(object sender, EventArgs e)
+        {
+            try
+            {
                 if (dtgvquanlynhanvien.SelectedRows.Count == 0) { MessageBox.Show("Vui lòng chọn nhân viên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 int maNv = Convert.ToInt32(dtgvquanlynhanvien.SelectedRows[0].Cells["MaNv"].Value);
                 string tenNv = dtgvquanlynhanvien.SelectedRows[0].Cells["TenNv"].Value.ToString();
@@ -804,27 +910,32 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 // Gọi repo để xóa tài khoản theo MaNv
                 bool success = _repoNhanVien.XoaTaiKhoan(maNv);
 
-                if (success) {
+                if (success)
+                {
                     MessageBox.Show("Xóa tài khoản thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadEmployeeData(); // Reload để cập nhật UI
                 }
-                else {
+                else
+                {
                     MessageBox.Show("Xóa tài khoản thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi xóa tài khoản: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         // --- ĐĂNG XUẤT (Đóng form Admin để quay về Login) ---
-        private void btnLogout_Click(object sender, EventArgs e) {
+        private void btnLogout_Click(object sender, EventArgs e)
+        {
             DialogResult result = MessageBox.Show("Bạn có chắc muốn đăng xuất?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes) { this.Close(); }
         }
 
         // --- THOÁT ỨNG DỤNG ---
-        private void btnExit_Click(object sender, EventArgs e) {
+        private void btnExit_Click(object sender, EventArgs e)
+        {
             DialogResult result = MessageBox.Show("Bạn có chắc muốn thoát?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes) { Application.Exit(); }
         }
@@ -838,14 +949,16 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // --- THÊM KHUYẾN MÃI ---
         private void btnthemkm_Click_1(object sender, EventArgs e) // Thêm KM
         {
-            try {
+            try
+            {
                 // Validate tên và giá trị khuyến mãi
                 if (string.IsNullOrWhiteSpace(txttenkm.Text)) { MessageBox.Show("Vui lòng nhập tên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txttenkm.Focus(); return; }
                 if (!decimal.TryParse(txtgiatri.Text, out decimal giaTri) || giaTri < 0 || giaTri > 100) { MessageBox.Show("Giá trị phải từ 0-100!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txtgiatri.Focus(); return; }
                 if (MessageBox.Show($"Xác nhận THÊM MỚI '{txttenkm.Text}'?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
                 // Tạo Models.KhuyenMai mới từ dữ liệu form
-                var newKhuyenMai = new Models.KhuyenMai {
+                var newKhuyenMai = new Models.KhuyenMai
+                {
                     TenKm = txttenkm.Text.Trim(),
                     MoTa = txtmota.Text.Trim(),
                     LoaiKm = cmbloaikm.SelectedItem?.ToString() ?? "HoaDon",
@@ -858,16 +971,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 // Gọi repo thêm KM
                 bool success = _repoKM.ThemKhuyenMai(newKhuyenMai);
 
-                if (success) {
+                if (success)
+                {
                     MessageBox.Show("Thêm khuyến mãi thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadKhuyenMaiData(); // Reload danh sách KM
                     gbkhuyenmai.Visible = false;
                 }
-                else {
+                else
+                {
                     MessageBox.Show("Thêm thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi thêm khuyến mãi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -875,7 +991,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // --- SỬA KHUYẾN MÃI ---
         private void btnsuakm_Click_1(object sender, EventArgs e) // Sửa KM
         {
-            try {
+            try
+            {
                 if (dgvkhuyenmai.CurrentRow == null) { MessageBox.Show("Vui lòng chọn khuyến mãi!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 int maKm = Convert.ToInt32(dgvkhuyenmai.CurrentRow.Cells["MaKm"].Value);
                 if (string.IsNullOrWhiteSpace(txttenkm.Text)) { MessageBox.Show("Vui lòng nhập tên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
@@ -894,16 +1011,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     cmbtrangthaikm.SelectedItem?.ToString() ?? "Đang áp dụng"
                 );
 
-                if (success) {
+                if (success)
+                {
                     MessageBox.Show("Cập nhật khuyến mãi thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadKhuyenMaiData();
                     gbkhuyenmai.Visible = false;
                 }
-                else {
+                else
+                {
                     MessageBox.Show("Cập nhật thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi cập nhật khuyến mãi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -911,28 +1031,33 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // --- XÓA KHUYẾN MÃI ---
         private void btnxoakm_Click_1(object sender, EventArgs e) // Xóa KM
         {
-            try {
+            try
+            {
                 if (dgvkhuyenmai.SelectedRows.Count == 0) { MessageBox.Show("Vui lòng chọn khuyến mãi!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (MessageBox.Show($"Xác nhận xóa {dgvkhuyenmai.SelectedRows.Count} khuyến mãi?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
                 // Thu thập danh sách MaKm để gửi cho repo
                 List<int> maKmList = new List<int>();
-                foreach (DataGridViewRow row in dgvkhuyenmai.SelectedRows) {
+                foreach (DataGridViewRow row in dgvkhuyenmai.SelectedRows)
+                {
                     maKmList.Add(Convert.ToInt32(row.Cells["MaKm"].Value));
                 }
 
                 bool success = _repoKM.XoaKhuyenMai(maKmList); // Gọi repo
 
-                if (success) {
+                if (success)
+                {
                     MessageBox.Show("Xóa khuyến mãi thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadKhuyenMaiData();
                     gbkhuyenmai.Visible = false;
                 }
-                else {
+                else
+                {
                     MessageBox.Show("Xóa thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi xóa khuyến mãi: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -940,29 +1065,64 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // --- CẬP NHẬT NHÂN VIÊN ---
         private void button3_Click_1(object sender, EventArgs e) // Sửa NV
         {
-            try {
-                if (string.IsNullOrEmpty(txtmanv.Text)) { MessageBox.Show("Vui lòng chọn nhân viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                int maNv = Convert.ToInt32(txtmanv.Text);
-                string tenDangNhap = txttentaikhoan.Text;
-                if (tenDangNhap == "Chưa có") { MessageBox.Show("Nhân viên này chưa có tài khoản!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                if (MessageBox.Show($"Xác nhận cập nhật cho: {txthoten.Text}?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
-
-                // Gọi repo cập nhật nhân viên (chức vụ, vai trò)
-                bool success = _repoNhanVien.CapNhatNhanVien(
-                    maNv,
-                    txtchucvu.Text.Trim(),
-                    txtvaitro.Text.Trim()
-                );
-
-                if (success) {
-                    MessageBox.Show("Cập nhật thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadEmployeeData(); // Reload list để cập nhật UI
+            try
+            {
+                if (string.IsNullOrEmpty(txtmanv.Text) || txtmanv.Text == "(Tự động)")
+                {
+                    MessageBox.Show("Vui lòng chọn nhân viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
                 }
-                else {
+                int maNv = Convert.ToInt32(txtmanv.Text);
+                if (string.IsNullOrWhiteSpace(txthoten.Text))
+                {
+                    MessageBox.Show("Vui lòng nhập họ tên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txthoten.Focus(); return;
+                }
+                if (string.IsNullOrWhiteSpace(txtsdt.Text))
+                {
+                    MessageBox.Show("Vui lòng nhập số điện thoại!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtsdt.Focus(); return;
+                }
+                if (cbvaitro.SelectedItem == null)
+                {
+                    MessageBox.Show("Vui lòng chọn vai trò!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    cbvaitro.Focus(); return;
+                }
+                if (cb_chucvu.SelectedItem == null)
+                {
+                    MessageBox.Show("Vui lòng chọn chức vụ!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    cb_chucvu.Focus(); return;
+                }
+                // Validate số điện thoại
+                string phone = txtsdt.Text.Trim();
+                if (phone.Length < 10 || phone.Length > 11 || !phone.All(char.IsDigit))
+                {
+                    MessageBox.Show("Số điện thoại không hợp lệ!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    txtsdt.Focus(); return;
+                }
+                var selectedVaiTro = (VaiTro)cbvaitro.SelectedItem;
+                string chucVu = cb_chucvu.SelectedItem.ToString();
+                if (MessageBox.Show($"Xác nhận cập nhật cho: {txthoten.Text}?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+                // Gọi repo cập nhật nhân viên
+                bool success = _repoNhanVien.CapNhatNhanVienFull(
+                    maNv,
+                    txthoten.Text.Trim(),
+                    phone,
+                    chucVu,
+                    selectedVaiTro.MaVaiTro
+                );
+                if (success)
+                {
+                    MessageBox.Show("Cập nhật thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadEmployeeData();
+                }
+                else
+                {
                     MessageBox.Show("Cập nhật thất bại! (Lỗi: Không tìm thấy NV hoặc Vai trò)", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi cập nhật nhân viên: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -970,13 +1130,15 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         // --- XÓA NGUYÊN LIỆU ---
         private void button3_Click(object sender, EventArgs e) // Xóa Nguyên Liệu
         {
-            try {
+            try
+            {
                 if (dgvkho.SelectedRows.Count == 0) { MessageBox.Show("Vui lòng chọn nguyên liệu để xóa.", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
                 if (MessageBox.Show($"Bạn có chắc muốn xóa {dgvkho.SelectedRows.Count} nguyên liệu đã chọn?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
                 // Gom mã nguyên liệu được chọn vào danh sách
                 List<int> maNlList = new List<int>();
-                foreach (DataGridViewRow row in dgvkho.SelectedRows) {
+                foreach (DataGridViewRow row in dgvkho.SelectedRows)
+                {
                     maNlList.Add(Convert.ToInt32(row.Cells["MaNl"].Value));
                 }
 
@@ -989,11 +1151,66 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 LoadInventoryData();
                 gbthongtinnguyenlieu.Visible = false;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Đã xảy ra lỗi nghiêm trọng khi xóa: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
+        // --- LOAD DANH SÁCH VAI TRÒ VÀ CHỨC VỤ ---
+        private void LoadVaiTro_ChucVu()
+        {
+            // Lấy danh sách vai trò từ repo, loại bỏ Chủ cửa hàng
+            var vaiTros = _repoNhanVien.LayDanhSachVaiTro()
+                .Where(v => !v.TenVaiTro.ToLower().Contains("chủ cửa hàng") && !v.TenVaiTro.ToLower().Contains("chu cua hang"))
+                .ToList();
+            cbvaitro.DataSource = vaiTros;
+            cbvaitro.DisplayMember = "TenVaiTro";
+            cbvaitro.ValueMember = "MaVaiTro";
+            cbvaitro.SelectedIndexChanged += cbvaitro_SelectedIndexChanged;
+        }
+        private void cbvaitro_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            if (cbvaitro.SelectedItem == null) { cb_chucvu.DataSource = null; return; }
+            var selectedVaiTro = (VaiTro)cbvaitro.SelectedItem;
+            if (selectedVaiTro.TenVaiTro.ToLower().Contains("quản lý") || selectedVaiTro.TenVaiTro.ToLower().Contains("quan ly"))
+            {
+                cb_chucvu.DataSource = new[] { "Quản lý" };
+                cb_chucvu.Enabled = false;
+            }
+            else if (selectedVaiTro.TenVaiTro.ToLower().Contains("nhân viên") || selectedVaiTro.TenVaiTro.ToLower().Contains("nhan vien"))
+            {
+                cb_chucvu.DataSource = new[] { "Thu Ngân", "Oder" };
+                cb_chucvu.Enabled = true;
+            }
+            else
+            {
+                cb_chucvu.DataSource = null;
+                cb_chucvu.Enabled = false;
+            }
+        }
+
+        // Đảm bảo khai báo hàm ClearEmployeeForm trong Admin.cs
+        private void ClearEmployeeForm()
+        {
+            // Khi reset form hoặc tạo mới, chỉ hiển thị '(tạo tự động)' và luôn ReadOnly
+            txtmanv.Text = "(tạo tự động)";
+            txtmanv.ReadOnly = true;
+            txtmanv.Visible = true;
+            txthoten.Text = "";
+            txthoten.ReadOnly = false;
+            txtsdt.Text = "";
+            txtsdt.ReadOnly = false;
+            txttentaikhoan.Text = "";
+            txttentaikhoan.ReadOnly = false;
+            txtmatkhau.Text = "";
+            txtmatkhau.ReadOnly = false;
+            txtmatkhau.UseSystemPasswordChar = false;
+            cb_chucvu.Enabled = true;
+            cb_chucvu.DataSource = null;
+            cbvaitro.Enabled = true;
+            cbvaitro.DataSource = null;
+        }
 
     }
 }

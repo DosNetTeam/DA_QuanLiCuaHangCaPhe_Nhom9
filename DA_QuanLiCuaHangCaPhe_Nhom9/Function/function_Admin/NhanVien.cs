@@ -259,5 +259,41 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                 return false;
             }
         }
+
+        // Thêm hàm cập nhật đầy đủ thông tin nhân viên
+        public bool CapNhatNhanVienFull(int maNv, string tenNvMoi, string soDienThoaiMoi, string chucVuMoi, int maVaiTroMoi) {
+            try {
+                using (DataSqlContext db = new DataSqlContext()) {
+                    // Tìm nhân viên
+                    Models.NhanVien nhanVien = null;
+                    foreach (var nv in db.NhanViens) {
+                        if (nv.MaNv == maNv) {
+                            nhanVien = nv;
+                            break;
+                        }
+                    }
+                    if (nhanVien == null) return false;
+                    nhanVien.TenNv = tenNvMoi;
+                    nhanVien.SoDienThoai = soDienThoaiMoi;
+                    nhanVien.ChucVu = chucVuMoi;
+                    // Nếu NV có tài khoản -> cập nhật MaVaiTro
+                    TaiKhoan taiKhoan = null;
+                    foreach (var tk in db.TaiKhoans) {
+                        if (tk.MaNv == maNv) {
+                            taiKhoan = tk;
+                            break;
+                        }
+                    }
+                    if (taiKhoan != null) {
+                        taiKhoan.MaVaiTro = maVaiTroMoi;
+                    }
+                    db.SaveChanges();
+                    return true;
+                }
+            } catch (Exception ex) {
+                Console.WriteLine($"Lỗi khi cập nhật nhân viên: {ex.Message}");
+                return false;
+            }
+        }
     }
 }
