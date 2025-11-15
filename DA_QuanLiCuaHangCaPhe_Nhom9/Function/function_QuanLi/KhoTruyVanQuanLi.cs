@@ -99,7 +99,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi {
                     // 1. Lọc NhanVien đang làm việc
                     var nhanVienDangLam = new List<NhanVien>();
                     foreach (var nv in allNhanVien) {
-                        if (nv.TrangThai == "Đang làm việc") {
+                        if (nv.TrangThai == "Đang làm việc" & nv.ChucVu != "Chủ cửa hàng") {
                             nhanVienDangLam.Add(nv);
                         }
                     }
