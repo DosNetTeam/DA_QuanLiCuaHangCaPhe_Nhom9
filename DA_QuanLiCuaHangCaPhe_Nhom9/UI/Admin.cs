@@ -359,7 +359,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         // --- ĐỔI MẬT KHẨU (BUTTON) ---
         // Mở một dialog nhỏ để nhập mật khẩu hiện tại / mới / xác nhận rồi gọi repo để đổi
-        private void button1_Click(object sender, EventArgs e) // Đổi mật khẩu
+        private void btndoimatkhau_Click(object sender, EventArgs e) // Đổi mật khẩu
         {
             try {
                 // Kiểm tra đã chọn nhân viên chưa
@@ -481,7 +481,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         // --- LƯU (CẬP NHẬT HOẶC THÊM) NGUYÊN LIỆU ---
         // Nếu lblcapnhat.Tag != null -> UPDATE, ngược lại -> ADD NEW
-        private void button2_Click(object sender, EventArgs e) // Lưu (Nguyên liệu)
+        private void lblcapnhat_Click(object sender, EventArgs e) // Lưu (Nguyên liệu)
         {
             try {
                 // Validate input số lượng
@@ -522,7 +522,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         // (Giữ nguyên) - Hiển thị form thêm mới nguyên liệu, đặt mặc định và focus vào tên
-        private void button4_Click(object sender, EventArgs e) // Thêm mới (Nguyên liệu)
+        private void lblthem_Click(object sender, EventArgs e) // Thêm mới (Nguyên liệu)
         {
             ClearInventoryForm();
             txtma.ReadOnly = true;
@@ -993,5 +993,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 MessageBox.Show("Đã xảy ra lỗi nghiêm trọng khi xóa: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+
     }
 }
