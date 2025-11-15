@@ -26,14 +26,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             _dichVuThanhToan = new DichVuThanhToan();
         }
 
-        // *** ĐÃ THAY ĐỔI: Gọi DichVuThanhToan ***
-        private void ThanhToan_Load(object sender, EventArgs e) {
-            try {
+        
+        private void ThanhToan_Load(object sender, EventArgs e)
+        {
+            try
+            {
                 // 1. Gọi Dịch Vụ để tải thông tin
                 var ketQua = _dichVuThanhToan.TaiThongTinThanhToan(_maDonHangChon);
 
                 // 2. Kiểm tra lỗi
-                if (ketQua == null) {
+                if (ketQua == null)
+                {
                     MessageBox.Show("Lỗi: Không tìm thấy đơn hàng hoặc thanh toán chờ.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     this.DialogResult = DialogResult.Cancel;
                     this.Close();
@@ -43,7 +46,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 // 3. Gán dữ liệu vào các biến
                 _donHangCanThanhToan = ketQua.DonHang;
                 _thanhToanCanCapNhat = ketQua.ThanhToan;
-                _tongTien = _donHangCanThanhToan.TongTien ?? 0;
+                _tongTien = _donHangCanThanhToan.TongTien ?? 0; // <-- Lấy 36.000 (ĐÚNG)
 
                 var chiTietDonHang = ketQua.ChiTiet;
                 var allSanPham = ketQua.SanPhams;
@@ -53,33 +56,58 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 txtKhachDua.Text = _tongTien.ToString("N0");
                 lblTienDu.Text = "0 đ";
 
-                // 5. Đổ danh sách món ăn vào ListView
+                
+                // Chúng ta sẽ tính lại tổng gốc (Tiền trước giảm)
+                // ngay tại đây để đảm bảo nó luôn đúng,
+                // bất kể MainForm truyền gì sang.
+
+                decimal tongGocMoi = 0;
+
+                // 5. Đổ danh sách món ăn vào ListView VÀ TÍNH LẠI TỔNG GỐC
                 lvChiTietBill.Items.Clear();
-                foreach (var ct in chiTietDonHang) {
+                foreach (var ct in chiTietDonHang)
+                {
                     string tenSP = "Không tìm thấy SP";
                     foreach (var sp in allSanPham) // Join thủ công
                     {
-                        if (sp.MaSp == ct.MaSp) {
+                        if (sp.MaSp == ct.MaSp)
+                        {
                             tenSP = sp.TenSp;
                             break;
                         }
                     }
 
+                    // Tính thành tiền của món này (ct.DonGia là giá gốc)
+                    decimal thanhTienGoc = ct.SoLuong * ct.DonGia;
+
+                    // Cộng dồn vào tổng gốc mới
+                    tongGocMoi += thanhTienGoc; // <-- Sẽ tính ra 45.000
+
                     ListViewItem lvi = new ListViewItem(tenSP);
                     lvi.SubItems.Add(ct.SoLuong.ToString());
                     lvi.SubItems.Add(ct.DonGia.ToString("N0"));
-                    lvi.SubItems.Add((ct.SoLuong * ct.DonGia).ToString("N0"));
+                    lvi.SubItems.Add(thanhTienGoc.ToString("N0"));
                     lvChiTietBill.Items.Add(lvi);
                 }
 
-                // 6. Cấu hình thanh toán
+                // 6. GHI ĐÈ CÁC BIẾN _passed BẰNG GIÁ TRỊ ĐÃ TÍNH LẠI
+                _tongTienGoc_passed = tongGocMoi; // <-- Ghi đè thành 45.000
+                _soTienGiam_passed = tongGocMoi - _tongTien; // <-- Ghi đè thành (45.000 - 36.000) = 9.000
+
+                // --- KẾT THÚC SỬA LỖI ---
+
+
+                // 7. Cấu hình thanh toán (trước đây là bước 6)
                 rbTienMat.Checked = true;
-                if (this.Controls.Find("panelBillPreview", true).FirstOrDefault() is Panel panelBillPreview) {
+                if (this.Controls.Find("panelBillPreview", true).FirstOrDefault() is Panel panelBillPreview)
+                {
                     pbQR_InBill.Visible = false;
+                    // Giờ hàm này sẽ dùng _tongTienGoc_passed = 45.000 và _soTienGiam_passed = 9.000
                     HienThiBillPreview(panelBillPreview); // Vẽ hóa đơn
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi tải thông tin thanh toán: " + ex.Message);
                 this.DialogResult = DialogResult.Cancel;
                 this.Close();
@@ -97,11 +125,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         private void HienThiBillPreview(Panel panelBillPreview) {
             while (panelBillPreview.Controls.Count > 0) { Control c = panelBillPreview.Controls[0]; if (c != pbQR_InBill) { panelBillPreview.Controls.Remove(c); c.Dispose(); } else { panelBillPreview.Controls.Remove(c); } }
             int currentY = 10;
-            Label lblTenQuan = AddLabelToBill("COFFEE", currentY, 14, FontStyle.Bold); currentY += lblTenQuan.Height + 2;
-            Label lblDiaChi = AddLabelToBill("Ung Van Khiem, Long Xuyen", currentY, 9); currentY += lblDiaChi.Height;
-            Label lblSDT = AddLabelToBill("0814 585 526", currentY, 9); currentY += lblSDT.Height + 5; currentY += 20;
-            Label lblHoaDon = AddLabelToBill("HÓA ĐƠN", currentY, 12, FontStyle.Bold); currentY += lblHoaDon.Height + 15;
-            AddLabelToBill("Tên món", currentY, 9, FontStyle.Regular, 40); AddLabelToBill("SL", currentY, 9, FontStyle.Regular, 250); AddLabelToBill("Dơn giá", currentY, 9, FontStyle.Regular, 320); AddLabelToBill("Thành tiền", currentY, 9, FontStyle.Regular, 450); currentY += 30;
+            Label lblTenQuan = AddLabelToBill("COFFEE", currentY, 14, FontStyle.Bold); 
+            currentY += lblTenQuan.Height + 2;
+            Label lblDiaChi = AddLabelToBill("Ung Van Khiem, Long Xuyen", currentY, 9); 
+            currentY += lblDiaChi.Height;
+            Label lblSDT = AddLabelToBill("0814 585 526", currentY, 9); 
+            currentY += lblSDT.Height + 5; 
+            currentY += 20;
+            Label lblHoaDon = AddLabelToBill("HÓA ĐƠN", currentY, 12, FontStyle.Bold); 
+            currentY += lblHoaDon.Height + 15;
+            AddLabelToBill("Tên món", currentY, 9, FontStyle.Regular, 40); 
+            AddLabelToBill("SL", currentY, 9, FontStyle.Regular, 250); 
+            AddLabelToBill("Dơn giá", currentY, 9, FontStyle.Regular, 320); 
+            AddLabelToBill("Thành tiền", currentY, 9, FontStyle.Regular, 450); currentY += 30;
             foreach (ListViewItem item in lvChiTietBill.Items) { string tenMon = item.SubItems[0].Text; string soLuong = item.SubItems[1].Text; string donGia = item.SubItems[2].Text; string thanhTien = item.SubItems[3].Text; AddLabelToBill(tenMon, currentY, 9, FontStyle.Regular, 40); AddLabelToBill(soLuong, currentY, 9, FontStyle.Regular, 250); AddLabelToBill(donGia, currentY, 9, FontStyle.Regular, 320); AddLabelToBill(thanhTien, currentY, 9, FontStyle.Regular, 450); currentY += 30; }
             currentY += 15; AddLabelToBill("-----------------------------------", currentY, 9); currentY += 55;
             AddLabelToBill("Tiền trước giảm:", currentY, 10, FontStyle.Regular, 40); AddLabelToBill(_tongTienGoc_passed.ToString("N0") + " đ", currentY, 14, FontStyle.Regular, 290); currentY += 55;

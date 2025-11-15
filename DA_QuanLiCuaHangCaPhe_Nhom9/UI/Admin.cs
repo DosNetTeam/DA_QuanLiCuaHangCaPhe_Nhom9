@@ -827,6 +827,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             // Nếu đang chọn nhân viên (txtmanv khác '(tạo tự động)' và có số) thì reset form để nhập mới
             if (!string.IsNullOrWhiteSpace(txtmanv.Text) && txtmanv.Text != "(tạo tự động)" && int.TryParse(txtmanv.Text, out _))
             {
+                cbvaitro.Enabled = true;
                 ClearEmployeeForm();
                 return;
             }
@@ -874,6 +875,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 MessageBox.Show("Tên đăng nhập đã tồn tại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 txttentaikhoan.Focus(); return;
             }
+            // Lấy vai trò và chức vụ đã chọn
+            cbvaitro.DisplayMember = "TenVaiTro";
+            cbvaitro.Enabled= true;
+
             var selectedVaiTro = (VaiTro)cbvaitro.SelectedItem;
             string chucVu = cb_chucvu.SelectedItem.ToString();
             // Luôn tạo mới nhân viên và tài khoản

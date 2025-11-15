@@ -201,42 +201,87 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 { // namespace của project
         // Xử lý nút Thanh Toán:
         // - Nếu giỏ hàng có món -> lưu tạm, mở ThanhToan cho đơn vừa tạo
         // - Nếu giỏ hàng rỗng -> mở ChonDonHangCho để chọn đơn cũ thanh toán
-        private void btnThanhToan_Click(object sender, EventArgs e) {
-            if (_gioHang.LaySoLuongMon() > 0) {
-                // Lưu tạm đơn và nhận MaDH mới
+        private void btnThanhToan_Click(object sender, EventArgs e)
+        {
+            if (_gioHang.LaySoLuongMon() > 0)
+            {
+                // KỊCH BẢN 1: TẠO ĐƠN MỚI (ĐÃ CHẠY ĐÚNG)
                 int maDonHangVuaTao = ThucHienLuuTam();
-                if (maDonHangVuaTao > 0) {
-                    // Mở form ThanhToan với MaDH và các giá trị tổng
+                if (maDonHangVuaTao > 0)
+                {
+                    // Truyền tongGoc, soTienGiam hiện tại của giỏ hàng
                     ThanhToan frmThanhToan = new ThanhToan(maDonHangVuaTao, tongGoc, soTienGiam);
                     var result = frmThanhToan.ShowDialog();
-                    // Nếu OK hoặc Cancel -> reset form (vì đơn đã được xử lý hoặc huỷ)
-                    if ((result == DialogResult.OK) || (result == DialogResult.Cancel)) {
-                        ResetMainForm(); // sau khi đóng form thanh toán -> reset main form (xóa giỏ, load lại sản phẩm)
+
+                    if ((result == DialogResult.OK) || (result == DialogResult.Cancel))
+                    {
+                        ResetMainForm();
                     }
                 }
             }
-            else {
-                // Nếu giỏ hàng rỗng, mở danh sách đơn chờ để chọn đơn cũ
+            else
+            {
+                // KỊCH BẢN 2: MỞ ĐƠN CŨ (ĐANG BỊ LỖI)
                 ChonDonHangCho cdhc = new ChonDonHangCho();
                 var resultChon = cdhc.ShowDialog();
-                if (resultChon == DialogResult.OK) {
+
+                if (resultChon == DialogResult.OK)
+                {
                     int maDonHangChon = cdhc.MaDonHangDaChon;
-                    // Mở ThanhToan cho đơn đã chọn; tongGoc và soTienGiam có thể là 0 nếu không tính lại ở đây
-                    ThanhToan thanhtoan = new ThanhToan(maDonHangChon, tongGoc, soTienGiam);
-                    var resultThanhToan = thanhtoan.ShowDialog();
-                    if ((resultThanhToan == DialogResult.OK) || (resultThanhToan == DialogResult.Cancel)) {
-                        // Reload sản phẩm (vì có thể kho đã thay đổi sau khi thanh toán/hủy)
+
+                    // --- BẮT ĐẦU SỬA LỖI ---
+                    // Phải tải lại chi tiết đơn hàng đã chọn để lấy tổng gốc và tổng giảm
+                    // vì 'tongGoc' và 'soTienGiam' của MainForm hiện tại là 0
+
+                    // 1. Dùng DichVuThanhToan để tải lại chi tiết đơn hàng
+                    DichVuThanhToan dichVuThanhToan = new DichVuThanhToan();
+                    // 2. Dùng LayChiTietDonHangGoc (vì nó lấy cả DonHang và ChiTietDonHangs)
+                    var donHangGoc = dichVuThanhToan.LayChiTietDonHangGoc(maDonHangChon);
+
+                    if (donHangGoc != null && donHangGoc.ChiTietDonHangs != null)
+                    {
+                        decimal tongGocMoi = 0;
+
+                        // 3. Tính lại Tiền trước giảm (tổng gốc)
+                        // (ThucHienLuuTam đã lưu DonGiaGoc vào ct.DonGia)
+                        foreach (var ct in donHangGoc.ChiTietDonHangs)
+                        {
+                            tongGocMoi += (ct.DonGia * ct.SoLuong);
+                        }
+
+                        // 4. Lấy Thành tiền (tổng cuối) đã lưu trong đơn
+                        decimal tongCuoi = donHangGoc.TongTien ?? 0;
+
+                        // 5. Tính lại Giảm giá
+                        decimal soTienGiamMoi = tongGocMoi - tongCuoi;
+
+                        // 6. Mở ThanhToan với DỮ LIỆU ĐÚNG của đơn hàng cũ
+                        ThanhToan thanhtoan = new ThanhToan(maDonHangChon, tongGocMoi, soTienGiamMoi);
+                        var resultThanhToan = thanhtoan.ShowDialog();
+
+                        if ((resultThanhToan == DialogResult.OK) || (resultThanhToan == DialogResult.Cancel))
+                        {
+                            TaiSanPham(_currentMaLoai);
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Lỗi: Không thể tải chi tiết đơn hàng đã chọn.");
                         TaiSanPham(_currentMaLoai);
                     }
+                    // --- KẾT THÚC SỬA LỖI ---
                 }
-                else if (resultChon == DialogResult.Cancel) TaiSanPham(_currentMaLoai); // nếu cancel -> reload sản phẩm
+                else if (resultChon == DialogResult.Cancel)
+                {
+                    TaiSanPham(_currentMaLoai);
+                }
             }
         }
 
         // Hủy đơn hiện tại (trong UI): hỏi xác nhận rồi reset nếu có món
         private void btnHuyDon_Click(object sender, EventArgs e) {
 
-            if (lvDonHang.SelectedItems.Count > 0) { // nếu có item được chọn trong ListView
+            if (_gioHang.LaySoLuongMon() != 0) { 
                 var confirm = MessageBox.Show("Bạn có chắc muốn hủy đơn hàng này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (confirm == DialogResult.Yes) {
                     ResetMainForm(); // reset toàn bộ form -> xóa giỏ, reset thông tin
