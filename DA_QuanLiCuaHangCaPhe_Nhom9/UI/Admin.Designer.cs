@@ -35,6 +35,7 @@
             btnLognout = new Button();
             quanlynhanvien = new TabPage();
             pnthongtinnv = new Panel();
+            cbvaitro = new ComboBox();
             cb_chucvu = new ComboBox();
             btnsuathongtinnv = new Button();
             btndoimatkhau = new Button();
@@ -114,7 +115,6 @@
             btnthemkm = new Button();
             btnsuakm = new Button();
             btnxoakm = new Button();
-            cbvaitro = new ComboBox();
             bandieukhien.SuspendLayout();
             tongquan.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tongquandulieu).BeginInit();
@@ -287,6 +287,14 @@
             pnthongtinnv.Size = new Size(891, 175);
             pnthongtinnv.TabIndex = 1;
             // 
+            // cbvaitro
+            // 
+            cbvaitro.FormattingEnabled = true;
+            cbvaitro.Location = new Point(676, 47);
+            cbvaitro.Name = "cbvaitro";
+            cbvaitro.Size = new Size(137, 28);
+            cbvaitro.TabIndex = 9;
+            // 
             // cb_chucvu
             // 
             cb_chucvu.FormattingEnabled = true;
@@ -305,7 +313,7 @@
             btnsuathongtinnv.TabIndex = 8;
             btnsuathongtinnv.Text = "Sửa";
             btnsuathongtinnv.UseVisualStyleBackColor = false;
-            btnsuathongtinnv.Click += button3_Click_1;
+            btnsuathongtinnv.Click += btnsuathongtinnv_Click;
             // 
             // btndoimatkhau
             // 
@@ -1127,14 +1135,6 @@
             btnxoakm.Text = "Xóa";
             btnxoakm.UseVisualStyleBackColor = false;
             btnxoakm.Click += btnxoakm_Click_1;
-            // 
-            // cbvaitro
-            // 
-            cbvaitro.FormattingEnabled = true;
-            cbvaitro.Location = new Point(676, 47);
-            cbvaitro.Name = "cbvaitro";
-            cbvaitro.Size = new Size(137, 28);
-            cbvaitro.TabIndex = 9;
             // 
             // Admin
             // 

@@ -1063,16 +1063,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         // --- CẬP NHẬT NHÂN VIÊN ---
-        private void button3_Click_1(object sender, EventArgs e) // Sửa NV
+        private void btnsuathongtinnv_Click(object sender, EventArgs e) // Sửa NV
         {
             try
             {
-                if (string.IsNullOrEmpty(txtmanv.Text) || txtmanv.Text == "(Tự động)")
+                if (string.IsNullOrWhiteSpace(txtmanv.Text) || txtmanv.Text == "(tạo tự động)")
                 {
-                    MessageBox.Show("Vui lòng chọn nhân viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Vui lòng chọn nhân viên để sửa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
                 int maNv = Convert.ToInt32(txtmanv.Text);
+
                 if (string.IsNullOrWhiteSpace(txthoten.Text))
                 {
                     MessageBox.Show("Vui lòng nhập họ tên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1093,7 +1094,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     MessageBox.Show("Vui lòng chọn chức vụ!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     cb_chucvu.Focus(); return;
                 }
-                // Validate số điện thoại
                 string phone = txtsdt.Text.Trim();
                 if (phone.Length < 10 || phone.Length > 11 || !phone.All(char.IsDigit))
                 {
@@ -1102,8 +1102,32 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 }
                 var selectedVaiTro = (VaiTro)cbvaitro.SelectedItem;
                 string chucVu = cb_chucvu.SelectedItem.ToString();
+
+                // Logic: Nếu vai trò là Quản lý thì chức vụ chỉ là Quản lý, nếu Nhân viên thì chức vụ là Thu Ngân/Oder
+                if (selectedVaiTro.TenVaiTro.ToLower().Contains("quản lý") || selectedVaiTro.TenVaiTro.ToLower().Contains("quan ly"))
+                {
+                    if (chucVu != "Quản lý")
+                    {
+                        MessageBox.Show("Chức vụ phải là 'Quản lý' khi vai trò là Quản lý!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+                else if (selectedVaiTro.TenVaiTro.ToLower().Contains("nhân viên") || selectedVaiTro.TenVaiTro.ToLower().Contains("nhan vien"))
+                {
+                    if (chucVu != "Thu Ngân" && chucVu != "Oder")
+                    {
+                        MessageBox.Show("Chức vụ phải là 'Thu Ngân' hoặc 'Oder' khi vai trò là Nhân viên!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+                else if (selectedVaiTro.TenVaiTro.ToLower().Contains("chủ cửa hàng") || selectedVaiTro.TenVaiTro.ToLower().Contains("chu cua hang"))
+                {
+                    MessageBox.Show("Không được chọn vai trò Chủ cửa hàng!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 if (MessageBox.Show($"Xác nhận cập nhật cho: {txthoten.Text}?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
-                // Gọi repo cập nhật nhân viên
+
                 bool success = _repoNhanVien.CapNhatNhanVienFull(
                     maNv,
                     txthoten.Text.Trim(),
@@ -1167,7 +1191,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             cbvaitro.DataSource = vaiTros;
             cbvaitro.DisplayMember = "TenVaiTro";
             cbvaitro.ValueMember = "MaVaiTro";
+            cbvaitro.SelectedIndex = -1;
             cbvaitro.SelectedIndexChanged += cbvaitro_SelectedIndexChanged;
+            cb_chucvu.DataSource = null;
         }
         private void cbvaitro_SelectedIndexChanged(object? sender, EventArgs e)
         {
@@ -1177,11 +1203,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             {
                 cb_chucvu.DataSource = new[] { "Quản lý" };
                 cb_chucvu.Enabled = false;
+                cb_chucvu.SelectedIndex = 0;
             }
             else if (selectedVaiTro.TenVaiTro.ToLower().Contains("nhân viên") || selectedVaiTro.TenVaiTro.ToLower().Contains("nhan vien"))
             {
                 cb_chucvu.DataSource = new[] { "Thu Ngân", "Oder" };
                 cb_chucvu.Enabled = true;
+                cb_chucvu.SelectedIndex = -1;
             }
             else
             {
@@ -1190,10 +1218,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // Đảm bảo khai báo hàm ClearEmployeeForm trong Admin.cs
+        // Gọi LoadVaiTro_ChucVu khi vào tab nhân viên và khi reset form
         private void ClearEmployeeForm()
         {
-            // Khi reset form hoặc tạo mới, chỉ hiển thị '(tạo tự động)' và luôn ReadOnly
             txtmanv.Text = "(tạo tự động)";
             txtmanv.ReadOnly = true;
             txtmanv.Visible = true;
@@ -1206,11 +1233,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             txtmatkhau.Text = "";
             txtmatkhau.ReadOnly = false;
             txtmatkhau.UseSystemPasswordChar = false;
-            cb_chucvu.Enabled = true;
-            cb_chucvu.DataSource = null;
-            cbvaitro.Enabled = true;
-            cbvaitro.DataSource = null;
-        }
-
+            LoadVaiTro_ChucVu();
+        }       
     }
 }
