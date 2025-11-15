@@ -36,6 +36,18 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             _repoSanPham = new SanPham_function();    // Tạo instance xử lý SP
             _repoThongKe = new ThongKe();            // Tạo instance xử lý thống kê
 
+            // Khởi tạo các mục cho ComboBox trạng thái nguyên liệu (cbTT)
+            cbTT.Items.Clear();
+            cbTT.Items.Add("Đang kinh doanh");
+            cbTT.Items.Add("Ngừng kinh doanh");
+            // Đặt chế độ chỉ cho phép chọn, không cho phép gõ
+            cbTT.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            cbTTsp.Items.Clear();
+            cbTTsp.Items.Add("Còn bán");
+            cbTTsp.Items.Add("Ngừng bán");
+            cbTTsp.DropDownStyle = ComboBoxStyle.DropDownList;
+
             // (Các sự kiện giữ nguyên)
             this.StartPosition = FormStartPosition.CenterScreen;           // Đặt form giữa màn hình
             dtgvquanlynhanvien.CellClick += dataGridView1_CellClick;      // Khi click trên DGV NV -> mở chi tiết
@@ -325,7 +337,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     txtdongia.Text = product.DonGia.ToString("N0");
                     txtloai.Text = product.LoaiSp ?? "";
                     txtdon_vi.Text = product.DonVi ?? "";
-                    txttinhtrangsp.Text = product.TrangThai ?? "Còn kinh doanh";
+
+                    // === THAY ĐỔI: SỬ DỤNG cbTTsp ===
+                    cbTTsp.SelectedItem = product.TrangThai ?? "Còn bán";
+                    // ================================
 
                     // Thiết lập trạng thái read-only / editable cho các control
                     txtmasp.ReadOnly = true;
@@ -334,7 +349,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     txtdongia.ReadOnly = false;
                     txtdon_vi.ReadOnly = false;
                     txtgia.ReadOnly = false;
-                    txttinhtrangsp.ReadOnly = false;
+
+                    // === THAY ĐỔI: SỬ DỤNG cbTTsp ===
+                    cbTTsp.Enabled = true; // ComboBox dùng Enabled
+                    // ================================
 
                     // Hiển thị nhóm thông tin sản phẩm và focus vào tên để người dùng sửa nhanh
                     gbsanpham.Visible = true;
@@ -400,7 +418,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     }
 
                     txtmatkhau.ReadOnly = true;
-                    txtmatkhau.UseSystemPasswordChar = true;
+                    //txtmatkhau.UseSystemPasswordChar = true;
                     txthoten.ReadOnly = false;
                     txtsdt.ReadOnly = false;
                     pnthongtinnv.Visible = true; // Hiện panel thông tin NV
@@ -500,7 +518,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 if (txtmatkhau != null)
                 {
                     txtmatkhau.ReadOnly = true;
-                    txtmatkhau.UseSystemPasswordChar = true;
+                    //txtmatkhau.UseSystemPasswordChar = true;
                 }
             }
         }
@@ -524,14 +542,21 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     txtten.Text = ingredient.TenNl;
                     txtsoluong.Text = ingredient.SoLuongTon?.ToString() ?? "0";
                     txtdonvi.Text = ingredient.DonViTinh;
-                    textBox2.Text = ingredient.TrangThai ?? "Đang kinh doanh";
+
+                    // === THAY ĐỔI: SỬ DỤNG cbTT ===
+                    cbTT.SelectedItem = ingredient.TrangThai ?? "Đang kinh doanh";
+                    // =============================
 
                     // Thiết lập trạng thái editable/readonly cho form cập nhật
                     txtma.ReadOnly = true;
-                    txtten.ReadOnly = true;
+                    //txtten.ReadOnly = true; // Code gốc của bạn đang comment dòng này
                     txtdonvi.ReadOnly = true;
                     txtsoluong.ReadOnly = false;
-                    textBox2.ReadOnly = false;
+
+                    // === THAY ĐỔI: SỬ DỤNG cbTT ===
+                    cbTT.Enabled = true; // ComboBox dùng Enabled
+                                         // =============================
+
                     txtsoluong.Focus();
                     txtsoluong.SelectAll();
 
@@ -556,7 +581,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             {
                 // Validate input số lượng
                 if (!decimal.TryParse(txtsoluong.Text, out decimal soLuongMoi) || soLuongMoi < 0) { MessageBox.Show("Vui lòng nhập số lượng hợp lệ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txtsoluong.Focus(); return; }
-                string tinhTrangMoi = textBox2.Text.Trim();
+
+                // === THAY ĐỔI: SỬ DỤNG cbTT ===
+                // Lấy trạng thái từ ComboBox
+                string tinhTrangMoi = cbTT.SelectedItem?.ToString();
+                if (string.IsNullOrEmpty(tinhTrangMoi))
+                {
+                    MessageBox.Show("Vui lòng chọn trạng thái kinh doanh!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    cbTT.Focus();
+                    return;
+                }
+                // =============================
 
                 if (lblcapnhat.Tag != null) // Chế độ UPDATE
                 {
@@ -601,8 +636,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             txtten.ReadOnly = false;
             txtsoluong.ReadOnly = false;
             txtdonvi.ReadOnly = false;
-            textBox2.ReadOnly = false;
-            textBox2.Text = "Đang kinh doanh";
+
+            // === THAY ĐỔI: SỬ DỤNG cbTT ===
+            cbTT.Enabled = true;
+            cbTT.SelectedItem = "Đang kinh doanh"; // Gán giá trị mặc định
+                                                   // =============================
+
             lblcapnhat.Tag = null;
             lblcapnhat.Text = "Lưu Mới";
             gbthongtinnguyenlieu.Visible = true;
@@ -617,7 +656,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             txtten.Clear();
             txtsoluong.Clear();
             txtdonvi.Clear();
-            textBox2.Clear();
+
+            // === THAY ĐỔI: SỬ DỤNG cbTT ===
+            cbTT.SelectedIndex = -1; // Xóa lựa chọn của ComboBox
+                                     // =============================
+
             lblcapnhat.Tag = null;
             lblcapnhat.Text = "Cập nhật";
         }
@@ -630,6 +673,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             {
                 if (string.IsNullOrWhiteSpace(txttensp.Text)) { MessageBox.Show("Vui lòng nhập tên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txttensp.Focus(); return; }
                 if (string.IsNullOrWhiteSpace(txtdongia.Text) || !decimal.TryParse(txtdongia.Text.Replace(".", "").Replace(",", ""), out decimal donGia)) { MessageBox.Show("Vui lòng nhập đơn giá hợp lệ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txtdongia.Focus(); return; }
+
+                // === THAY ĐỔI: SỬ DỤNG cbTTsp ===
+                if (cbTTsp.SelectedItem == null)
+                {
+                    MessageBox.Show("Vui lòng chọn trạng thái sản phẩm!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    cbTTsp.Focus();
+                    return;
+                }
+                string trangThai = cbTTsp.SelectedItem.ToString();
+                // ================================
+
                 if (MessageBox.Show($"Xác nhận THÊM MỚI '{txttensp.Text}'?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
                 // Gọi repo để thêm sản phẩm mới với thông tin từ form
@@ -638,7 +692,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     txtloai.Text.Trim(),
                     donGia,
                     txtdon_vi.Text.Trim(),
-                    txttinhtrangsp.Text.Trim()
+                    trangThai // Truyền trạng thái từ ComboBox
                 );
 
                 if (newProduct != null)
@@ -668,6 +722,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 int maSp = Convert.ToInt32(txtmasp.Text);
                 if (string.IsNullOrWhiteSpace(txttensp.Text)) { MessageBox.Show("Vui lòng nhập tên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txttensp.Focus(); return; }
                 if (string.IsNullOrWhiteSpace(txtdongia.Text) || !decimal.TryParse(txtdongia.Text.Replace(".", "").Replace(",", ""), out decimal donGia)) { MessageBox.Show("Vui lòng nhập đơn giá hợp lệ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); txtdongia.Focus(); return; }
+
+                // === THAY ĐỔI: SỬ DỤNG cbTTsp ===
+                if (cbTTsp.SelectedItem == null)
+                {
+                    MessageBox.Show("Vui lòng chọn trạng thái sản phẩm!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    cbTTsp.Focus();
+                    return;
+                }
+                string trangThai = cbTTsp.SelectedItem.ToString();
+                // ================================
+
                 if (MessageBox.Show($"Xác nhận CẬP NHẬT '{txttensp.Text}'?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
 
                 // Gọi repo cập nhật sản phẩm
@@ -677,7 +742,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     txtloai.Text.Trim(),
                     donGia,
                     txtdon_vi.Text.Trim(),
-                    txttinhtrangsp.Text.Trim()
+                    trangThai // Truyền trạng thái từ ComboBox
                 );
 
                 if (updatedProduct != null)
@@ -717,7 +782,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 }
                 else
                 {
-                    MessageBox.Show("Xóa thất bại! Sản phẩm có thể đang được sử dụng trong công thức hoặc đơn hàng.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // *** THAY ĐỔI: CẬP NHẬT THÔNG BÁO LỖI ***
+                    MessageBox.Show("Xóa thất bại! \n\nLý do có thể là:\n" +
+                                    "1. Sản phẩm đang ở trạng thái 'Còn bán'.\n",
+                                    "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                  
                 }
             }
             catch (Exception ex)
@@ -877,7 +946,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
             // Lấy vai trò và chức vụ đã chọn
             cbvaitro.DisplayMember = "TenVaiTro";
-            cbvaitro.Enabled= true;
+            cbvaitro.Enabled = true;
 
             var selectedVaiTro = (VaiTro)cbvaitro.SelectedItem;
             string chucVu = cb_chucvu.SelectedItem.ToString();
@@ -905,29 +974,42 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         {
             try
             {
-                if (dtgvquanlynhanvien.SelectedRows.Count == 0) { MessageBox.Show("Vui lòng chọn nhân viên!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (dtgvquanlynhanvien.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("Vui lòng chọn nhân viên cần xóa!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 int maNv = Convert.ToInt32(dtgvquanlynhanvien.SelectedRows[0].Cells["MaNv"].Value);
                 string tenNv = dtgvquanlynhanvien.SelectedRows[0].Cells["TenNv"].Value.ToString();
-                string taiKhoan = dtgvquanlynhanvien.SelectedRows[0].Cells["TaiKhoan"].Value.ToString();
-                if (taiKhoan == "Chưa có") { MessageBox.Show("Nhân viên này chưa có tài khoản!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
-                if (MessageBox.Show($"Xác nhận xóa tài khoản của: {tenNv}?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
 
-                // Gọi repo để xóa tài khoản theo MaNv
-                bool success = _repoNhanVien.XoaTaiKhoan(maNv);
+                // Thay đổi câu hỏi xác nhận
+                var confirm = MessageBox.Show($"Xác nhận XÓA NHÂN VIÊN: {tenNv} (MaNV: {maNv})?\n\n" +
+                                            $"LƯU Ý:Tài khoản liên quan đến nhân viên sẽ bị xóa.\n" +
+                                            $"Hệ thống sẽ từ chối nếu nhân viên này đã từng lập đơn hàng.",
+                                            "Xác nhận xóa nhân viên",
+                                            MessageBoxButtons.YesNo,
+                                            MessageBoxIcon.Warning);
+
+                if (confirm != DialogResult.Yes) return;
+
+                // Gọi hàm repository XÓA NHÂN VIÊN mới
+                bool success = _repoNhanVien.XoaNhanVien(maNv);
 
                 if (success)
                 {
-                    MessageBox.Show("Xóa tài khoản thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadEmployeeData(); // Reload để cập nhật UI
+                    MessageBox.Show("Xóa nhân viên thành công!", "Thành công", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadEmployeeData(); // Tải lại danh sách
+                    ClearEmployeeForm(); // Dọn dẹp form chi tiết
                 }
                 else
                 {
-                    MessageBox.Show("Xóa tài khoản thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Xóa thất bại! \n\nNguyên nhân có thể do nhân viên này đã lập đơn hàng trong quá khứ và không thể xóa.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi xóa tài khoản: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Lỗi khi xóa nhân viên: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -1162,7 +1244,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             try
             {
                 if (dgvkho.SelectedRows.Count == 0) { MessageBox.Show("Vui lòng chọn nguyên liệu để xóa.", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
-                if (MessageBox.Show($"Bạn có chắc muốn xóa {dgvkho.SelectedRows.Count} nguyên liệu đã chọn?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+
+                // === THAY ĐỔI: CẬP NHẬT CÂU HỎI XÁC NHẬN ===
+                if (MessageBox.Show($"Bạn có chắc muốn xóa {dgvkho.SelectedRows.Count} nguyên liệu đã chọn?\n\n" +
+                                   $"LƯU Ý: Những nguyên liệu 'Đang kinh doanh' hoặc đang dùng trong công thức sẽ KHÔNG bị xóa.",
+                                   "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+                // ===========================================
 
                 // Gom mã nguyên liệu được chọn vào danh sách
                 List<int> maNlList = new List<int>();
@@ -1171,7 +1258,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     maNlList.Add(Convert.ToInt32(row.Cells["MaNl"].Value));
                 }
 
-                // Gọi repo để xóa, repo trả về chuỗi kết quả (có thể chứa thông báo)
+                // Gọi repo để xóa (repo đã được cập nhật ở bước 1)
                 string ketQua = _repoKho.XoaNguyenLieu(maNlList);
 
                 // Hiển thị kết quả trả về và reload danh sách kho
@@ -1239,6 +1326,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             txtmatkhau.ReadOnly = false;
             txtmatkhau.UseSystemPasswordChar = false;
             LoadVaiTro_ChucVu();
-        }       
+        }
     }
 }

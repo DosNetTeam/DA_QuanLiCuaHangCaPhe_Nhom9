@@ -159,20 +159,26 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
             }
         }
 
-        public string XoaNguyenLieu(List<int> maNlList) {
+        public string XoaNguyenLieu(List<int> maNlList)
+        {
             List<string> deletedItems = new List<string>();
             List<string> failedItems = new List<string>();
 
-            try {
-                using (var db = new DataSqlContext()) {
+            try
+            {
+                using (var db = new DataSqlContext())
+                {
                     var allDinhLuong = db.DinhLuongs.ToList();
                     var allNguyenLieu = db.NguyenLieus.ToList();
 
-                    foreach (int maNl in maNlList) {
+                    foreach (int maNl in maNlList)
+                    {
                         NguyenLieu ingredient = null;
                         string tenNl = "(Không rõ)";
-                        foreach (var nl in allNguyenLieu) {
-                            if (nl.MaNl == maNl) {
+                        foreach (var nl in allNguyenLieu)
+                        {
+                            if (nl.MaNl == maNl)
+                            {
                                 ingredient = nl;
                                 tenNl = nl.TenNl;
                                 break;
@@ -180,35 +186,53 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                         }
                         if (ingredient == null) continue;
 
+                        // *** BẮT ĐẦU THAY ĐỔI LOGIC ***
+
+                        // KIỂM TRA 1: Trạng thái kinh doanh
+                        if (ingredient.TrangThai == "Đang kinh doanh")
+                        {
+                            failedItems.Add($"{tenNl} (Lỗi: Đang kinh doanh)");
+                            continue; // Bỏ qua, không xóa
+                        }
+
+                        // KIỂM TRA 2: Ràng buộc công thức
                         bool isInUse = false;
-                        foreach (var dl in allDinhLuong) {
-                            if (dl.MaNl == maNl) {
+                        foreach (var dl in allDinhLuong)
+                        {
+                            if (dl.MaNl == maNl)
+                            {
                                 isInUse = true;
                                 break;
                             }
                         }
 
-                        if (isInUse) {
-                            failedItems.Add($"{tenNl} (Lỗi: Đang được sử dụng trong công thức)");
+                        if (isInUse)
+                        {
+                            failedItems.Add($"{tenNl} (Lỗi: Đang dùng trong công thức)");
                         }
-                        else {
+                        else
+                        {
                             db.NguyenLieus.Remove(ingredient);
                             deletedItems.Add(tenNl);
                         }
+                        // *** KẾT THÚC THAY ĐỔI LOGIC ***
                     }
                     db.SaveChanges();
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return "Lỗi nghiêm trọng khi xóa: " + ex.Message;
             }
 
             // Xây dựng thông báo kết quả
             System.Text.StringBuilder summary = new System.Text.StringBuilder();
-            if (deletedItems.Count > 0) {
+            if (deletedItems.Count > 0)
+            {
                 summary.AppendLine($"Đã xóa thành công {deletedItems.Count} nguyên liệu.");
             }
-            if (failedItems.Count > 0) {
+            if (failedItems.Count > 0)
+            {
                 summary.AppendLine($"\nXóa thất bại {failedItems.Count} nguyên liệu:");
                 summary.AppendLine(string.Join("\n", failedItems));
             }
