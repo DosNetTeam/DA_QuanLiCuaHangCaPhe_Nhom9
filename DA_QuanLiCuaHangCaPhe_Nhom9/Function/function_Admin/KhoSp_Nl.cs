@@ -34,21 +34,40 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                 using (DataSqlContext db = new DataSqlContext()) {
                     var inventory = db.NguyenLieus.ToList(); // Lấy tất cả
 
-                    // Tính toán tình trạng (logic gốc)
+                    //// Tính toán tình trạng (logic gốc)
+                    //foreach (var nl in inventory) {
+                    //    string tinhTrang;
+                    //    decimal soLuongTon = Math.Round(nl.SoLuongTon ?? 0, 2);
+                    //    decimal nguongCanhBao = Math.Round(nl.NguongCanhBao ?? 0, 2);
+
+                    //    decimal nguong = nguongCanhBao > 0 ? nguongCanhBao : 100;
+                    //    decimal motPhanBa = nguong / 3;
+                    //    decimal haiPhanBa = (nguong * 2) / 3;
+
+                    //    if (soLuongTon <= 0) tinhTrang = "Hết hàng";
+                    //    else if (soLuongTon <= motPhanBa) tinhTrang = "Hết hàng";
+                    //    else if (soLuongTon <= haiPhanBa) tinhTrang = "Thiếu thốn";
+                    //    else tinhTrang = "Dồi dào";
+
+                    //    inventoryWithStatus.Add(new DuLieuKho {
+                    //        MaNl = nl.MaNl,
+                    //        TenNl = nl.TenNl,
+                    //        DonViTinh = nl.DonViTinh,
+                    //        SoLuongTon = soLuongTon,
+                    //        NguongCanhBao = nguongCanhBao,
+                    //        TinhTrang = tinhTrang
+                    //   });
+                    //}
+
+                    // Sắp xếp
+                    //inventoryWithStatus.Sort((a, b) => a.SoLuongTon.CompareTo(b.SoLuongTon));
+
+
+                    // Tính toán tình trạng (logic mới)
                     foreach (var nl in inventory) {
-                        string tinhTrang;
                         decimal soLuongTon = Math.Round(nl.SoLuongTon ?? 0, 2);
                         decimal nguongCanhBao = Math.Round(nl.NguongCanhBao ?? 0, 2);
-
-                        decimal nguong = nguongCanhBao > 0 ? nguongCanhBao : 100;
-                        decimal motPhanBa = nguong / 3;
-                        decimal haiPhanBa = (nguong * 2) / 3;
-
-                        if (soLuongTon <= 0) tinhTrang = "Hết hàng";
-                        else if (soLuongTon <= motPhanBa) tinhTrang = "Hết hàng";
-                        else if (soLuongTon <= haiPhanBa) tinhTrang = "Thiếu thốn";
-                        else tinhTrang = "Dồi dào";
-
+                        string tinhTrang = TinhTrangThaiKho(soLuongTon, nguongCanhBao);
                         inventoryWithStatus.Add(new DuLieuKho {
                             MaNl = nl.MaNl,
                             TenNl = nl.TenNl,
@@ -57,10 +76,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                             NguongCanhBao = nguongCanhBao,
                             TinhTrang = tinhTrang
                         });
-                    }
 
+                    }
                     // Sắp xếp
                     inventoryWithStatus.Sort((a, b) => a.SoLuongTon.CompareTo(b.SoLuongTon));
+                    return inventoryWithStatus;
+
                 }
             }
             catch (Exception ex) {

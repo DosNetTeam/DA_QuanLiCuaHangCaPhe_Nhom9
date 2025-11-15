@@ -185,7 +185,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 dgvkho.Columns["DonViTinh"].HeaderText = "Đơn vị";
                 dgvkho.Columns["SoLuongTon"].HeaderText = "Số lượng tồn";
                 dgvkho.Columns["NguongCanhBao"].HeaderText = "Ngưỡng cảnh báo";
-                dgvkho.Columns["TinhTrang"].HeaderText = "Tình trạng";
+                dgvkho.Columns["TinhTrang"].HeaderText = "Trạng thái";
 
                 // Duyệt từng hàng để tô màu theo tình trạng kho
                 for (int i = 0; i < dgvkho.Rows.Count; i++) {
@@ -196,7 +196,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                             row.DefaultCellStyle.BackColor = Color.FromArgb(223, 240, 216);
                             row.DefaultCellStyle.ForeColor = Color.FromArgb(60, 118, 61);
                         }
-                        else if (tinhTrang == "Thiếu thốn") {
+                        else if (tinhTrang == "Cảnh báo") {
                             row.DefaultCellStyle.BackColor = Color.FromArgb(255, 243, 205);
                             row.DefaultCellStyle.ForeColor = Color.FromArgb(156, 87, 0);
                         }
