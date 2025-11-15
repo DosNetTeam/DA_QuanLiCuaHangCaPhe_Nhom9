@@ -295,5 +295,48 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                 return false;
             }
         }
+
+        // Thêm phương thức tạo mới nhân viên, trả về mã nhân viên vừa tạo
+        public int ThemNhanVien(string tenNv, string chucVu, string soDienThoai)
+        {
+            try
+            {
+                using (DataSqlContext db = new DataSqlContext())
+                {
+                    var nhanVien = new NhanVien
+                    {
+                        TenNv = tenNv,
+                        ChucVu = chucVu,
+                        SoDienThoai = soDienThoai,
+                        NgayVaoLam = DateOnly.FromDateTime(DateTime.Now)
+                    };
+                    db.NhanViens.Add(nhanVien);
+                    db.SaveChanges();
+                    return nhanVien.MaNv;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi thêm nhân viên: {ex.Message}");
+                return 0;
+            }
+        }
+
+        // Thêm phương thức lấy danh sách tài khoản
+        public List<TaiKhoan> LayDanhSachTaiKhoan()
+        {
+            try
+            {
+                using (DataSqlContext db = new DataSqlContext())
+                {
+                    return db.TaiKhoans.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi lấy danh sách tài khoản: {ex.Message}");
+                return new List<TaiKhoan>();
+            }
+        }
     }
 }
