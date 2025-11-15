@@ -112,7 +112,7 @@
             panelMenu.Controls.Add(lblCoffee);
             panelMenu.Dock = DockStyle.Fill;
             panelMenu.Location = new Point(6, 6);
-            panelMenu.Margin = new Padding(6, 6, 6, 6);
+            panelMenu.Margin = new Padding(6);
             panelMenu.Name = "panelMenu";
             panelMenu.Size = new Size(239, 438);
             panelMenu.TabIndex = 1;
@@ -148,7 +148,7 @@
             // 
             txtNotifyMessage.Dock = DockStyle.Fill;
             txtNotifyMessage.Location = new Point(1, 21);
-            txtNotifyMessage.Margin = new Padding(1, 1, 1, 1);
+            txtNotifyMessage.Margin = new Padding(1);
             txtNotifyMessage.Multiline = true;
             txtNotifyMessage.Name = "txtNotifyMessage";
             txtNotifyMessage.PlaceholderText = "Nội dung thông báo";
@@ -161,9 +161,9 @@
             grpNotify.Controls.Add(btnSendNotify);
             grpNotify.Dock = DockStyle.Bottom;
             grpNotify.Location = new Point(7, 290);
-            grpNotify.Margin = new Padding(1, 1, 1, 1);
+            grpNotify.Margin = new Padding(1);
             grpNotify.Name = "grpNotify";
-            grpNotify.Padding = new Padding(1, 1, 1, 1);
+            grpNotify.Padding = new Padding(1);
             grpNotify.Size = new Size(519, 61);
             grpNotify.TabIndex = 5;
             grpNotify.TabStop = false;
@@ -174,7 +174,7 @@
             // 
             btnSendNotify.Dock = DockStyle.Right;
             btnSendNotify.Location = new Point(449, 21);
-            btnSendNotify.Margin = new Padding(1, 1, 1, 1);
+            btnSendNotify.Margin = new Padding(1);
             btnSendNotify.Name = "btnSendNotify";
             btnSendNotify.Size = new Size(69, 39);
             btnSendNotify.TabIndex = 1;
@@ -210,7 +210,7 @@
             tabPageQuanLyNV.Controls.Add(label2);
             tabPageQuanLyNV.Location = new Point(4, 29);
             tabPageQuanLyNV.Name = "tabPageQuanLyNV";
-            tabPageQuanLyNV.Padding = new Padding(1, 1, 1, 1);
+            tabPageQuanLyNV.Padding = new Padding(1);
             tabPageQuanLyNV.Size = new Size(535, 411);
             tabPageQuanLyNV.TabIndex = 0;
             tabPageQuanLyNV.Text = "Nhân viên";
@@ -225,7 +225,7 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(1, 52);
             panel1.Name = "panel1";
-            panel1.Padding = new Padding(7, 7, 7, 7);
+            panel1.Padding = new Padding(7);
             panel1.Size = new Size(533, 358);
             panel1.TabIndex = 1;
             // 
@@ -302,7 +302,7 @@
             label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label2.Location = new Point(1, 1);
             label2.Name = "label2";
-            label2.Padding = new Padding(5, 5, 5, 5);
+            label2.Padding = new Padding(5);
             label2.Size = new Size(414, 51);
             label2.TabIndex = 0;
             label2.Text = "Quản lí nhân viên bán hàng";
@@ -313,7 +313,7 @@
             tabPageHoaDon.Controls.Add(label3);
             tabPageHoaDon.Location = new Point(4, 29);
             tabPageHoaDon.Name = "tabPageHoaDon";
-            tabPageHoaDon.Padding = new Padding(1, 1, 1, 1);
+            tabPageHoaDon.Padding = new Padding(1);
             tabPageHoaDon.Size = new Size(535, 411);
             tabPageHoaDon.TabIndex = 1;
             tabPageHoaDon.Text = "Hóa đơn";
@@ -328,7 +328,7 @@
             panelHoaDon.Dock = DockStyle.Fill;
             panelHoaDon.Location = new Point(1, 52);
             panelHoaDon.Name = "panelHoaDon";
-            panelHoaDon.Padding = new Padding(7, 7, 7, 7);
+            panelHoaDon.Padding = new Padding(7);
             panelHoaDon.Size = new Size(533, 358);
             panelHoaDon.TabIndex = 1;
             // 
@@ -391,7 +391,7 @@
             label3.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label3.Location = new Point(1, 1);
             label3.Name = "label3";
-            label3.Padding = new Padding(5, 5, 5, 5);
+            label3.Padding = new Padding(5);
             label3.Size = new Size(327, 51);
             label3.TabIndex = 0;
             label3.Text = "Hoá đơn và giao dịch";
@@ -415,9 +415,9 @@
             panel2.Controls.Add(btnThemMoiKho);
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(0, 56);
-            panel2.Margin = new Padding(1, 1, 1, 1);
+            panel2.Margin = new Padding(1);
             panel2.Name = "panel2";
-            panel2.Padding = new Padding(7, 7, 7, 7);
+            panel2.Padding = new Padding(7);
             panel2.Size = new Size(535, 355);
             panel2.TabIndex = 1;
             // 
@@ -490,7 +490,7 @@
             label5.Font = new Font("Segoe UI", 20F, FontStyle.Bold, GraphicsUnit.Point, 0);
             label5.Location = new Point(0, 0);
             label5.Name = "label5";
-            label5.Padding = new Padding(5, 5, 5, 5);
+            label5.Padding = new Padding(5);
             label5.Size = new Size(278, 56);
             label5.TabIndex = 0;
             label5.Text = "Quản lí tồn kho";
@@ -514,7 +514,7 @@
             panelSanPham.Dock = DockStyle.Fill;
             panelSanPham.Location = new Point(0, 56);
             panelSanPham.Name = "panelSanPham";
-            panelSanPham.Padding = new Padding(7, 7, 7, 7);
+            panelSanPham.Padding = new Padding(7);
             panelSanPham.Size = new Size(535, 355);
             panelSanPham.TabIndex = 1;
             // 
@@ -572,7 +572,7 @@
             lblTitleSP.Font = new Font("Segoe UI", 20F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblTitleSP.Location = new Point(0, 0);
             lblTitleSP.Name = "lblTitleSP";
-            lblTitleSP.Padding = new Padding(5, 5, 5, 5);
+            lblTitleSP.Padding = new Padding(5);
             lblTitleSP.Size = new Size(307, 56);
             lblTitleSP.TabIndex = 0;
             lblTitleSP.Text = "Quản lí sản phẩm";
@@ -583,7 +583,7 @@
             tabPageKhuyenMai.Controls.Add(lblTitleKM);
             tabPageKhuyenMai.Location = new Point(4, 29);
             tabPageKhuyenMai.Name = "tabPageKhuyenMai";
-            tabPageKhuyenMai.Padding = new Padding(3, 3, 3, 3);
+            tabPageKhuyenMai.Padding = new Padding(3);
             tabPageKhuyenMai.Size = new Size(535, 411);
             tabPageKhuyenMai.TabIndex = 4;
             tabPageKhuyenMai.Text = "Khuyến mãi";
@@ -597,7 +597,7 @@
             panelKhuyenMai.Dock = DockStyle.Fill;
             panelKhuyenMai.Location = new Point(3, 59);
             panelKhuyenMai.Name = "panelKhuyenMai";
-            panelKhuyenMai.Padding = new Padding(7, 7, 7, 7);
+            panelKhuyenMai.Padding = new Padding(7);
             panelKhuyenMai.Size = new Size(529, 349);
             panelKhuyenMai.TabIndex = 1;
             // 
@@ -675,7 +675,7 @@
             lblTitleKM.Font = new Font("Segoe UI", 20F, FontStyle.Bold, GraphicsUnit.Point, 0);
             lblTitleKM.Location = new Point(3, 3);
             lblTitleKM.Name = "lblTitleKM";
-            lblTitleKM.Padding = new Padding(5, 5, 5, 5);
+            lblTitleKM.Padding = new Padding(5);
             lblTitleKM.Size = new Size(339, 56);
             lblTitleKM.TabIndex = 0;
             lblTitleKM.Text = "Quản lí khuyến mãi";
