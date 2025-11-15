@@ -235,27 +235,85 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
         }
 
         // Xóa tài khoản theo MaNv
-        public bool XoaTaiKhoan(int maNv) {
-            try {
-                using (DataSqlContext db = new DataSqlContext()) {
-                    TaiKhoan account = null;
-                    foreach (var tk in db.TaiKhoans) // Lặp trực tiếp
+        public bool XoaNhanVien(int maNv)
+        {
+            try
+            {
+                using (DataSqlContext db = new DataSqlContext())
+                {
+                    using (var transaction = db.Database.BeginTransaction())
                     {
-                        if (tk.MaNv == maNv) {
-                            account = tk;
-                            break;
+                        try
+                        {
+                            // 1. Kiểm tra ràng buộc Đơn Hàng (RẤT QUAN TRỌNG)
+                            // Nếu nhân viên đã lập đơn hàng, KHÔNG THỂ XÓA
+                            bool coDonHang = false;
+                            foreach (var dh in db.DonHangs.ToList())
+                            {
+                                if (dh.MaNv == maNv)
+                                {
+                                    coDonHang = true;
+                                    break;
+                                }
+                            }
+
+                            if (coDonHang)
+                            {
+                                transaction.Rollback();
+                                return false; // Trả về false nếu có đơn hàng
+                            }
+
+                            // 2. Tìm và xóa TaiKhoan (nếu có)
+                            TaiKhoan taiKhoan = null;
+                            foreach (var tk in db.TaiKhoans.ToList())
+                            {
+                                if (tk.MaNv == maNv)
+                                {
+                                    taiKhoan = tk;
+                                    break;
+                                }
+                            }
+                            if (taiKhoan != null)
+                            {
+                                db.TaiKhoans.Remove(taiKhoan);
+                            }
+
+                            // 3. Tìm và xóa NhanVien
+                            Models.NhanVien nhanVien = null;
+                            foreach (var nv in db.NhanViens.ToList())
+                            {
+                                if (nv.MaNv == maNv)
+                                {
+                                    nhanVien = nv;
+                                    break;
+                                }
+                            }
+
+                            if (nhanVien == null)
+                            {
+                                transaction.Rollback();
+                                return false; // Không tìm thấy nhân viên
+                            }
+
+                            db.NhanViens.Remove(nhanVien);
+
+                            // 4. Lưu thay đổi và commit
+                            db.SaveChanges();
+                            transaction.Commit();
+                            return true; // Xóa thành công
+                        }
+                        catch (Exception ex_inner)
+                        {
+                            Console.WriteLine("Lỗi trong transaction XoaNhanVien: " + ex_inner.Message);
+                            transaction.Rollback();
+                            return false;
                         }
                     }
-
-                    if (account != null) {
-                        db.TaiKhoans.Remove(account);
-                        db.SaveChanges();
-                    }
-                    return true;
                 }
             }
-            catch (Exception ex) {
-                Console.WriteLine($"Lỗi khi xóa tài khoản: {ex.Message}");
+            catch (Exception ex)
+            {
+                Console.WriteLine("Lỗi XoaNhanVien: " + ex.Message);
                 return false;
             }
         }

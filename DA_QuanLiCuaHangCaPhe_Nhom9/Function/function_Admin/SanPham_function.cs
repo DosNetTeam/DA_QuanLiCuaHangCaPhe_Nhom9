@@ -122,32 +122,49 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
             }
         }
 
+       
         // Xóa sản phẩm theo mã; trả về true nếu thành công
-        public bool XoaSanPham(int maSp) {
-            try {
-                using (DataSqlContext db = new DataSqlContext()) {
+        public bool XoaSanPham(int maSp)
+        {
+            try
+            {
+                using (DataSqlContext db = new DataSqlContext())
+                {
                     SanPham product = null;
                     foreach (var sp in db.SanPhams) // Lặp trực tiếp trên DbSet
                     {
-                        if (sp.MaSp == maSp) {
+                        if (sp.MaSp == maSp)
+                        {
                             product = sp;
                             break;
                         }
                     }
 
-                    if (product == null) return false;
+                    if (product == null) return false; // Không tìm thấy
+
+                    // *** THAY ĐỔI: THÊM LUẬT NGHIỆP VỤ MỚI ***
+                    // Nếu sản phẩm vẫn "Còn bán", không cho phép xóa
+                    if (product.TrangThai == "Còn bán")
+                    {
+                        Console.WriteLine($"Không thể xóa SP {maSp}: Sản phẩm đang ở trạng thái 'Còn bán'.");
+                        return false; // Trả về thất bại
+                    }
+                    // *** KẾT THÚC THAY ĐỔI ***
 
                     db.SanPhams.Remove(product);
                     db.SaveChanges();
                     return true;
                 }
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 // Nếu lỗi ràng buộc FK, log inner exception để biết chi tiết
-                if (ex.InnerException != null && ex.InnerException.Message.Contains("REFERENCE constraint")) {
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("REFERENCE constraint"))
+                {
                     Console.WriteLine($"Lỗi ràng buộc khi xóa SP: {ex.InnerException.Message}");
                 }
-                else {
+                else
+                {
                     Console.WriteLine($"Lỗi khi xóa sản phẩm: {ex.Message}");
                 }
                 return false;

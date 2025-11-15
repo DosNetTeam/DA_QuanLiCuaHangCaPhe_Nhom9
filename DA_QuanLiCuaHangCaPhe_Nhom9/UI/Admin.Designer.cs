@@ -58,8 +58,8 @@
             tabPageNguyenLieu = new TabPage();
             dgvkho = new DataGridView();
             gbthongtinnguyenlieu = new GroupBox();
+            cbTT = new ComboBox();
             txtten = new TextBox();
-            textBox2 = new TextBox();
             txtdonvi = new TextBox();
             txtsoluong = new TextBox();
             txtma = new TextBox();
@@ -74,7 +74,6 @@
             tabPageSanPham = new TabPage();
             dgvSanPham = new DataGridView();
             gbsanpham = new GroupBox();
-            txttinhtrangsp = new TextBox();
             btnthem = new Button();
             txtdon_vi = new TextBox();
             txtloai = new TextBox();
@@ -115,6 +114,7 @@
             btnthemkm = new Button();
             btnsuakm = new Button();
             btnxoakm = new Button();
+            cbTTsp = new ComboBox();
             bandieukhien.SuspendLayout();
             tongquan.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)tongquandulieu).BeginInit();
@@ -514,8 +514,8 @@
             // 
             // gbthongtinnguyenlieu
             // 
+            gbthongtinnguyenlieu.Controls.Add(cbTT);
             gbthongtinnguyenlieu.Controls.Add(txtten);
-            gbthongtinnguyenlieu.Controls.Add(textBox2);
             gbthongtinnguyenlieu.Controls.Add(txtdonvi);
             gbthongtinnguyenlieu.Controls.Add(txtsoluong);
             gbthongtinnguyenlieu.Controls.Add(txtma);
@@ -536,19 +536,20 @@
             gbthongtinnguyenlieu.Text = "Thông Tin Nguyên Liệu";
             gbthongtinnguyenlieu.Visible = false;
             // 
+            // cbTT
+            // 
+            cbTT.FormattingEnabled = true;
+            cbTT.Location = new Point(720, 22);
+            cbTT.Name = "cbTT";
+            cbTT.Size = new Size(151, 28);
+            cbTT.TabIndex = 3;
+            // 
             // txtten
             // 
             txtten.Location = new Point(327, 23);
             txtten.Name = "txtten";
             txtten.Size = new Size(276, 27);
             txtten.TabIndex = 1;
-            // 
-            // textBox2
-            // 
-            textBox2.Location = new Point(731, 23);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(144, 27);
-            textBox2.TabIndex = 1;
             // 
             // txtdonvi
             // 
@@ -686,7 +687,7 @@
             // 
             // gbsanpham
             // 
-            gbsanpham.Controls.Add(txttinhtrangsp);
+            gbsanpham.Controls.Add(cbTTsp);
             gbsanpham.Controls.Add(btnthem);
             gbsanpham.Controls.Add(txtdon_vi);
             gbsanpham.Controls.Add(txtloai);
@@ -711,13 +712,6 @@
             gbsanpham.TabStop = false;
             gbsanpham.Text = "Thông Tin Sản Phẩm";
             gbsanpham.Visible = false;
-            // 
-            // txttinhtrangsp
-            // 
-            txttinhtrangsp.Location = new Point(747, 35);
-            txttinhtrangsp.Name = "txttinhtrangsp";
-            txttinhtrangsp.Size = new Size(125, 27);
-            txttinhtrangsp.TabIndex = 5;
             // 
             // btnthem
             // 
@@ -1136,6 +1130,14 @@
             btnxoakm.UseVisualStyleBackColor = false;
             btnxoakm.Click += btnxoakm_Click_1;
             // 
+            // cbTTsp
+            // 
+            cbTTsp.FormattingEnabled = true;
+            cbTTsp.Location = new Point(746, 31);
+            cbTTsp.Name = "cbTTsp";
+            cbTTsp.Size = new Size(128, 28);
+            cbTTsp.TabIndex = 5;
+            // 
             // Admin
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -1259,8 +1261,6 @@
         private Button btnxoakm;
         private Panel pnChucnang;
         private Panel pnnutthoat;
-        private TextBox txttinhtrangsp;
-        private TextBox textBox2;
         private Label lbltinhtrang;
         private Label lblgtapdung;
         private TextBox txtgtkm;
@@ -1268,5 +1268,7 @@
         private Button btndoimatkhau;
         private ComboBox cb_chucvu;
         private ComboBox cbvaitro;
+        private ComboBox cbTT;
+        private ComboBox cbTTsp;
     }
 }

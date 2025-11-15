@@ -3,14 +3,16 @@
 using DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
-    public partial class QuanLi : Form {
+    public partial class QuanLi : Form
+    {
 
         private int _currentMaNV = 0;
 
         // Khai báo Kho Truy Vấn
         private readonly KhoTruyVanQuanLi _khoTruyVan;
 
-        public QuanLi(int maNv = 0) {
+        public QuanLi(int maNv = 0)
+        {
             _currentMaNV = maNv;
             InitializeComponent();
 
@@ -45,7 +47,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 btnSendNotify.Click += btnSendNotify_Click;
         }
 
-        private void QuanLi_Load(object sender, EventArgs e) {
+        private void QuanLi_Load(object sender, EventArgs e)
+        {
             SetupFilters();
             LoadData_NhanVien();
             LoadData_HoaDon();
@@ -55,16 +58,20 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             LoadNotifications();
 
             // (Code setup UI giữ nguyên)
-            try {
-                if (grpNotify != null) {
+            try
+            {
+                if (grpNotify != null)
+                {
                     grpNotify.Visible = true;
                     grpNotify.BringToFront();
                 }
-                if (txtNotifyMessage != null) {
+                if (txtNotifyMessage != null)
+                {
                     txtNotifyMessage.Enabled = true;
                     txtNotifyMessage.ReadOnly = false;
                 }
-                if (btnSendNotify != null) {
+                if (btnSendNotify != null)
+                {
                     btnSendNotify.Enabled = true;
                     btnSendNotify.Click -= btnSendNotify_Click;
                     btnSendNotify.Click += btnSendNotify_Click;
@@ -73,9 +80,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             catch { }
         }
 
-        private void PositionNotifyGroup() {
+        private void PositionNotifyGroup()
+        {
 
-            try {
+            try
+            {
                 if (grpNotify == null || panelContent == null) return;
                 int margin = 15;
                 int x = Math.Max(margin, panelContent.ClientSize.Width - grpNotify.Width - margin);
@@ -88,12 +97,15 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
 
-        public List<string> GetNotifications() {
-            try {
+        public List<string> GetNotifications()
+        {
+            try
+            {
                 // Chỉ gọi hàm từ KhoTruyVan
                 return _khoTruyVan.TaiThongBao();
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 var list = new List<string>();
                 list.Add("Lỗi khi tải thông báo: " + ex.Message);
                 return list;
@@ -101,11 +113,14 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
 
-        private void LoadNotifications() {
-            try {
+        private void LoadNotifications()
+        {
+            try
+            {
                 // Chỉ gọi hàm GetNotifications đã được refactor
                 var notes = GetNotifications();
-                if (grpNotify != null && notes != null && notes.Count > 0) {
+                if (grpNotify != null && notes != null && notes.Count > 0)
+                {
                     grpNotify.Tag = notes;
                 }
             }
@@ -113,11 +128,13 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         // Cài đặt giá trị ban đầu cho các ComboBox lọc
-        private void SetupFilters() {
+        private void SetupFilters()
+        {
             // (Code này giữ nguyên)
             cbThang.Items.Clear();
             cbThang.Items.Add("Tất cả");
-            for (int i = 1; i <= 12; i++) {
+            for (int i = 1; i <= 12; i++)
+            {
                 cbThang.Items.Add($"Tháng {i}");
             }
             cbThang.SelectedIndex = 0;
@@ -145,8 +162,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         #region Các hàm tải dữ liệu (ĐÃ TÁCH CSDL)
 
 
-        private void LoadData_NhanVien() {
-            try {
+        private void LoadData_NhanVien()
+        {
+            try
+            {
                 int selectedMonth = cbThang.SelectedIndex;
 
                 // 1. Gọi KhoTruyVan để lấy dữ liệu
@@ -166,14 +185,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 dgvPerformance.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi tải dữ liệu nhân viên: " + (ex.InnerException?.Message ?? ex.Message));
             }
         }
 
 
-        private void LoadData_HoaDon() {
-            try {
+        private void LoadData_HoaDon()
+        {
+            try
+            {
                 // 1. Lấy tham số từ UI
                 string timKiem = txtTimKiemHD.Text?.Trim().ToLower() ?? "";
                 string trangThai = cbTrangThaiHD.SelectedItem?.ToString() ?? "Tất cả";
@@ -186,14 +208,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 dgvHoaDon.DataSource = finalData;
                 dgvHoaDon.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi tải dữ liệu hóa đơn: " + (ex.InnerException?.Message ?? ex.Message));
             }
         }
 
 
-        private void LoadData_TonKho() {
-            try {
+        private void LoadData_TonKho()
+        {
+            try
+            {
                 // 1. Lấy tham số từ UI
                 string timKiem = txtTimKiemKho.Text?.Trim().ToLower() ?? "";
                 if (timKiem == "tim kiem nguyen lieu") timKiem = "";
@@ -205,14 +230,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 dgvTonKho.DataSource = finalData;
                 dgvTonKho.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi tải dữ liệu tồn kho: " + (ex.InnerException?.Message ?? ex.Message));
             }
         }
 
 
-        private void LoadData_SanPham() {
-            try {
+        private void LoadData_SanPham()
+        {
+            try
+            {
                 // 1. Lấy tham số từ UI
                 string timKiem = txtTimKiemSP.Text?.Trim().ToLower() ?? "";
                 if (timKiem == "tìm theo tên sản phẩm") timKiem = "";
@@ -238,14 +266,17 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 dgvSanPham.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi tải dữ liệu sản phẩm: " + (ex.InnerException?.Message ?? ex.Message));
             }
         }
 
 
-        private void LoadData_KhuyenMai() {
-            try {
+        private void LoadData_KhuyenMai()
+        {
+            try
+            {
                 // 1. Lấy tham số từ UI
                 string trangThai = cbLocTrangThaiKM.SelectedItem?.ToString() ?? "Tất cả";
                 string timKiem = txtTimKiemKM.Text?.Trim().ToLower() ?? "";
@@ -274,7 +305,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                 dgvKhuyenMai.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi tải dữ liệu khuyến mãi: " + (ex.InnerException?.Message ?? ex.Message));
             }
         }
@@ -283,59 +315,73 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         #region Các hàm xử lý sự kiện (Event Handlers - Giữ nguyên)
 
-        private void btnLoc_Click(object sender, EventArgs e) {
+        private void btnLoc_Click(object sender, EventArgs e)
+        {
             LoadData_NhanVien();
         }
 
-        private void txtTimKiemHD_TextChanged(object sender, EventArgs e) {
+        private void txtTimKiemHD_TextChanged(object sender, EventArgs e)
+        {
             LoadData_HoaDon();
         }
 
-        private void cbTrangThaiHD_SelectedIndexChanged(object sender, EventArgs e) {
+        private void cbTrangThaiHD_SelectedIndexChanged(object sender, EventArgs e)
+        {
             LoadData_HoaDon();
         }
 
-        private void txtTimKiemKho_TextChanged(object sender, EventArgs e) {
+        private void txtTimKiemKho_TextChanged(object sender, EventArgs e)
+        {
             LoadData_TonKho();
         }
 
-        private void btnThemMoiKho_Click(object sender, EventArgs e) {
+        private void btnThemMoiKho_Click(object sender, EventArgs e)
+        {
             MessageBox.Show("Chức năng 'Thêm Mới Kho' đang được phát triển!", "Thông báo");
         }
 
-        private void txtTimKiemSP_TextChanged(object sender, EventArgs e) {
+        private void txtTimKiemSP_TextChanged(object sender, EventArgs e)
+        {
             LoadData_SanPham();
         }
 
-        private void btnThemSP_Click(object sender, EventArgs e) {
+        private void btnThemSP_Click(object sender, EventArgs e)
+        {
             MessageBox.Show("Chức năng 'Thêm Sản Phẩm' đang được phát triển!", "Thông báo");
         }
 
-        private void btnSuaSP_Click(object sender, EventArgs e) {
+        private void btnSuaSP_Click(object sender, EventArgs e)
+        {
             MessageBox.Show("Chức năng 'Sửa Sản Phẩm' đang được phát triển!", "Thông báo");
         }
 
-        private void txtTimKiemKM_TextChanged(object sender, EventArgs e) {
+        private void txtTimKiemKM_TextChanged(object sender, EventArgs e)
+        {
             LoadData_KhuyenMai();
         }
 
-        private void cbLocTrangThaiKM_SelectedIndexChanged(object sender, EventArgs e) {
+        private void cbLocTrangThaiKM_SelectedIndexChanged(object sender, EventArgs e)
+        {
             LoadData_KhuyenMai();
         }
 
-        private void btnThemKM_Click(object sender, EventArgs e) {
+        private void btnThemKM_Click(object sender, EventArgs e)
+        {
             MessageBox.Show("Chức năng 'Thêm Khuyến Mãi' đang được phát triển!", "Thông báo");
         }
 
-        private void btnSuaKM_Click(object sender, EventArgs e) {
+        private void btnSuaKM_Click(object sender, EventArgs e)
+        {
             MessageBox.Show("Chức năng 'Sửa Khuyến Mãi' đang được phát triển!", "Thông báo");
         }
 
-        private void btnChuyenFormOder_Click(object sender, EventArgs e) {
+        private void btnChuyenFormOder_Click(object sender, EventArgs e)
+        {
             var confirm = MessageBox.Show("Chuyển sang trang Order?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (confirm != DialogResult.Yes) return;
 
-            try {
+            try
+            {
                 // (Đoạn code này không cần truy cập CSDL, chỉ là khởi tạo để vào form bán hàng hehehe)
                 var orderForm = new MainForm(_currentMaNV);
                 orderForm.StartPosition = FormStartPosition.CenterScreen;
@@ -343,8 +389,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 orderForm.BringToFront();
                 orderForm.Activate();
 
-                orderForm.FormClosed += (s2, e2) => {
-                    try {
+                orderForm.FormClosed += (s2, e2) =>
+                {
+                    try
+                    {
                         this.Show();
                         this.BringToFront();
                         this.Activate();
@@ -356,22 +404,28 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                     catch { }
                 };
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi chuyển trang: " + ex.Message);
             }
         }
 
-        private void cbThang_SelectedIndexChanged(object sender, EventArgs e) {
+        private void cbThang_SelectedIndexChanged(object sender, EventArgs e)
+        {
             // (Đã có nút Lọc riêng)
         }
 
-        private void dgvPerformance_CellContentClick(object sender, DataGridViewCellEventArgs e) {
+        private void dgvPerformance_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
             // (Để trống) vì đéo bt nó là cái khung lào để xoá =))))
         }
 
-        private void btnSendNotify_Click(object sender, EventArgs e) {
-            try {
-                if (dgvPerformance.SelectedRows.Count == 0) {
+        private void btnSendNotify_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgvPerformance.SelectedRows.Count == 0)
+                {
                     MessageBox.Show("Vui lòng chọn một nhân viên trong bảng để thông báo.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -379,7 +433,8 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 var row = dgvPerformance.SelectedRows[0];
                 var ten = row.Cells["TenNV"].Value?.ToString() ?? "(không tên)";
                 var custom = txtNotifyMessage.Text?.Trim();
-                if (string.IsNullOrEmpty(custom)) {
+                if (string.IsNullOrEmpty(custom))
+                {
                     MessageBox.Show("Vui lòng nhập nội dung thông báo.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -389,9 +444,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
                 var n = new NotificationCenter.Notification { Type = NotificationCenter.NotificationType.NhanVienInactive, Message = fullMsg, Data = ten };
                 NotificationCenter.Raise(n);
 
-                MessageBox.Show("Đã gửi thông báo tới Admin.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+               
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show("Lỗi khi gửi thông báo: " + ex.Message);
             }
         }
@@ -400,13 +456,16 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         #region Các hàm tô màu DataGridView (Cell Formatting - Giữ nguyên)
 
-        private void dgvPerformance_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
-            if (dgvPerformance.Columns[e.ColumnIndex].Name == "HieuSuat" && e.Value != null) {
+        private void dgvPerformance_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dgvPerformance.Columns[e.ColumnIndex].Name == "HieuSuat" && e.Value != null)
+            {
                 string hieuSuat = e.Value.ToString();
                 e.CellStyle.SelectionBackColor = e.CellStyle.BackColor;
                 e.CellStyle.SelectionForeColor = e.CellStyle.ForeColor;
 
-                switch (hieuSuat) {
+                switch (hieuSuat)
+                {
                     case "Xuất Sắc":
                         e.CellStyle.BackColor = Color.FromArgb(223, 240, 216);
                         e.CellStyle.ForeColor = Color.FromArgb(60, 118, 61);
@@ -423,13 +482,16 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        private void dgvHoaDon_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
-            if (dgvHoaDon.Columns[e.ColumnIndex].Name == "TrangThai" && e.Value != null) {
+        private void dgvHoaDon_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dgvHoaDon.Columns[e.ColumnIndex].Name == "TrangThai" && e.Value != null)
+            {
                 string trangThai = e.Value.ToString();
                 e.CellStyle.SelectionBackColor = e.CellStyle.BackColor;
                 e.CellStyle.SelectionForeColor = e.CellStyle.ForeColor;
 
-                switch (trangThai) {
+                switch (trangThai)
+                {
                     case "Đã thanh toán":
                         e.CellStyle.BackColor = Color.FromArgb(223, 240, 216);
                         e.CellStyle.ForeColor = Color.FromArgb(60, 118, 61);
@@ -446,13 +508,16 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        private void dgvTonKho_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
-            if (dgvTonKho.Columns[e.ColumnIndex].Name == "TrangThai" && e.Value != null) {
+        private void dgvTonKho_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dgvTonKho.Columns[e.ColumnIndex].Name == "TrangThai" && e.Value != null)
+            {
                 string trangThai = e.Value.ToString();
                 e.CellStyle.SelectionBackColor = e.CellStyle.BackColor;
                 e.CellStyle.SelectionForeColor = e.CellStyle.ForeColor;
 
-                switch (trangThai) {
+                switch (trangThai)
+                {
                     case "Dồi dào":
                         e.CellStyle.BackColor = Color.FromArgb(223, 240, 216);
                         e.CellStyle.ForeColor = Color.FromArgb(60, 118, 61);
@@ -469,13 +534,16 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        private void dgvSanPham_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
-            if (dgvSanPham.Columns[e.ColumnIndex].Name == "TrangThai" && e.Value != null) {
+        private void dgvSanPham_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dgvSanPham.Columns[e.ColumnIndex].Name == "TrangThai" && e.Value != null)
+            {
                 string trangThai = e.Value.ToString();
                 e.CellStyle.SelectionBackColor = e.CellStyle.BackColor;
                 e.CellStyle.SelectionForeColor = e.CellStyle.ForeColor;
 
-                switch (trangThai) {
+                switch (trangThai)
+                {
                     case "Còn bán":
                         e.CellStyle.BackColor = Color.FromArgb(223, 240, 216); // Green
                         e.CellStyle.ForeColor = Color.FromArgb(60, 118, 61);
@@ -489,13 +557,16 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        private void dgvKhuyenMai_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) {
-            if (dgvKhuyenMai.Columns[e.ColumnIndex].Name == "TrangThai" && e.Value != null) {
+        private void dgvKhuyenMai_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (dgvKhuyenMai.Columns[e.ColumnIndex].Name == "TrangThai" && e.Value != null)
+            {
                 string trangThai = e.Value.ToString();
                 e.CellStyle.SelectionBackColor = e.CellStyle.BackColor;
                 e.CellStyle.SelectionForeColor = e.CellStyle.ForeColor;
 
-                switch (trangThai) {
+                switch (trangThai)
+                {
                     case "Đang áp dụng":
                         e.CellStyle.BackColor = Color.FromArgb(223, 240, 216); // Green
                         e.CellStyle.ForeColor = Color.FromArgb(60, 118, 61);
@@ -521,13 +592,14 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         #endregion
 
-        private void QuanLi_Load_1(object sender, EventArgs e) {
+        private void QuanLi_Load_1(object sender, EventArgs e)
+        {
             // (Trống) 
         }
 
-        private void grpNotify_Enter(object sender, EventArgs e) {
+        private void grpNotify_Enter(object sender, EventArgs e)
+        {
             // (Trống)
         }
-
     }
 }

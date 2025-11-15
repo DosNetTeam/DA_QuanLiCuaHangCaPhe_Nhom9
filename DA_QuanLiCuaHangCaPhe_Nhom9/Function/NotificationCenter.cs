@@ -1,4 +1,4 @@
-using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+Ôªøusing DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function {
     public static class NotificationCenter {
@@ -34,19 +34,19 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function {
                         .ToList();
 
                     foreach (var name in inactive) {
-                        var n = new Notification { Type = NotificationType.NhanVienInactive, Message = $"Nh‚n viÍn l‚u khÙng ho?t ??ng: {name}" };
+                        var n = new Notification { Type = NotificationType.NhanVienInactive, Message = $"Nh√¢n vi√™n l√¢u kh√¥ng ho·∫°t ƒë·ªông: {name}" };
                         Raise(n);
                     }
 
-                    // 2) Unpaid invoices (older than 1 day and ThanhToan status 'Ch?a thanh to·n')
+                    // 2) Unpaid invoices (older than 1 day and ThanhToan status 'Ch?a thanh to√°n')
                     var unpaid = db.ThanhToans
-                        .Where(tt => tt.TrangThai == "Ch?a thanh to·n" && tt.MaDhNavigation.NgayLap <= DateTime.Now.AddDays(-1))
+                        .Where(tt => tt.TrangThai == "Ch∆∞a thanh to√°n" && tt.MaDhNavigation.NgayLap <= DateTime.Now.AddDays(-1))
                         .Select(tt => new { tt.MaDh, tt.MaDhNavigation.NgayLap })
                         .Take(10)
                         .ToList();
 
                     foreach (var u in unpaid) {
-                        var msg = $"HÛa ??n ch?a thanh to·n: #{u.MaDh} - {u.NgayLap?.ToString("dd/MM/yy")}";
+                        var msg = $"H√≥a ƒë∆°n ch∆∞a thanh to√°n: #{u.MaDh} - {u.NgayLap?.ToString("dd/MM/yy")}";
                         var n = new Notification { Type = NotificationType.UnpaidInvoice, Message = msg, Data = u.MaDh };
                         Raise(n);
                     }
@@ -59,7 +59,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function {
                         .ToList();
 
                     foreach (var nl in low) {
-                        var msg = $"H‡ng trong kho cÚn Ìt: {nl.TenNl} ({nl.SoLuongTon ?? 0})";
+                        var msg = $"H√†ng trong kho c√≤n √≠t: {nl.TenNl} ({nl.SoLuongTon ?? 0})";
                         var n = new Notification { Type = NotificationType.LowStock, Message = msg, Data = nl.MaNl };
                         Raise(n);
                     }
@@ -82,15 +82,15 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function {
                         .Take(5)
                         .ToList();
 
-                    list.AddRange(inactive.Select(name => new Notification { Type = NotificationType.NhanVienInactive, Message = $"Nh‚n viÍn l‚u khÙng ho?t ??ng: {name}" }));
+                    list.AddRange(inactive.Select(name => new Notification { Type = NotificationType.NhanVienInactive, Message = $"Nh√¢n vi√™n l√¢u kh√¥ng ho·∫°t ƒë·ªông: {name}" }));
 
                     var unpaid = db.ThanhToans
-                        .Where(tt => tt.TrangThai == "Ch?a thanh to·n" && tt.MaDhNavigation.NgayLap <= DateTime.Now.AddDays(-1))
+                        .Where(tt => tt.TrangThai == "Ch∆∞a thanh to√°n" && tt.MaDhNavigation.NgayLap <= DateTime.Now.AddDays(-1))
                         .Select(tt => new { tt.MaDh, tt.MaDhNavigation.NgayLap })
                         .Take(10)
                         .ToList();
 
-                    list.AddRange(unpaid.Select(u => new Notification { Type = NotificationType.UnpaidInvoice, Message = $"HÛa ??n ch?a thanh to·n: #{u.MaDh} - {u.NgayLap?.ToString("dd/MM/yy")}", Data = u.MaDh }));
+                    list.AddRange(unpaid.Select(u => new Notification { Type = NotificationType.UnpaidInvoice, Message = $"H√≥a ƒë∆°n ch∆∞a thanh to√°n: #{u.MaDh} - {u.NgayLap?.ToString("dd/MM/yy")}", Data = u.MaDh }));
 
                     var low = db.NguyenLieus
                         .Where(nl => nl.SoLuongTon <= (nl.NguongCanhBao ?? 0))
@@ -98,14 +98,14 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function {
                         .Take(10)
                         .ToList();
 
-                    list.AddRange(low.Select(nl => new Notification { Type = NotificationType.LowStock, Message = $"H‡ng trong kho cÚn Ìt: {nl.TenNl} ({nl.SoLuongTon ?? 0})", Data = nl.MaNl }));
+                    list.AddRange(low.Select(nl => new Notification { Type = NotificationType.LowStock, Message = $"H√†ng trong kho c√≤n √≠t: {nl.TenNl} ({nl.SoLuongTon ?? 0})", Data = nl.MaNl }));
                 }
             }
             catch {
             }
 
             if (list.Count == 0)
-                list.Add(new Notification { Type = NotificationType.LowStock, Message = "KhÙng cÛ thÙng b·o m?i." });
+                list.Add(new Notification { Type = NotificationType.LowStock, Message = "Kh√¥ng c√≥ th√¥ng b√°o m·ªõi." });
 
             return list;
         }
