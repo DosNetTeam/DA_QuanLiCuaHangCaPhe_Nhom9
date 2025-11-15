@@ -259,5 +259,84 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                 return false;
             }
         }
+
+        // Thêm hàm cập nhật đầy đủ thông tin nhân viên
+        public bool CapNhatNhanVienFull(int maNv, string tenNvMoi, string soDienThoaiMoi, string chucVuMoi, int maVaiTroMoi) {
+            try {
+                using (DataSqlContext db = new DataSqlContext()) {
+                    // Tìm nhân viên
+                    Models.NhanVien nhanVien = null;
+                    foreach (var nv in db.NhanViens) {
+                        if (nv.MaNv == maNv) {
+                            nhanVien = nv;
+                            break;
+                        }
+                    }
+                    if (nhanVien == null) return false;
+                    nhanVien.TenNv = tenNvMoi;
+                    nhanVien.SoDienThoai = soDienThoaiMoi;
+                    nhanVien.ChucVu = chucVuMoi;
+                    // Nếu NV có tài khoản -> cập nhật MaVaiTro
+                    TaiKhoan taiKhoan = null;
+                    foreach (var tk in db.TaiKhoans) {
+                        if (tk.MaNv == maNv) {
+                            taiKhoan = tk;
+                            break;
+                        }
+                    }
+                    if (taiKhoan != null) {
+                        taiKhoan.MaVaiTro = maVaiTroMoi;
+                    }
+                    db.SaveChanges();
+                    return true;
+                }
+            } catch (Exception ex) {
+                Console.WriteLine($"Lỗi khi cập nhật nhân viên: {ex.Message}");
+                return false;
+            }
+        }
+
+        // Thêm phương thức tạo mới nhân viên, trả về mã nhân viên vừa tạo
+        public int ThemNhanVien(string tenNv, string chucVu, string soDienThoai)
+        {
+            try
+            {
+                using (DataSqlContext db = new DataSqlContext())
+                {
+                    var nhanVien = new NhanVien
+                    {
+                        TenNv = tenNv,
+                        ChucVu = chucVu,
+                        SoDienThoai = soDienThoai,
+                        NgayVaoLam = DateOnly.FromDateTime(DateTime.Now)
+                    };
+                    db.NhanViens.Add(nhanVien);
+                    db.SaveChanges();
+                    return nhanVien.MaNv;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi thêm nhân viên: {ex.Message}");
+                return 0;
+            }
+        }
+
+        // Thêm phương thức lấy danh sách tài khoản
+        public List<TaiKhoan> LayDanhSachTaiKhoan()
+        {
+            try
+            {
+                using (DataSqlContext db = new DataSqlContext())
+                {
+                    return db.TaiKhoans.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi lấy danh sách tài khoản: {ex.Message}");
+                return new List<TaiKhoan>();
+            }
+        }
     }
 }
