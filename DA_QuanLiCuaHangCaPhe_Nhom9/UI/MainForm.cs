@@ -281,7 +281,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 { // namespace của project
         // Hủy đơn hiện tại (trong UI): hỏi xác nhận rồi reset nếu có món
         private void btnHuyDon_Click(object sender, EventArgs e) {
 
-            if (lvDonHang.SelectedItems.Count > 0) { // nếu có item được chọn trong ListView
+            if (_gioHang.LaySoLuongMon() != 0) { 
                 var confirm = MessageBox.Show("Bạn có chắc muốn hủy đơn hàng này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (confirm == DialogResult.Yes) {
                     ResetMainForm(); // reset toàn bộ form -> xóa giỏ, reset thông tin
