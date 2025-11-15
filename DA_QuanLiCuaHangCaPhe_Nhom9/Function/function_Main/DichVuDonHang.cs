@@ -1,213 +1,111 @@
-﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
-using Microsoft.EntityFrameworkCore;
+﻿//csharp Function/function_Main/DichVuDonHang.cs
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+using DA_QuanLiCuaHangCaPhe_Nhom9.DataAccess;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
 
-    /// Lớp này chứa các logic nghiệp vụ (business logic)
-    /// liên quan đến việc bán hàng, tách biệt khỏi MainForm.
-    /// (Tương đương OrderService)
-
     public class DichVuDonHang {
 
-        /// Trạng thái kiểm tra tồn kho (thay thế cho chuỗi "DU_HANG")
-
         public enum TrangThaiKho {
-            DuHang,  // Đủ hàng
-            SapHet,  // Sắp hết (dưới ngưỡng)
-            HetHang  // Hết hàng
+            DuHang, SapHet, HetHang
         }
-
-
-        /// Lớp này dùng để trả về kết quả chi tiết
-        /// từ hàm KiemTraSoLuongTonThucTe
-        /// (Tương đương InventoryCheckResult)
 
         public class KetQuaKiemKho {
-            public bool DuHang { get; set; } // Đủ hàng hay không? (thay cho IsSufficient)
-            public string ThongBao { get; set; } // Thông báo lỗi (nếu có) (thay cho Message)
+            public bool DuHang { get; set; }
+            public string? ThongBao { get; set; } // made nullable to avoid non-nullable warnings
         }
 
-
-
-        /// Kiểm tra trạng thái tồn kho (Đủ, Sắp hết, Hết)
-        /// (Dùng để tô màu nút sản phẩm)
-
-
-        public TrangThaiKho KiemTraDuNguyenLieu(int maSP, List<DinhLuong> allDinhLuong, List<NguyenLieu> allNguyenLieu) {
-            // 1. Lấy công thức từ List tạm
-            var congThuc = new List<DinhLuong>();
-
-            foreach (var dl in allDinhLuong) {
-                if (dl.MaSp == maSP) {
-                    congThuc.Add(dl);
-                }
-            }
-
-            if (congThuc.Count == 0) {
-                return TrangThaiKho.DuHang; // Không có công thức = Luôn đủ
-            }
-
-            TrangThaiKho trangThaiTongQuat = TrangThaiKho.DuHang;
-
-            // 3. Lặp qua TỪNG NGUYÊN LIỆU trong công thức
-            foreach (var nguyenLieuCan in congThuc) {
-                // 4. Lấy nguyên liệu trong kho từ List tạm
-                NguyenLieu nguyenLieuTrongKho = null;
-                foreach (var nl in allNguyenLieu) {
-                    if (nl.MaNl == nguyenLieuCan.MaNl) {
-                        nguyenLieuTrongKho = nl;
+        // Return stock status for a product based on its DinhLuong and current NguyenLieu
+        public TrangThaiKho KiemTraDuNguyenLieu(int maSp, List<DinhLuong> allDinhLuong, List<NguyenLieu> allNguyenLieu) {
+            try {
+                bool anySapHet = false;
+                foreach (var dl in allDinhLuong) {
+                    if (dl.MaSp != maSp) continue;
+                    foreach (var nl in allNguyenLieu) {
+                        if (nl.MaNl != dl.MaNl) continue;
+                        decimal ton = nl.SoLuongTon ?? 0m;
+                        decimal needed = dl.SoLuongCan;
+                        if (ton < needed) return TrangThaiKho.HetHang;
+                        if (ton < needed * 2) anySapHet = true;
                         break;
                     }
                 }
-
-                if (nguyenLieuTrongKho == null) {
-                    return TrangThaiKho.HetHang; // Lỗi CSDL, coi như hết
-                }
-
-                // 5.1. KIỂM TRA HẾT HẲN (<= 0)
-                if (nguyenLieuTrongKho.SoLuongTon <= 0) {
-                    return TrangThaiKho.HetHang; // Hết hẳn
-                }
-
-                // 5.2. KIỂM TRA SẮP HẾT (dưới ngưỡng)
-                if (nguyenLieuTrongKho.SoLuongTon <= nguyenLieuTrongKho.NguongCanhBao) {
-                    trangThaiTongQuat = TrangThaiKho.SapHet;
-                }
+                return anySapHet ? TrangThaiKho.SapHet : TrangThaiKho.DuHang;
             }
-
-            return trangThaiTongQuat;
+            catch {
+                return TrangThaiKho.DuHang;
+            }
         }
 
+        // Minimal pricing: return given price (placeholder for real pricing logic)
+        public decimal GetGiaBan(int maSp, decimal giaGoc) {
+            return giaGoc;
+        }
 
-        /// Lấy giá bán cuối cùng của 1 sản phẩm (đã trừ KM 'SanPham' nếu có)
+        // Return detailed result matching GioHang expectations
+        // Now checks real stock using EF when available, otherwise ADO fallback
+        public KetQuaKiemKho KiemTraSoLuongTonThucTe(int maSp, int soLuongYeuCau) {
+            var res = new KetQuaKiemKho { DuHang = false, ThongBao = null };
+            if (soLuongYeuCau <= 0) { res.DuHang = false; res.ThongBao = "Số lượng không hợp lệ"; return res; }
 
-
-        public decimal GetGiaBan(int maSanPham, decimal giaGoc) {
             try {
-                // Mở kết nối CSDL
-                using (DataSqlContext db = new DataSqlContext()) {
-                    // --- BƯỚC 1: LẤY HẾT DỮ LIỆU CẦN THIẾT TỪ CSDL ---
-                    DateOnly homNay = DateOnly.FromDateTime(DateTime.Now);
+                // Try EF approach first
+                using (var db = new DataSqlContext()) {
+                    // Load formula lines for product
+                    var dinhluong = db.DinhLuongs.Where(d => d.MaSp == maSp).ToList();
+                    if (dinhluong == null || dinhluong.Count == 0) {
+                        // No recipe -> assume product does not consume ingredients (e.g., raw product) -> allow
+                        res.DuHang = true; return res;
+                    }
 
-                    // 2. Lấy TẤT CẢ các khuyến mãi 'SanPham' đang hoạt động
-                    var dsKMDangChay_SP = new List<KhuyenMai>();
-                    foreach (var km in db.KhuyenMais.ToList()) {
-                        if (km.LoaiKm == "SanPham" &&
-                            km.TrangThai == "Đang áp dụng" &&
-                            km.NgayBatDau <= homNay &&
-                            km.NgayKetThuc >= homNay) {
-                            dsKMDangChay_SP.Add(km);
+                    // For each ingredient required, check stock
+                    foreach (var dl in dinhluong) {
+                        var nl = db.NguyenLieus.FirstOrDefault(n => n.MaNl == dl.MaNl);
+                        decimal ton = nl?.SoLuongTon ?? 0m;
+                        decimal required = dl.SoLuongCan * soLuongYeuCau;
+                        if (ton < required) {
+                            res.DuHang = false;
+                            res.ThongBao = $"Nguyên liệu '{nl?.TenNl ?? "(#" + dl.MaNl + ")"}' không đủ. Cần {required}, còn {ton}.";
+                            return res;
                         }
                     }
 
-                    if (dsKMDangChay_SP.Count == 0) {
-                        return giaGoc;
-                    }
-
-                    // 3. Tải TẤT CẢ sản phẩm và "liên kết" khuyến mãi
-                    var dsSanPham_va_KM = db.SanPhams.Include(sp => sp.MaKms).ToList();
-
-                    // --- BƯỚC 2: LỌC BẰNG VÒNG LẶP (FOREACH VÀ IF) ---
-
-                    // 4. Tìm sản phẩm ta cần
-                    SanPham sanPhamCuaToi = null;
-                    foreach (var sp in dsSanPham_va_KM) {
-                        if (sp.MaSp == maSanPham) {
-                            sanPhamCuaToi = sp;
-                            break;
-                        }
-                    }
-
-                    if (sanPhamCuaToi == null) {
-                        return giaGoc;
-                    }
-
-                    // 5. Tìm khuyến mãi tốt nhất cho sản phẩm này
-                    KhuyenMai kmTotNhat = null;
-
-                    // Lặp qua các "liên kết" KM CỦA RIÊNG sản phẩm này
-                    foreach (var kmCuaSP in sanPhamCuaToi.MaKms) {
-                        // Lặp qua danh sách KM "đang chạy"
-                        foreach (var kmDangChay in dsKMDangChay_SP) {
-                            // Nếu KM của sản phẩm này khớp với một KM đang chạy
-                            if (kmCuaSP.MaKm == kmDangChay.MaKm) {
-                                if (kmTotNhat == null || kmDangChay.GiaTri > kmTotNhat.GiaTri) {
-                                    kmTotNhat = kmDangChay;
-                                }
-                                break;
-                            }
-                        }
-                    }
-
-                    // --- BƯỚC 3: TÍNH GIÁ CUỐI CÙNG ---
-                    if (kmTotNhat != null) {
-                        decimal phanTramGiam = kmTotNhat.GiaTri / 100;
-                        return giaGoc - (giaGoc * phanTramGiam);
-                    }
-
-                    return giaGoc;
+                    // All ingredients sufficient
+                    res.DuHang = true;
+                    return res;
                 }
             }
-            catch (Exception ex) {
-                // Thay vì MessageBox, chúng ta ghi lỗi ra Console
-                // (Vì lớp service không nên chứa UI)
-                Console.WriteLine("Lỗi khi lấy giá khuyến mãi: " + ex.Message);
-                return giaGoc; // Nếu lỗi, trả về giá gốc
-            }
-        }
+            catch (Exception) {
+                // Fallback to ADO queries
+                try {
+                    string sqlDinhLuong = "SELECT MaNL, SoLuongCan FROM DinhLuong WHERE MaSP = @MaSP";
+                    var dls = AdoNetHelper.QueryList(sqlDinhLuong, r => new { MaNl = r.IsDBNull(0) ? 0 : r.GetInt32(0), SoLuongCan = r.IsDBNull(1) ? 0m : r.GetDecimal(1) }, new Dictionary<string, object> { ["@MaSP"] = maSp });
+                    if (dls == null || dls.Count == 0) { res.DuHang = true; return res; }
 
-
-        /// Kiểm tra xem kho có đủ nguyên liệu không.
-        /// (Dùng khi thêm vào giỏ hàng)
-
-
-        /// <returns>Một đối tượng KetQuaKiemKho.</returns>
-        public KetQuaKiemKho KiemTraSoLuongTonThucTe(int maSP, int soLuongMuonKiemTra) {
-            // Mở CSDL (chỉ để kiểm tra)
-            using (DataSqlContext db = new DataSqlContext()) {
-                // 1. Lấy công thức
-                var congThuc = db.DinhLuongs
-                                 .Where(dl => dl.MaSp == maSP)
-                                 .ToList(); // .ToList()
-
-                if (congThuc.Count == 0) {
-                    // Không có công thức, luôn đủ
-                    return new KetQuaKiemKho { DuHang = true };
-                }
-
-                // 2. Lặp qua công thức
-                foreach (var nguyenLieuCan in congThuc) {
-                    // 3. Lấy NL trong kho
-                    var nguyenLieuTrongKho = db.NguyenLieus
-                                               .FirstOrDefault(nl => nl.MaNl == nguyenLieuCan.MaNl && nl.TrangThai == "Đang kinh doanh");
-
-                    if (nguyenLieuTrongKho == null) {
-                        return new KetQuaKiemKho {
-                            DuHang = false,
-                            ThongBao = $"Lỗi CSDL: Không tìm thấy nguyên liệu '{nguyenLieuCan.MaNl}'"
-                        };
+                    foreach (var dl in dls) {
+                        var rows = AdoNetHelper.QueryList("SELECT TenNL, ISNULL(SoLuongTon,0) FROM NguyenLieu WHERE MaNL = @MaNL", r => new { Ten = r.IsDBNull(0) ? string.Empty : r.GetString(0), Ton = r.IsDBNull(1) ? 0m : r.GetDecimal(1) }, new Dictionary<string, object> { ["@MaNL"] = dl.MaNl });
+                        decimal ton = 0m; string ten = dl.MaNl.ToString();
+                        if (rows.Count > 0) { ton = rows[0].Ton; ten = rows[0].Ten; }
+                        decimal required = dl.SoLuongCan * soLuongYeuCau;
+                        if (ton < required) {
+                            res.DuHang = false;
+                            res.ThongBao = $"Nguyên liệu '{ten}' không đủ. Cần {required}, còn {ton}.";
+                            return res;
+                        }
                     }
 
-                    // 4. Tính toán
-                    decimal tongNguyenLieuCan = nguyenLieuCan.SoLuongCan * soLuongMuonKiemTra;
-
-                    // 5. KIỂM TRA
-                    if (nguyenLieuTrongKho.SoLuongTon < tongNguyenLieuCan) {
-                        // KHÔNG ĐỦ
-                        string message = $"Không đủ hàng trong kho cho {soLuongMuonKiemTra} ly!\n\n" +
-                                         $"Nguyên liệu: {nguyenLieuTrongKho.TenNl}\n" +
-                                         $"Chỉ còn: {nguyenLieuTrongKho.SoLuongTon}\n" +
-                                         $"Cần: {tongNguyenLieuCan}";
-
-                        return new KetQuaKiemKho {
-                            DuHang = false,
-                            ThongBao = message
-                        };
-                    }
+                    res.DuHang = true;
+                    return res;
                 }
-
-                // TẤT CẢ ĐỀU ĐỦ
-                return new KetQuaKiemKho { DuHang = true };
+                catch (Exception ex) {
+                    // If fallback also fails, be conservative and disallow
+                    res.DuHang = false;
+                    res.ThongBao = "Không thể kiểm tra tồn kho: " + ex.Message;
+                    return res;
+                }
             }
         }
     }

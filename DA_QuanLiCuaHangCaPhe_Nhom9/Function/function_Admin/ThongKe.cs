@@ -1,7 +1,9 @@
-﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+﻿using DA_QuanLiCuaHangCaPhe_Nhom9.DataAccess;
+using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+
+//csharp Function/function_Admin/ThongKe.cs
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
-    // --- CÁC LỚP CHỨA KẾT QUẢ TRUY VẤN (DTOs) ---
     public class DuLieuTongQuan {
         public string Category { get; set; }
         public int Count { get; set; }
@@ -17,51 +19,34 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
         public decimal DonHangNhoNhat { get; set; }
     }
 
-
-    /// Lớp này chịu trách nhiệm truy vấn CSDL
-    /// cho chức năng Thống Kê (Tổng Quan, Doanh Thu).
-
     public class ThongKe {
         public List<DuLieuTongQuan> TaiDuLieuTongQuan() {
             var overviewData = new List<DuLieuTongQuan>();
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
-                    // Lấy dữ liệu thô
                     var allNhanVien = db.NhanViens.ToList();
                     var allSanPham = db.SanPhams.ToList();
                     var allDonHang = db.DonHangs.ToList();
                     var allNguyenLieu = db.NguyenLieus.ToList();
                     var allKhachHang = db.KhachHangs.ToList();
 
-                    // 1. Tổng NV
                     int tongNhanVien = allNhanVien.Count;
 
-                    // 2. Tổng SP
                     int tongSanPham = 0;
                     foreach (var sp in allSanPham) {
-                        if (sp.TrangThai == "Con ban" || sp.TrangThai == "Còn bán") {
-                            tongSanPham++;
-                        }
+                        if (sp.TrangThai == "Con ban" || sp.TrangThai == "Còn bán") tongSanPham++;
                     }
 
-                    // 3. Tổng ĐH
                     int tongDonHang = allDonHang.Count;
 
-                    // 4. ĐH Hôm nay
                     int donHangHomNay = 0;
                     foreach (var dh in allDonHang) {
-                        if (dh.NgayLap.HasValue && dh.NgayLap.Value.Date == DateTime.Today) {
-                            donHangHomNay++;
-                        }
+                        if (dh.NgayLap.HasValue && dh.NgayLap.Value.Date == DateTime.Today) donHangHomNay++;
                     }
 
-                    // 5. Tổng NL
                     int tongNguyenLieu = allNguyenLieu.Count;
-
-                    // 6. Tổng KH
                     int tongKhachHang = allKhachHang.Count;
 
-                    // Thêm vào danh sách
                     overviewData.Add(new DuLieuTongQuan { Category = "Tổng số nhân viên", Count = tongNhanVien, Details = "Nhân viên đang làm việc" });
                     overviewData.Add(new DuLieuTongQuan { Category = "Tổng số sản phẩm", Count = tongSanPham, Details = "Sản phẩm đang bán" });
                     overviewData.Add(new DuLieuTongQuan { Category = "Tổng số đơn hàng", Count = tongDonHang, Details = "Tất cả đơn hàng" });
@@ -70,8 +55,26 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                     overviewData.Add(new DuLieuTongQuan { Category = "Khách hàng", Count = tongKhachHang, Details = "Tổng số khách hàng" });
                 }
             }
-            catch (Exception ex) {
-                Console.WriteLine($"Lỗi khi tải dữ liệu tổng quan: {ex.Message}");
+            catch (Exception) {
+                // Fallback ADO: use scalar / simple queries
+                try {
+                    int tongNhanVien = AdoNetHelper.ExecuteScalar<int>("SELECT COUNT(1) FROM NhanVien");
+                    int tongSanPham = AdoNetHelper.ExecuteScalar<int>("SELECT COUNT(1) FROM SanPham WHERE TrangThai IN (N'Con ban', N'Còn bán')");
+                    int tongDonHang = AdoNetHelper.ExecuteScalar<int>("SELECT COUNT(1) FROM DonHang");
+                    int donHangHomNay = AdoNetHelper.ExecuteScalar<int>("SELECT COUNT(1) FROM DonHang WHERE CONVERT(date, NgayLap) = CONVERT(date, GETDATE())");
+                    int tongNguyenLieu = AdoNetHelper.ExecuteScalar<int>("SELECT COUNT(1) FROM NguyenLieu");
+                    int tongKhachHang = AdoNetHelper.ExecuteScalar<int>("SELECT COUNT(1) FROM KhachHang");
+
+                    overviewData.Add(new DuLieuTongQuan { Category = "Tổng số nhân viên", Count = tongNhanVien, Details = "Nhân viên đang làm việc" });
+                    overviewData.Add(new DuLieuTongQuan { Category = "Tổng số sản phẩm", Count = tongSanPham, Details = "Sản phẩm đang bán" });
+                    overviewData.Add(new DuLieuTongQuan { Category = "Tổng số đơn hàng", Count = tongDonHang, Details = "Tất cả đơn hàng" });
+                    overviewData.Add(new DuLieuTongQuan { Category = "Đơn hàng hôm nay", Count = donHangHomNay, Details = DateTime.Today.ToString("dd/MM/yyyy") });
+                    overviewData.Add(new DuLieuTongQuan { Category = "Nguyên liệu trong kho", Count = tongNguyenLieu, Details = "Tổng số loại nguyên liệu" });
+                    overviewData.Add(new DuLieuTongQuan { Category = "Khách hàng", Count = tongKhachHang, Details = "Tổng số khách hàng" });
+                }
+                catch (Exception ex) {
+                    Console.WriteLine("Lỗi khi tải dữ liệu tổng quan (ADO fallback): " + ex.Message);
+                }
             }
             return overviewData;
         }
@@ -82,18 +85,14 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                 using (DataSqlContext db = new DataSqlContext()) {
                     var donHangsHopLe = new List<DonHang>();
                     foreach (var dh in db.DonHangs.ToList()) {
-                        if (dh.TongTien != null && dh.NgayLap != null) {
-                            donHangsHopLe.Add(dh);
-                        }
+                        if (dh.TongTien != null && dh.NgayLap != null) donHangsHopLe.Add(dh);
                     }
 
                     Dictionary<string, List<DonHang>> groups = new Dictionary<string, List<DonHang>>();
                     foreach (var dh in donHangsHopLe) {
                         if (dh.NgayLap.HasValue) {
                             string key = dh.NgayLap.Value.Month.ToString("00") + "/" + dh.NgayLap.Value.Year.ToString();
-                            if (!groups.ContainsKey(key)) {
-                                groups[key] = new List<DonHang>();
-                            }
+                            if (!groups.ContainsKey(key)) groups[key] = new List<DonHang>();
                             groups[key].Add(dh);
                         }
                     }
@@ -124,7 +123,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                         });
                     }
 
-                    // Sắp xếp và lấy 12
                     tempData.Sort((a, b) => string.Compare(b.Thang, a.Thang));
 
                     int count = 0;
@@ -135,8 +133,39 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                     }
                 }
             }
-            catch (Exception ex) {
-                Console.WriteLine($"Lỗi khi tải dữ liệu doanh thu: {ex.Message}");
+            catch (Exception) {
+                // Fallback ADO: aggregate by month/year
+                try {
+                    string sql = @"SELECT MONTH(NgayLap) AS M, YEAR(NgayLap) AS Y, COUNT(*) AS SoDon, SUM(ISNULL(TongTien,0)) AS TongDoanhThu
+                                   FROM DonHang
+                                   WHERE NgayLap IS NOT NULL
+                                   GROUP BY YEAR(NgayLap), MONTH(NgayLap)
+                                   ORDER BY YEAR(NgayLap) DESC, MONTH(NgayLap) DESC";
+                    var rows = AdoNetHelper.QueryList(sql, r => new {
+                        M = r.GetInt32(0),
+                        Y = r.GetInt32(1),
+                        SoDon = r.GetInt32(2),
+                        TongDoanhThu = r.IsDBNull(3) ? 0m : r.GetDecimal(3)
+                    });
+
+                    int added = 0;
+                    foreach (var row in rows) {
+                        decimal avg = row.SoDon > 0 ? row.TongDoanhThu / row.SoDon : 0;
+                        revenueData.Add(new DuLieuDoanhThu {
+                            Thang = row.M.ToString("00") + "/" + row.Y.ToString(),
+                            SoDonHang = row.SoDon,
+                            TongDoanhThu = Math.Round(row.TongDoanhThu, 0),
+                            DoanhThuTrungBinh = Math.Round(avg, 0),
+                            DonHangLonNhat = 0,
+                            DonHangNhoNhat = 0
+                        });
+                        added++;
+                        if (added >= 12) break;
+                    }
+                }
+                catch (Exception ex) {
+                    Console.WriteLine("Lỗi khi tải doanh thu (ADO fallback): " + ex.Message);
+                }
             }
             return revenueData;
         }

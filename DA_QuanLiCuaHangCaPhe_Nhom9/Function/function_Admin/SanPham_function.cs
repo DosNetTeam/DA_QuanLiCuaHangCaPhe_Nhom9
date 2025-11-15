@@ -1,7 +1,9 @@
-﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+﻿using DA_QuanLiCuaHangCaPhe_Nhom9.DataAccess;
+using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+
+//csharp Function/function_Admin/SanPham_function.cs
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
-    // --- LỚP CHỨA KẾT QUẢ TRUY VẤN (DTO) ---
     public class DuLieuSanPham {
         public int MaSp { get; set; }
         public string TenSp { get; set; }
@@ -11,20 +13,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
         public string TrangThai { get; set; }
     }
 
-
-    /// Lớp này chịu trách nhiệm truy vấn CSDL
-    /// cho chức năng Quản Lý Sản Phẩm.
-    /// (ĐÃ VIẾT LẠI BẰNG FOREACH, KHÔNG LINQ)
-
     public class SanPham_function {
-        // Lấy danh sách sản phẩm chuyển sang DTO DuLieuSanPham cho UI
         public List<DuLieuSanPham> TaiDuLieuSanPham() {
             var ketQua = new List<DuLieuSanPham>();
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
                     var products = db.SanPhams.ToList();
-
-                    // Chuyển đổi model -> DTO
                     foreach (var sp in products) {
                         ketQua.Add(new DuLieuSanPham {
                             MaSp = sp.MaSp,
@@ -35,18 +29,27 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                             TrangThai = sp.TrangThai
                         });
                     }
-
-                    // Sắp xếp theo tên sản phẩm (tăng dần)
                     ketQua.Sort((a, b) => string.Compare(a.TenSp, b.TenSp));
                 }
             }
-            catch (Exception ex) {
-                Console.WriteLine($"Lỗi khi tải dữ liệu sản phẩm: {ex.Message}");
+            catch (Exception) {
+                // Fallback ADO
+                var list = SanPhamRepository.GetAllActive();
+                foreach (var sp in list) {
+                    ketQua.Add(new DuLieuSanPham {
+                        MaSp = sp.MaSp,
+                        TenSp = sp.TenSp,
+                        LoaiSp = sp.LoaiSp,
+                        DonGia = sp.DonGia,
+                        DonVi = sp.DonVi,
+                        TrangThai = sp.TrangThai
+                    });
+                }
+                ketQua.Sort((a, b) => string.Compare(a.TenSp, b.TenSp));
             }
             return ketQua;
         }
 
-        // Lấy chi tiết một sản phẩm theo mã, trả về entity SanPham (hoặc null nếu không tìm thấy)
         public SanPham LayChiTietSanPham(int maSp) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
@@ -56,101 +59,93 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
                     return null;
                 }
             }
-            catch (Exception ex) {
-                Console.WriteLine($"Lỗi khi lấy chi tiết sản phẩm: {ex.Message}");
-                return null;
+            catch (Exception) {
+                return SanPhamRepository.GetById(maSp);
             }
         }
 
-        // Thêm sản phẩm mới vào DB, trả về entity vừa thêm (kèm MaSp do EF gán)
         public SanPham ThemSanPham(string tenSp, string loaiSp, decimal donGia, string donVi, string trangThai) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
-                    if (string.IsNullOrEmpty(trangThai)) {
-                        trangThai = "Còn bán";
-                    }
-
-                    SanPham newProduct = new SanPham {
-                        TenSp = tenSp,
-                        LoaiSp = loaiSp,
-                        DonGia = donGia,
-                        DonVi = donVi,
-                        TrangThai = trangThai
-                    };
-
+                    if (string.IsNullOrEmpty(trangThai)) trangThai = "Còn bán";
+                    SanPham newProduct = new SanPham { TenSp = tenSp, LoaiSp = loaiSp, DonGia = donGia, DonVi = donVi, TrangThai = trangThai };
                     db.SanPhams.Add(newProduct);
                     db.SaveChanges();
                     return newProduct;
                 }
             }
-            catch (Exception ex) {
-                Console.WriteLine($"Lỗi khi thêm sản phẩm: {ex.Message}");
+            catch (Exception) {
+                // ADO fallback: simple insert and return null (caller handles)
+                string sql = @"INSERT INTO SanPham (TenSP, LoaiSP, DonGia, DonVi, TrangThai)
+                               VALUES (@TenSP, @LoaiSP, @DonGia, @DonVi, @TrangThai)";
+                var p = new Dictionary<string, object> {
+                    ["@TenSP"] = tenSp,
+                    ["@LoaiSP"] = loaiSp,
+                    ["@DonGia"] = donGia,
+                    ["@DonVi"] = donVi,
+                    ["@TrangThai"] = string.IsNullOrEmpty(trangThai) ? "Còn bán" : trangThai
+                };
+                try {
+                    AdoNetHelper.ExecuteNonQuery(sql, p);
+                    // return repository read (best-effort)
+                    var inserted = SanPhamRepository.GetAllActive();
+                    // try find by name
+                    foreach (var s in inserted) if (s.TenSp == tenSp) return s;
+                }
+                catch { }
                 return null;
             }
         }
 
-        // Cập nhật sản phẩm; trả về entity cập nhật hoặc null nếu không tìm thấy
         public SanPham CapNhatSanPham(int maSp, string tenSp, string loaiSp, decimal donGia, string donVi, string trangThai) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
                     SanPham product = null;
-                    foreach (var sp in db.SanPhams) // Lặp trực tiếp trên DbSet (deferred execution)
-                    {
-                        if (sp.MaSp == maSp) {
-                            product = sp;
-                            break;
-                        }
-                    }
-
+                    foreach (var sp in db.SanPhams) { if (sp.MaSp == maSp) { product = sp; break; } }
                     if (product == null) return null;
-
                     product.TenSp = tenSp;
                     product.LoaiSp = loaiSp;
                     product.DonGia = donGia;
                     product.DonVi = donVi;
-                    if (!string.IsNullOrEmpty(trangThai)) {
-                        product.TrangThai = trangThai;
-                    }
-
+                    if (!string.IsNullOrEmpty(trangThai)) product.TrangThai = trangThai;
                     db.SaveChanges();
                     return product;
                 }
             }
-            catch (Exception ex) {
-                Console.WriteLine($"Lỗi khi cập nhật sản phẩm: {ex.Message}");
-                return null;
+            catch (Exception) {
+                try {
+                    string sql = @"UPDATE SanPham SET TenSP=@TenSP, LoaiSP=@LoaiSP, DonGia=@DonGia, DonVi=@DonVi, TrangThai=@TrangThai WHERE MaSP=@MaSP";
+                    var p = new Dictionary<string, object> {
+                        ["@TenSP"] = tenSp, ["@LoaiSP"] = loaiSp, ["@DonGia"] = donGia, ["@DonVi"] = donVi, ["@TrangThai"] = trangThai, ["@MaSP"] = maSp
+                    };
+                    AdoNetHelper.ExecuteNonQuery(sql, p);
+                    return SanPhamRepository.GetById(maSp);
+                }
+                catch {
+                    return null;
+                }
             }
         }
 
-        // Xóa sản phẩm theo mã; trả về true nếu thành công
         public bool XoaSanPham(int maSp) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
                     SanPham product = null;
-                    foreach (var sp in db.SanPhams) // Lặp trực tiếp trên DbSet
-                    {
-                        if (sp.MaSp == maSp) {
-                            product = sp;
-                            break;
-                        }
-                    }
-
+                    foreach (var sp in db.SanPhams) { if (sp.MaSp == maSp) { product = sp; break; } }
                     if (product == null) return false;
-
                     db.SanPhams.Remove(product);
                     db.SaveChanges();
                     return true;
                 }
             }
-            catch (Exception ex) {
-                // Nếu lỗi ràng buộc FK, log inner exception để biết chi tiết
-                if (ex.InnerException != null && ex.InnerException.Message.Contains("REFERENCE constraint")) {
-                    Console.WriteLine($"Lỗi ràng buộc khi xóa SP: {ex.InnerException.Message}");
+            catch (Exception) {
+                try {
+                    AdoNetHelper.ExecuteNonQuery("DELETE FROM SanPham WHERE MaSP = @MaSP", new Dictionary<string, object> { ["@MaSP"] = maSp });
+                    return true;
                 }
-                else {
-                    Console.WriteLine($"Lỗi khi xóa sản phẩm: {ex.Message}");
+                catch {
+                    return false;
                 }
-                return false;
             }
         }
     }

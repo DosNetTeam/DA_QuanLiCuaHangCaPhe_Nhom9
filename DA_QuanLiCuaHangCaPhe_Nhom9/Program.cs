@@ -1,4 +1,7 @@
 ﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+using DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi;
+using DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main;
+using DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Login;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +36,29 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
                     // Đăng ký Form chính của bạn (ví dụ tên là Form1)
                     services.AddTransient<Loginform>();
+
+                    // Register IKhoTruyVan with runtime detection: prefer EF if database reachable, otherwise ADO
+                    services.AddSingleton<IKhoTruyVan>(sp => {
+                        try {
+                            using var scope = sp.CreateScope();
+                            var db = scope.ServiceProvider.GetRequiredService<DataSqlContext>();
+                            // Try to connect using EF
+                            if (db.Database.CanConnect()) {
+                                return new EfKhoTruyVan();
+                            }
+                        }
+                        catch {
+                            // ignore and fallback to ADO
+                        }
+                        return new AdoKhoTruyVan();
+                    });
+
+                    // Register other services used by forms
+                    services.AddSingleton<KhoTruyVanDangNhap>();
+                    services.AddTransient<KhoTruyVanMainForm>();
+                    services.AddTransient<DichVuDonHang>();
+                    services.AddTransient<GioHang>(sp => new GioHang(sp.GetRequiredService<DichVuDonHang>()));
+
                 })
                 .Build();
 
@@ -42,7 +68,9 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
             ApplicationConfiguration.Initialize();
 
-            Application.Run(new Loginform());
+            // Start the application using DI-resolved Loginform so forms can receive IKhoTruyVan from container
+            var login = ServiceProvider.GetRequiredService<Loginform>();
+            Application.Run(login);
         }
     }
 }

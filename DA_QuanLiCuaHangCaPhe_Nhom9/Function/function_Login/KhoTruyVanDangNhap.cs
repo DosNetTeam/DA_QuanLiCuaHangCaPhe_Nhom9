@@ -1,10 +1,9 @@
-﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+﻿using DA_QuanLiCuaHangCaPhe_Nhom9.DataAccess;
+using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 
-// *** Namespace trỏ đến function_Login ***
+//csharp Function/function_Login/KhoTruyVanDangNhap.cs
+
 namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Login {
-
-    /// Lớp DTO (Đối tượng truyền dữ liệu)
-    /// Dùng để trả về thông tin tài khoản cho Form Login
 
     public class ThongTinTaiKhoan {
         public string TenDangNhap { get; set; }
@@ -15,17 +14,12 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Login {
         public string TenVaiTro { get; set; }
     }
 
-
-    /// Lớp này chịu trách nhiệm truy vấn CSDL
-    /// cho chức năng Đăng nhập.
-    /// (ĐÃ VIẾT LẠI BẰNG FOREACH, KHÔNG LINQ)
-
     public class KhoTruyVanDangNhap {
 
-        /// Lấy thông tin tài khoản, nhân viên, và vai trò
-        /// dựa trên Tên đăng nhập.
-        /// Trả về null nếu không tìm thấy.
-
+        /// <summary>
+        /// Lấy thông tin tài khoản, nhân viên, và vai trò dựa trên Tên đăng nhập.
+        /// Thử EF trước, nếu lỗi thì fallback ADO.
+        /// </summary>
         public ThongTinTaiKhoan XacThuc(string username) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {
@@ -80,9 +74,40 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Login {
                 }
             }
             catch (Exception ex) {
-                // Ghi log lên console để dev trace lỗi kết nối/EF
-                Console.WriteLine("Lỗi khi xác thực đăng nhập: " + ex.Message);
-                return null; // Trả về null nếu có lỗi CSDL
+                // Fallback ADO: đọc trực tiếp bằng AdoNetHelper
+                try {
+                    string sql = @"
+                        SELECT t.TenDangNhap, t.MatKhau, t.TrangThai, t.MaNV,
+                               nv.TenNV, vt.TenVaiTro
+                        FROM TaiKhoan t
+                        LEFT JOIN NhanVien nv ON t.MaNV = nv.MaNV
+                        LEFT JOIN VaiTro vt ON t.MaVaiTro = vt.MaVaiTro
+                        WHERE t.TenDangNhap = @username";
+
+                    var p = new Dictionary<string, object> { ["@username"] = username };
+
+                    var rows = AdoNetHelper.QueryList(sql, r => {
+                        var info = new ThongTinTaiKhoan();
+                        info.TenDangNhap = r.IsDBNull(0) ? string.Empty : r.GetString(0);
+                        info.MatKhau = r.IsDBNull(1) ? string.Empty : r.GetString(1);
+                        // TrangThai có thể là bit/int
+                        if (!r.IsDBNull(2)) {
+                            try { info.TrangThai = r.GetBoolean(2); } catch { info.TrangThai = r.GetInt32(2) == 1; }
+                        }
+                        else info.TrangThai = null;
+                        info.MaNv = r.IsDBNull(3) ? 0 : r.GetInt32(3);
+                        info.TenNhanVien = r.IsDBNull(4) ? "(Không tìm thấy NV)" : r.GetString(4);
+                        info.TenVaiTro = r.IsDBNull(5) ? "(Không tìm thấy VT)" : r.GetString(5);
+                        return info;
+                    }, p);
+
+                    if (rows.Count == 0) return null;
+                    return rows[0];
+                }
+                catch (Exception adoEx) {
+                    Console.WriteLine($"Lỗi khi xác thực đăng nhập (EF): {ex.Message} | (ADO): {adoEx.Message}");
+                    return null;
+                }
             }
         }
     }

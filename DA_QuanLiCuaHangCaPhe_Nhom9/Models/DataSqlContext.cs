@@ -4,6 +4,9 @@ using Microsoft.Extensions.Configuration;
 namespace DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 
 public partial class DataSqlContext : DbContext {
+    // Toggle to enable/disable EF Core at runtime for testing ADO.NET fallbacks
+    public static bool EnableEf { get; set; } = true;
+
     public DataSqlContext() {
     }
 
@@ -44,6 +47,11 @@ public partial class DataSqlContext : DbContext {
        // => optionsBuilder.UseSqlServer("Server=KenG_Kanowaki\\LEMINHDUCSQL;Database=DATA_SQL;Trusted_Connection=True;TrustServerCertificate=True");
        // => optionsBuilder.UseSqlServer("Server=LAPTOP-2Q4VT418\\SQLEXPRESS;Database=DA_QuanLiBanCaPhe;Trusted_Connection=True;TrustServerCertificate=True");
        {
+        // If someone disabled EF for testing, throw here so callers' try/catch paths fall back to ADO.NET.
+        if (!EnableEf) {
+            throw new InvalidOperationException("Entity Framework Core is disabled by DataSqlContext.EnableEf = false. This forces ADO.NET fallback paths for testing.");
+        }
+
         if (!optionsBuilder.IsConfigured) {
             // 1. Xây dựng đối tượng Configuration
 

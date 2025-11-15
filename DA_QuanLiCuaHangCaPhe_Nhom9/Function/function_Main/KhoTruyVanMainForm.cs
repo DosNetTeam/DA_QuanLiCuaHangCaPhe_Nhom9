@@ -1,4 +1,6 @@
 ﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
 
@@ -20,7 +22,6 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
         public int SoLuong { get; set; } // số lượng
         public decimal DonGia { get; set; } // giá gốc lưu vào CSDL
     }
-
 
 
     /// Lớp này chịu trách nhiệm truy vấn CSDL
@@ -79,16 +80,16 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
 
                     // Lọc chỉ những SP đang kinh doanh
                     foreach (var sp in tatCaSanPham_raw) {
-                        if (sp.TrangThai == "Còn bán") {
+                        // Make status check robust: accept variants like "Con ban", "Còn bán", case-insensitive
+                        var status = (sp.TrangThai ?? string.Empty).ToLower();
+                        if (status.Contains("con") || status.Contains("còn") || status.Contains("c\u00f2n") || status.Contains("con ban")) {
                             tatCaSanPham_filter.Add(sp);
                         }
                     }
 
-                    // Lọc nguyên liệu đang kinh doanh
+                    // Include all ingredients (do not rely on a TrangThai string which may be absent or different)
                     foreach (var nl in tatCaNguyenLieu_raw) {
-                        if (nl.TrangThai == "Đang kinh doanh") {
-                            allNguyenLieu_filter.Add(nl);
-                        }
+                        allNguyenLieu_filter.Add(nl);
                     }
 
                     // Trả về container chứa 3 danh sách để MainForm dùng
