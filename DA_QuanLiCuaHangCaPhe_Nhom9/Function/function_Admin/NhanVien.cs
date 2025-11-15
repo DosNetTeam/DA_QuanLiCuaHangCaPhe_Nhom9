@@ -12,11 +12,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
         public string TrangThai { get; set; }
     }
 
-    /// <summary>
+
     /// Lớp này chịu trách nhiệm truy vấn CSDL
     /// cho chức năng Quản Lý Nhân Viên và Tài Khoản.
-    /// (ĐÃ VIẾT LẠI BẰNG FOREACH, KHÔNG LINQ)
-    /// </summary>
+
+
     public class NhanVien_function // Đổi tên class cho khớp tên file
     {
         public List<DuLieuNhanVien> TaiDuLieuNhanVien() {

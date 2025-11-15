@@ -1,4 +1,4 @@
-﻿// Thêm namespace của KhoTruyVan/DichVu
+﻿
 using DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main;
 using DA_QuanLiCuaHangCaPhe_Nhom9.Models;
 
@@ -89,7 +89,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         #endregion
 
         #region HÓA ĐƠN XEM TRƯỚC (Giữ nguyên logic)
-        // (Không thay đổi gì trong vùng này)
+
         private Label AddLabelToBill(string text, int verticalPosition, float fontSize, FontStyle fontStyle = FontStyle.Regular, int horizontalPosition = -1) {
             Label lbl = new Label(); lbl.Text = text; lbl.Font = new Font("Segoe UI", fontSize, fontStyle); lbl.AutoSize = true; lbl.BackColor = Color.Transparent; int xPosition = horizontalPosition; if (xPosition == -1) { xPosition = (panelBillPreview.Width - TextRenderer.MeasureText(text, lbl.Font).Width) / 2; }
             lbl.Location = new Point(xPosition, verticalPosition); panelBillPreview.Controls.Add(lbl); return lbl;
@@ -114,7 +114,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         #region XỬ LÝ SỰ KIỆN (Thay đổi btn_inhoadon_Click)
 
-        // (Giữ nguyên)
+
         private void txtKhachDua_TextChanged(object sender, EventArgs e) {
             decimal khachDua = 0;
             decimal.TryParse(txtKhachDua.Text.Replace(".", ""), out khachDua);
@@ -122,7 +122,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             lblTienDu.Text = tienDu.ToString("N0") + " đ";
         }
 
-        // (Giữ nguyên)
+
         private void rbQR_CheckedChanged(object sender, EventArgs e) {
             if (rbQR.Checked) {
                 pbQR_InBill.Visible = true;

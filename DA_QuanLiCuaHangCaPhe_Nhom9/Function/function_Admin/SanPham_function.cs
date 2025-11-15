@@ -11,11 +11,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
         public string TrangThai { get; set; }
     }
 
-    /// <summary>
+
     /// Lớp này chịu trách nhiệm truy vấn CSDL
     /// cho chức năng Quản Lý Sản Phẩm.
-    /// (ĐÃ VIẾT LẠI BẰNG FOREACH, KHÔNG LINQ)
-    /// </summary>
+
     public class SanPham_function {
         public List<DuLieuSanPham> TaiDuLieuSanPham() {
             var ketQua = new List<DuLieuSanPham>();

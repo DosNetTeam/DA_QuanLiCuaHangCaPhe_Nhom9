@@ -1,12 +1,10 @@
 ﻿using DA_QuanLiCuaHangCaPhe_Nhom9.Function;
 // Thêm namespace của KhoTruyVan
 using DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_QuanLi;
-using global::System.Configuration;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
     public partial class QuanLi : Form {
-        // Vẫn giữ chuỗi kết nối (mặc dù hiện tại không dùng)
-        private string connectionString = ConfigurationManager.ConnectionStrings["CoffeeDB"]?.ConnectionString;
+
         private int _currentMaNV = 0;
 
         // Khai báo Kho Truy Vấn
@@ -76,7 +74,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         private void PositionNotifyGroup() {
-            // (Code này giữ nguyên)
+
             try {
                 if (grpNotify == null || panelContent == null) return;
                 int margin = 15;
@@ -89,7 +87,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             catch { }
         }
 
-        // *** ĐÃ TÁCH CSDL ***
+
         public List<string> GetNotifications() {
             try {
                 // Chỉ gọi hàm từ KhoTruyVan
@@ -102,7 +100,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** ĐÃ TÁCH CSDL ***
+
         private void LoadNotifications() {
             try {
                 // Chỉ gọi hàm GetNotifications đã được refactor
@@ -146,7 +144,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
 
         #region Các hàm tải dữ liệu (ĐÃ TÁCH CSDL)
 
-        // *** ĐÃ TÁCH CSDL ***
+
         private void LoadData_NhanVien() {
             try {
                 int selectedMonth = cbThang.SelectedIndex;
@@ -173,7 +171,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** ĐÃ TÁCH CSDL ***
+
         private void LoadData_HoaDon() {
             try {
                 // 1. Lấy tham số từ UI
@@ -193,7 +191,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** ĐÃ TÁCH CSDL ***
+
         private void LoadData_TonKho() {
             try {
                 // 1. Lấy tham số từ UI
@@ -212,7 +210,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** ĐÃ TÁCH CSDL ***
+
         private void LoadData_SanPham() {
             try {
                 // 1. Lấy tham số từ UI
@@ -245,7 +243,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             }
         }
 
-        // *** ĐÃ TÁCH CSDL ***
+
         private void LoadData_KhuyenMai() {
             try {
                 // 1. Lấy tham số từ UI
@@ -338,7 +336,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
             if (confirm != DialogResult.Yes) return;
 
             try {
-                // (Đoạn code này không cần truy cập CSDL, chỉ là khởi tạo)
+                // (Đoạn code này không cần truy cập CSDL, chỉ là khởi tạo để vào form bán hàng hehehe)
                 var orderForm = new MainForm(_currentMaNV);
                 orderForm.StartPosition = FormStartPosition.CenterScreen;
                 orderForm.Show();
@@ -368,7 +366,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         }
 
         private void dgvPerformance_CellContentClick(object sender, DataGridViewCellEventArgs e) {
-            // (Để trống)
+            // (Để trống) vì đéo bt nó là cái khung lào để xoá =))))
         }
 
         private void btnSendNotify_Click(object sender, EventArgs e) {
@@ -524,7 +522,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9 {
         #endregion
 
         private void QuanLi_Load_1(object sender, EventArgs e) {
-            // (Trống)
+            // (Trống) 
         }
 
         private void grpNotify_Enter(object sender, EventArgs e) {

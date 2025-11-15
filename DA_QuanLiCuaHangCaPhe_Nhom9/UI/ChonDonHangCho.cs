@@ -1,4 +1,4 @@
-﻿// Thêm namespace của Dịch Vụ
+﻿
 using DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main;
 
 namespace DA_QuanLiCuaHangCaPhe_Nhom9 {

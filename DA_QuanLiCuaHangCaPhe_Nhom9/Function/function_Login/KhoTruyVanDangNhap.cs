@@ -2,10 +2,10 @@
 
 // *** Namespace trỏ đến function_Login ***
 namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Login {
-    /// <summary>
+
     /// Lớp DTO (Đối tượng truyền dữ liệu)
     /// Dùng để trả về thông tin tài khoản cho Form Login
-    /// </summary>
+
     public class ThongTinTaiKhoan {
         public string TenDangNhap { get; set; }
         public string MatKhau { get; set; }
@@ -15,17 +15,16 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Login {
         public string TenVaiTro { get; set; }
     }
 
-    /// <summary>
+
     /// Lớp này chịu trách nhiệm truy vấn CSDL
     /// cho chức năng Đăng nhập.
-    /// (ĐÃ VIẾT LẠI BẰNG FOREACH, KHÔNG LINQ)
-    /// </summary>
+
     public class KhoTruyVanDangNhap {
-        /// <summary>
+
         /// Lấy thông tin tài khoản, nhân viên, và vai trò
         /// dựa trên Tên đăng nhập.
         /// Trả về null nếu không tìm thấy.
-        /// </summary>
+
         public ThongTinTaiKhoan XacThuc(string username) {
             try {
                 using (DataSqlContext db = new DataSqlContext()) {

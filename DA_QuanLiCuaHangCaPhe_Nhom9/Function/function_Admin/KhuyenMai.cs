@@ -13,11 +13,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
         public string TrangThai { get; set; }
     }
 
-    /// <summary>
+
     /// Lớp này chịu trách nhiệm truy vấn CSDL
     /// cho chức năng Quản Lý Khuyến Mãi.
-    /// (ĐÃ VIẾT LẠI BẰNG FOREACH, KHÔNG LINQ)
-    /// </summary>
+
+
     public class KhuyenMai_function // Đổi tên class cho khớp tên file
     {
         public List<DuLieuKhuyenMai> TaiDuLieuKhuyenMai() {

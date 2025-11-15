@@ -31,7 +31,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
 
         /// Kiểm tra trạng thái tồn kho (Đủ, Sắp hết, Hết)
         /// (Dùng để tô màu nút sản phẩm)
-        /// Logic này giữ NGUYÊN BẢN từ MainForm.cs
+
 
         public TrangThaiKho KiemTraDuNguyenLieu(int maSP, List<DinhLuong> allDinhLuong, List<NguyenLieu> allNguyenLieu) {
             // 1. Lấy công thức từ List tạm
@@ -80,7 +80,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
 
 
         /// Lấy giá bán cuối cùng của 1 sản phẩm (đã trừ KM 'SanPham' nếu có)
-        /// Logic này giữ NGUYÊN BẢN (V2) từ MainForm.cs
+
 
         public decimal GetGiaBan(int maSanPham, decimal giaGoc) {
             try {
@@ -159,7 +159,7 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Main {
 
         /// Kiểm tra xem kho có đủ nguyên liệu không.
         /// (Dùng khi thêm vào giỏ hàng)
-        /// Logic này giữ NGUYÊN BẢN từ MainForm.cs
+
 
         /// <returns>Một đối tượng KetQuaKiemKho.</returns>
         public KetQuaKiemKho KiemTraSoLuongTonThucTe(int maSP, int soLuongMuonKiemTra) {

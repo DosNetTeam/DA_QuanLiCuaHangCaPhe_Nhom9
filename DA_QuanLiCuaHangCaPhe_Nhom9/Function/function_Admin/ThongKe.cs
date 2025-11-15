@@ -17,11 +17,10 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
         public decimal DonHangNhoNhat { get; set; }
     }
 
-    /// <summary>
+
     /// Lớp này chịu trách nhiệm truy vấn CSDL
     /// cho chức năng Thống Kê (Tổng Quan, Doanh Thu).
-    /// (ĐÃ VIẾT LẠI BẰNG FOREACH, KHÔNG LINQ)
-    /// </summary>
+
     public class ThongKe {
         public List<DuLieuTongQuan> TaiDuLieuTongQuan() {
             var overviewData = new List<DuLieuTongQuan>();

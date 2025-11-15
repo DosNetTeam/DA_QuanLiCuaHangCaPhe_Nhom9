@@ -11,11 +11,11 @@ namespace DA_QuanLiCuaHangCaPhe_Nhom9.Function.function_Admin {
         public string TinhTrang { get; set; }
     }
 
-    /// <summary>
+
     /// Lớp này chịu trách nhiệm truy vấn CSDL
     /// cho chức năng Quản Lý Kho (Nguyên Liệu).
     /// (ĐÃ VIẾT LẠI BẰNG FOREACH, KHÔNG LINQ)
-    /// </summary>
+
     public class KhoSp_Nl {
         // --- HÀM PHỤ (HELPER) ---
         public string TinhTrangThaiKho(decimal? soLuong, decimal nguong) {
